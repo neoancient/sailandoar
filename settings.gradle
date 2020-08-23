@@ -1,0 +1,4 @@
+rootProject.name = 'sailandoar'
+
+include 'core'
+

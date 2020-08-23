@@ -1,0 +1,16 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+}
+
+group 'dev.neoancient'
+version '0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+}
