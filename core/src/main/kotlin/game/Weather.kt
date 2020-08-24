@@ -21,20 +21,13 @@
  * SOFTWARE.
  */
 
-package unit
-
-import java.util.*
+package game
 
 /**
- * The primary unit of the game
+ * Aspects of weather conditions; primarily wind strength and direction. Advanced options may include
+ * effects of precipitation and temperature.
  */
-class Ship(val shipStatId: UUID): BaseUnit() {
-
-    private var shipGameState = ShipGameState(-1)
-
-    override fun initGameState(unitId: Int) {
-        super.initGameState(unitId)
-        shipGameState = ShipGameState(unitId)
-    }
-
+class Weather {
+    var windDirection: Int = 0
+    var windStrength: WindStrength = WindStrength.MODERATE_WIND
 }

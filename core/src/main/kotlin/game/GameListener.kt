@@ -21,20 +21,14 @@
  * SOFTWARE.
  */
 
-package unit
-
-import java.util.*
+package game
 
 /**
- * The primary unit of the game
+ *
  */
-class Ship(val shipStatId: UUID): BaseUnit() {
-
-    private var shipGameState = ShipGameState(-1)
-
-    override fun initGameState(unitId: Int) {
-        super.initGameState(unitId)
-        shipGameState = ShipGameState(unitId)
-    }
-
+interface GameListener {
+    fun playerAdded(playerId: Int)
+    fun playerRemoved(playerId: Int)
+    fun unitAdded(unitId: Int)
+    fun unitRemoved(unitId: Int)
 }

@@ -27,4 +27,10 @@ package unit
  * Base class for physical objects in the game that are not terrain. Primarily ships, but
  * can also include fortresses, ground forces on the shore, or sea monsters
  */
-abstract class Unit(val unitId: Int)
+abstract class BaseUnit() {
+    var unitId = -1
+
+    open fun initGameState(unitId: Int) {
+        this.unitId = unitId
+    }
+}

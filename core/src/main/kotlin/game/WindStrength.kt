@@ -21,20 +21,16 @@
  * SOFTWARE.
  */
 
-package unit
-
-import java.util.*
+package game
 
 /**
- * The primary unit of the game
+ * Wind strength categories for weather
  */
-class Ship(val shipStatId: UUID): BaseUnit() {
-
-    private var shipGameState = ShipGameState(-1)
-
-    override fun initGameState(unitId: Int) {
-        super.initGameState(unitId)
-        shipGameState = ShipGameState(unitId)
-    }
-
+enum class WindStrength {
+    BECALMED,
+    LIGHT_WIND,
+    MODERATE_WIND,
+    STRONG_WIND,
+    GALE,
+    HURRICANE
 }

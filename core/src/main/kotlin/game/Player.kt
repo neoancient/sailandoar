@@ -21,20 +21,10 @@
  * SOFTWARE.
  */
 
-package unit
-
-import java.util.*
+package game
 
 /**
- * The primary unit of the game
+ * A participant in the game. Each player should have an id that is assigned by the {@link Game}
+ * to ensure that it is unique.
  */
-class Ship(val shipStatId: UUID): BaseUnit() {
-
-    private var shipGameState = ShipGameState(-1)
-
-    override fun initGameState(unitId: Int) {
-        super.initGameState(unitId)
-        shipGameState = ShipGameState(unitId)
-    }
-
-}
+data class Player(val id: Int, val name: String)
