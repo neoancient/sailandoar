@@ -44,5 +44,4 @@ data class HexData(
          * The elevation of a hex is independent of the depth, and it is possible for a hex to have both
          * elevation and depth > 0 in cases such as a mountain lake or a lock system, or a sea in a depression.
          */
-        val elevation: Int) {
-}
+        val elevation: Int)

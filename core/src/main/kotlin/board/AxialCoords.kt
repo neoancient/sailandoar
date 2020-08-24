@@ -29,8 +29,8 @@ import kotlin.math.sqrt
 /**
  * Implementation of HexCoords using an axial coordinate system, where there is a 60 degree angle between
  * the axes instead of 90, so that each axis is parallel to a line connecting opposite corners of the
- * hexes. With a vertical orientation (the hexes are aligned in columns) the Y axis is rotated clockwise
- * 30 degress so that it runs from the top right toward the bottom left and row are aligned in a roughly
+ * hexes. With a vertical orientation (the hexes are aligned in columns) the X axis is rotated clockwise
+ * 30 degress so that it runs from the top right toward the bottom left and rows are aligned in a roughly
  * WNW-ESE direction. With a horizontal orientation, the entire grid is rotated 30 degrees anticlockwise
  * from the vertical rotation so that the rows run straight W-E the columns are aligned roughly NNW-SSE.
  *
@@ -45,11 +45,9 @@ import kotlin.math.sqrt
  *
  * @author neoancient
  */
-internal class AxialCoords(col: Int, row: Int,
-                  /** Whether the grid has a vertical orientation */
-                  private val vertical: Boolean) : HexCoords(col, row) {
+internal class AxialCoords(col: Int, row: Int, vertical: Boolean) : HexCoords(col, row, vertical) {
 
-    constructor(other: AxialCoords): this(other.row, other.col, other.vertical)
+    constructor(other: AxialCoords): this(other.col, other.row, other.verticalGrid)
 
     companion object {
         /**
@@ -65,15 +63,15 @@ internal class AxialCoords(col: Int, row: Int,
         fun createFromOffset(x: Int, y: Int, vertical: Boolean, offsetOdd: Boolean): AxialCoords =
                 if (vertical) {
                     if (offsetOdd) {
-                        AxialCoords(y - (x - (x and 1)) / 2, x, true)
+                        AxialCoords(x, y - (x - (x and 1)) / 2, true)
                     } else {
-                        AxialCoords(y - (x + (x and 1)) / 2, x, true)
+                        AxialCoords(x, y - (x + (x and 1)) / 2, true)
                     }
                 } else {
                     if (offsetOdd) {
-                        AxialCoords(y, x - (y - (y and 1)) / 2, false)
+                        AxialCoords(x - (y - (y and 1)) / 2, y, false)
                     } else {
-                        AxialCoords(y, x - (y + (y and 1)) / 2, false)
+                        AxialCoords(x - (y + (y and 1)) / 2, y, false)
                     }
                 }
     }
@@ -82,17 +80,35 @@ internal class AxialCoords(col: Int, row: Int,
         return AxialCoords(this)
     }
 
-    override fun cartesianX() = if (vertical) {
-            sqrt(3.0) * col / 2.0
-        } else {
-            row / 2.0 + col
-        }
+    override fun offsetX(oddOffset: Boolean): Int =
+            if (verticalGrid) {
+                col
+            } else {
+                if (oddOffset) col + (row - (row and 1)) / 2
+                else col + (row + (row and 1)) / 2
+            }
 
-    override fun cartesianY() = if (vertical) {
-            col / 2.0 + row
-        } else {
-            sqrt(3.0) * row / 2.0
-        }
+    override fun offsetY(oddOffset: Boolean): Int =
+            if (verticalGrid) {
+                if (oddOffset) row + (col - (col and 1)) / 2
+                else row + (col + (col and 1)) / 2
+            } else {
+                row
+            }
+
+    override fun cartesianX() =
+            if (verticalGrid) {
+                sqrt(3.0) * col / 2.0
+            } else {
+                row / 2.0 + col
+            }
+
+    override fun cartesianY() =
+            if (verticalGrid) {
+                col / 2.0 + row
+            } else {
+                sqrt(3.0) * row / 2.0
+            }
 
     override fun distance(other: HexCoords): Int {
         /*
@@ -152,25 +168,21 @@ internal class AxialCoords(col: Int, row: Int,
         return retVal
     }
 
-    override fun adjacent(direction: Int): HexCoords {
-        val retVal: HexCoords = AxialCoords(this)
-        retVal.translate(direction)
-        return retVal
-    }
+    override fun adjacent(direction: Int): HexCoords = translate(direction)
 
     override fun translate(direction: Int): HexCoords =
         when (direction) {
-            0 -> AxialCoords(row - 1, col, vertical)
-            1 -> AxialCoords(row - 1, col + 1, vertical)
-            2 -> AxialCoords(row, col + 1, vertical)
-            3 -> AxialCoords(row + 1, col, vertical)
-            4 -> AxialCoords(row + 1, col - 1, vertical)
-            5 -> AxialCoords(row, col - 1, vertical)
+            0 -> AxialCoords(col, row - 1, verticalGrid)
+            1 -> AxialCoords(col + 1, row - 1, verticalGrid)
+            2 -> AxialCoords(col + 1, row, verticalGrid)
+            3 -> AxialCoords(col, row + 1, verticalGrid)
+            4 -> AxialCoords(col - 1, row + 1, verticalGrid)
+            5 -> AxialCoords(col - 1, row, verticalGrid)
             else -> this
         }
 
     override fun translate(dCol: Int, dRow: Int): HexCoords =
-        AxialCoords(row + dRow, col + dCol, vertical)
+        AxialCoords(row + dRow, col + dCol, verticalGrid)
 
     override fun rotate(change: Int, center: HexCoords): HexCoords {
         /*
@@ -202,6 +214,23 @@ internal class AxialCoords(col: Int, row: Int,
             rotatedRow = -rotatedRow
         }
         // Update the coordinates
-        return AxialCoords(center.row + rotatedRow, center.col + rotatedCol, vertical)
+        return AxialCoords(center.col + rotatedCol, center.row + rotatedRow, verticalGrid)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is AxialCoords
+                && col == other.col
+                && row == other.row
+                && verticalGrid == other.verticalGrid
+    }
+
+    override fun hashCode(): Int {
+        val prime = 31
+        var result = 1
+        result = prime * result + col
+        result = prime * result + row
+        result = prime * result + if (verticalGrid) 1231 else 1237
+        return result
     }
 }

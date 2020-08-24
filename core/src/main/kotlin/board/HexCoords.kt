@@ -46,9 +46,11 @@ const val H_DIR_W = 5
  */
 abstract class HexCoords(
     /** The X coordinate of the hex */
-    val row: Int,
+    val col: Int,
     /** The Y coordinate of the hex */
-    val col: Int) {
+    val row: Int,
+    /** Whether the grid is aligned by column (flat-topped hexes) */
+    val verticalGrid: Boolean) {
 
     /**
      * Creates a copy of the coordinates
@@ -56,6 +58,22 @@ abstract class HexCoords(
      * @return The copy
      */
     abstract fun copy(): HexCoords
+
+    /**
+     * Converts the internal representation to an offset coordinate system
+     * @param oddOffset If true, the odd-numbered columns (vertical grid) or rows (horizontal)
+     *                  are offset by +0.5
+     * @return The x coordinate in an offset coordinate system
+     */
+    abstract fun offsetX(oddOffset: Boolean): Int
+
+    /**
+     * Converts the internal representation to an offset coordinate system
+     * @param oddOffset If true, the odd-numbered columns (vertical grid) or rows (horizontal)
+     *                  are offset by +0.5
+     * @return The y coordinate in an offset coordinate system
+     */
+    abstract fun offsetY(oddOffset: Boolean): Int
 
     /**
      * @return The x coordinate of the hex in a rectangular coordinate system

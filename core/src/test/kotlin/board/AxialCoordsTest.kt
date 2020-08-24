@@ -208,7 +208,7 @@ internal class AxialCoordsTest {
                 .translate(1)
                 .translate(1)
                 .rotate(4, center)
-        assertEquals(center.degreesTo(testHex), 300)
+        assertEquals(300, center.degreesTo(testHex))
     }
 
     @Test

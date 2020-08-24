@@ -39,12 +39,40 @@ class Board(val width: Int, val height: Int,
         }
     }
 
+    /**
+     * Factory method to create a set of coordinates for this board
+     * @param col The hex column
+     * @param row The hex row
+     * @return    The coordinates for the hex
+     */
     fun createCoords(col: Int, row: Int): HexCoords =
             AxialCoords(col, row, verticalGrid)
 
+    /**
+     * Lookup for the features of the hex at the given coordinates
+     * @param coords The coordinates of the hex
+     * @return       The map features at the given coordinates
+     */
     fun getHex(coords: HexCoords): HexData =
             hexes[coords] ?: defaultHex
 
+    /**
+     * Look for the features of the hex at the given coordinates
+     * @param col    The column index for the hex
+     * @param row    The row index for the hex
+     * @return       The map features at the given coordinates
+     */
     fun getHex(col: Int, row: Int) =
             getHex(createCoords(col, row))
+
+    /**
+     * Find the X coordinate of the hex using offset coordinates
+     */
+    fun getOffsetCoordX(coords: HexCoords) = coords.offsetX(oddOffset)
+
+    fun getOffsetCoordY(coords: HexCoords) = coords.offsetY(oddOffset)
+
+    fun getCartesianX(coords: HexCoords) = coords.cartesianX()
+
+    fun getCartesianY(coords: HexCoords) = coords.cartesianY()
 }
