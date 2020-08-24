@@ -182,7 +182,7 @@ internal class AxialCoords(col: Int, row: Int, vertical: Boolean) : HexCoords(co
         }
 
     override fun translate(dCol: Int, dRow: Int): HexCoords =
-        AxialCoords(row + dRow, col + dCol, verticalGrid)
+        AxialCoords(col + dCol, row + dRow, verticalGrid)
 
     override fun rotate(change: Int, center: HexCoords): HexCoords {
         /*
