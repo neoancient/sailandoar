@@ -30,6 +30,10 @@ import java.util.*
  */
 class Ship(val shipStatId: UUID): BaseUnit() {
 
+    private val shipStats by lazy {
+        requireNotNull(ShipLibrary.instance.getShip(shipStatId))
+    }
+    private var shipCondition = ShipCondition(shipStats)
     private var shipGameState = ShipGameState(-1)
 
     override fun initGameState(unitId: Int) {
@@ -37,4 +41,31 @@ class Ship(val shipStatId: UUID): BaseUnit() {
         shipGameState = ShipGameState(unitId)
     }
 
+    val sizeClass by shipStats::sizeClass
+    val cargoSpace by shipStats::cargoSpace
+    val riggingType by shipStats::riggingType
+    val originalMastCount by shipStats::mastCount
+    val baseSailSpeed by shipStats::baseSailSpeed
+    val maxTurns by shipStats::maxTurns
+    val turnCost by shipStats::turnCost
+    val hasBattleSails by shipStats::hasBattleSails
+    val baseOarSpeed by shipStats::baseOarSpeed
+    val oarBankCount by shipStats::oarBankCount
+    val originalGunCount by shipStats::gunCount
+    val ramType by shipStats::ramType
+    val originalHullPoints by shipStats::hullPoints
+    val originalRiggingPoints by shipStats::riggingPoints
+    val originalOarPoints by shipStats::oarPoints
+    val originalSailorCount by shipStats::sailorCount
+    val originalRowerCount by shipStats::rowerCount
+    val originalMarineCount by shipStats::marineCount
+
+    var mastCount by shipCondition::mastCount
+    var gunCount by shipCondition::gunCount
+    var hullPoints by shipCondition::hullPoints
+    var riggingPoints by shipCondition::riggingPoints
+    var oarPoints by shipCondition::oarPoints
+    var sailorCount by shipCondition::sailorCount
+    var rowerCount by shipCondition::rowerCount
+    var marineCount by shipCondition::marineCount
 }

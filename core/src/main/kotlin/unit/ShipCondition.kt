@@ -26,4 +26,13 @@ package unit
 /**
  * State of a unit that persists beyond the end of a battle for campaign use
  */
-class ShipCondition: AbstractUnitCondition()
+class ShipCondition(ship: ShipStats): AbstractUnitCondition() {
+    var gunCount = ship.gunCount
+    var mastCount = ship.mastCount
+    var hullPoints = ship.hullPoints
+    var riggingPoints = ship.riggingPoints
+    var oarPoints = ship.oarPoints
+    var sailorCount = ship.sailorCount
+    var rowerCount = ship.rowerCount
+    var marineCount = ship.marineCount
+}
