@@ -22,6 +22,8 @@
  */
 package board
 
+import kotlinx.serialization.Serializable
+
 /**
  * In the open ocean where the depth is not relevant, this value can be used for the depth.
  */
@@ -31,6 +33,7 @@ const val DEPTH_DEEP_SEA = Integer.MAX_VALUE
  * Characteristics of an individual hex on the board. Tracks water depth, land elevation, and
  * type of terrain.
  */
+@Serializable
 data class HexData(
         /**
          * The terrain of a water hex is the seabed (usually SAND, but could be ROCK or REEF).

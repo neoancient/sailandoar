@@ -22,6 +22,7 @@
  */
 package board
 
+import kotlinx.serialization.Serializable
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -61,6 +62,7 @@ const val H_DIR_W = 5
  * See http://www.redblobgames.com/grids/hexagons
  *
  */
+@Serializable
 class HexCoords(
     /** The X coordinate of the hex */
     val col: Int,

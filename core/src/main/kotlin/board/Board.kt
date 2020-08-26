@@ -22,21 +22,24 @@
  */
 package board
 
+import kotlinx.serialization.Serializable
+
 /**
  * The playing area. Tracks dimensions and acts as a container for the individual hexes.
  */
+@Serializable
 class Board(val width: Int, val height: Int,
             val verticalGrid: Boolean = true,
             val oddOffset: Boolean = true,
-            val defaultHex: HexData = HexData(TerrainType.SEA, DEPTH_DEEP_SEA, 0),
-            initHexes: Map<out HexCoords, HexData>? = null) {
+            val defaultHex: HexData = HexData(TerrainType.SEA, DEPTH_DEEP_SEA, 0)) {
 
-    val hexes: MutableMap<in HexCoords, HexData> = HashMap()
+    private val hexes: MutableMap<in HexCoords, HexData> = HashMap()
 
-    init {
-        if (initHexes != null) {
-            hexes.putAll(initHexes)
-        }
+    constructor(width: Int, height: Int, verticalGrid: Boolean = true, oddOffset: Boolean = true,
+                defaultHex: HexData = HexData(TerrainType.SEA, DEPTH_DEEP_SEA, 0),
+                        initHexes: Map<out HexCoords, HexData>):
+            this(width, height, verticalGrid, oddOffset, defaultHex) {
+        hexes.putAll(initHexes)
     }
 
     /**
