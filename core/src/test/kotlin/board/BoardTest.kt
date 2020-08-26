@@ -3,6 +3,7 @@ package board
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.math.sqrt
 
 
 /**
@@ -35,8 +36,8 @@ internal class BoardTest {
     @Test
     fun testTerrainInitialization() {
         val initMap: MutableMap<HexCoords, HexData> = HashMap()
-        initMap[AxialCoords(1, 1, true)] = HexData(TerrainType.ROCKS, 0, 4)
-        initMap[AxialCoords(1, 2, true)] = HexData(TerrainType.REEF, 2, 0)
+        initMap[HexCoords(1, 1, true)] = HexData(TerrainType.ROCKS, 0, 4)
+        initMap[HexCoords(1, 2, true)] = HexData(TerrainType.REEF, 2, 0)
         val testBoard = Board(10, 10, initHexes = initMap,
                 defaultHex = HexData(TerrainType.SEA, DEPTH_DEEP_SEA, 0))
         assertAll(
@@ -87,7 +88,7 @@ internal class BoardTest {
 
     @Test
     fun testHorizontalGridOffsetXEvenOffset() {
-        val board = Board(10, 10, false, false)
+        val board = Board(10, 10, verticalGrid = false, oddOffset = false)
         val coords1 = board.createCoords(4, 4)
         val coords2 = coords1.adjacent(H_DIR_NW)
         assertEquals(board.getOffsetCoordX(coords1), board.getOffsetCoordX(coords2))
@@ -98,7 +99,7 @@ internal class BoardTest {
         val board = Board(10, 10)
         val coords1 = board.createCoords(2, 2)
         val coords2 = coords1.adjacent(V_DIR_SE)
-        assertEquals(board.getCartesianX(coords1) + Math.sqrt(3.0) / 2.0,
+        assertEquals(board.getCartesianX(coords1) + sqrt(3.0) / 2.0,
                 board.getCartesianX(coords2), 0.001)
     }
 
@@ -121,11 +122,11 @@ internal class BoardTest {
     }
 
     @Test
-    fun horizonalGridCartesianRowHeight() {
+    fun horizontalGridCartesianRowHeight() {
         val board = Board(10, 10, verticalGrid = false)
         val coords1 = board.createCoords(2, 2)
         val coords2 = coords1.adjacent(H_DIR_SE)
-        assertEquals(board.getCartesianY(coords1) + Math.sqrt(3.0) / 2.0,
+        assertEquals(board.getCartesianY(coords1) + sqrt(3.0) / 2.0,
                 board.getCartesianY(coords2), 0.001)
     }
 }

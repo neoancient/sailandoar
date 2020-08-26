@@ -46,7 +46,7 @@ class Board(val width: Int, val height: Int,
      * @return    The coordinates for the hex
      */
     fun createCoords(col: Int, row: Int): HexCoords =
-            AxialCoords(col, row, verticalGrid)
+            HexCoords(col, row, verticalGrid)
 
     /**
      * Lookup for the features of the hex at the given coordinates
