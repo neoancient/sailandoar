@@ -23,16 +23,24 @@
 
 package unit
 
+import kotlinx.serialization.Serializable
+
 /**
  * State of a unit that persists beyond the end of a battle for campaign use
  */
-class ShipCondition(ship: ShipStats): AbstractUnitCondition() {
-    var gunCount = ship.gunCount
-    var mastCount = ship.mastCount
-    var hullPoints = ship.hullPoints
-    var riggingPoints = ship.riggingPoints
-    var oarPoints = ship.oarPoints
-    var sailorCount = ship.sailorCount
-    var rowerCount = ship.rowerCount
-    var marineCount = ship.marineCount
+@Serializable
+internal class ShipCondition private constructor(
+        var gunCount: Int,
+        var mastCount: Int,
+        var hullPoints:Int,
+        var riggingPoints: Int,
+        var oarPoints: Int,
+        var sailorCount: Int,
+        var rowerCount: Int,
+        var marineCount: Int
+) {
+    constructor(ship: ShipStats): this(
+            ship.gunCount, ship.mastCount, ship.hullPoints, ship.riggingPoints, ship.oarPoints,
+            ship.sailorCount, ship.rowerCount, ship.marineCount
+    )
 }

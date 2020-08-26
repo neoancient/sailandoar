@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import unit.Ship
-import java.util.*
+import unit.ShipLibrary
 
 
 internal class GameTest {
@@ -36,15 +36,15 @@ internal class GameTest {
 
     @Test
     fun findUnitById() {
-        val unit = Ship(UUID.randomUUID())
+        val unit = Ship(ShipLibrary.instance.allShips().first().id)
         val id = game.addUnit(unit)
         assertEquals(game.getUnit(id), unit)
     }
 
     @Test
     fun allUnitsAdded() {
-        val unit1 = Ship(UUID.randomUUID())
-        val unit2 = Ship(UUID.randomUUID())
+        val unit1 = Ship(ShipLibrary.instance.allShips().first().id)
+        val unit2 = Ship(ShipLibrary.instance.allShips().last().id)
         game.addUnit(unit1)
         game.addUnit(unit2)
         val all = game.allUnits()

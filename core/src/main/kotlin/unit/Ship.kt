@@ -23,12 +23,16 @@
 
 package unit
 
+import serialization.UUIDAsStringSerializer
 import java.util.*
+import kotlinx.serialization.Serializable
 
 /**
  * The primary unit of the game
  */
-class Ship(val shipStatId: UUID): BaseUnit() {
+@Serializable
+class Ship(@Serializable(with = UUIDAsStringSerializer::class)
+           val shipStatId: UUID): BaseUnit() {
 
     private val shipStats by lazy {
         requireNotNull(ShipLibrary.instance.getShip(shipStatId))

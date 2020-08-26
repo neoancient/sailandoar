@@ -21,36 +21,18 @@
  * SOFTWARE.
  */
 
-package unit
+package serialization
 
-import board.HexCoords
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.util.*
 
-/**
- * Base class for unit data that is only relevant within the game. Persistent state for
- * campaign purposes is tracked by {@link AbstractUnitCondition}
- */
-
-abstract class AbstractUnitGameState(val unitId: Int) {
-    var playerId: Int = 0
-    var facing: Int = 0
-    var primaryPosition: HexCoords? = null
-    private val secondaryPositions: MutableSet<HexCoords> = HashSet()
-
-    fun allPositions(): List<HexCoords> {
-        val center = primaryPosition ?: return emptyList()
-        val retVal = mutableListOf(center)
-        secondaryPositions.map {
-            center.translate(it.col, it.row)
-                    .rotate(facing, center)
-        }.forEach {retVal.add(it)}
-        return retVal
-    }
-
-    fun addSecondaryPosition(coords: HexCoords) {
-        secondaryPositions.add(coords)
-    }
-
-    fun removeSecondaryPosition(coords: HexCoords) {
-        secondaryPositions.remove(coords)
-    }
+class UUIDAsStringSerializer : KSerializer<UUID> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: UUID) = encoder.encodeString(value.toString())
+    override fun deserialize(decoder: Decoder): UUID = UUID.fromString(decoder.decodeString())
 }

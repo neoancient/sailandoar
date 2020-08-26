@@ -23,7 +23,43 @@
 
 package unit
 
+import kotlinx.serialization.Serializable
+
+import board.HexCoords
+
+/**
+ * Base class for unit data that is only relevant within the game. Persistent state for
+ * campaign purposes is tracked by {@link AbstractUnitCondition}
+ */
+@Serializable
+sealed class AbstractUnitGameState {
+    abstract val unitId: Int
+    var playerId: Int = 0
+    var facing: Int = 0
+    var primaryPosition: HexCoords? = null
+    private val secondaryPositions: MutableSet<HexCoords> = HashSet()
+
+    fun allPositions(): List<HexCoords> {
+        val center = primaryPosition ?: return emptyList()
+        val retVal = mutableListOf(center)
+        secondaryPositions.map {
+            center.translate(it.col, it.row)
+                    .rotate(facing, center)
+        }.forEach {retVal.add(it)}
+        return retVal
+    }
+
+    fun addSecondaryPosition(coords: HexCoords) {
+        secondaryPositions.add(coords)
+    }
+
+    fun removeSecondaryPosition(coords: HexCoords) {
+        secondaryPositions.remove(coords)
+    }
+}
+
 /**
  * Tracks state of a ship within a game
  */
-internal class ShipGameState(unitId: Int) : AbstractUnitGameState(unitId)
+@Serializable
+internal class ShipGameState(override val unitId: Int) : AbstractUnitGameState()
