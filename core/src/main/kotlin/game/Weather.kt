@@ -23,10 +23,13 @@
 
 package game
 
+import kotlinx.serialization.Serializable
+
 /**
  * Aspects of weather conditions; primarily wind strength and direction. Advanced options may include
  * effects of precipitation and temperature.
  */
+@Serializable
 class Weather {
     var windDirection: Int = 0
     var windStrength: WindStrength = WindStrength.MODERATE_WIND

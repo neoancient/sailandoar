@@ -20,14 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package serialization
 
-package game
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import java.util.concurrent.atomic.AtomicInteger
 
-import kotlinx.serialization.Serializable
-
-/**
- * A participant in the game. Each player should have an id that is assigned by the {@link Game}
- * to ensure that it is unique.
- */
-@Serializable
-data class Player(val id: Int, val name: String)
+class AtomicIntegerAsIntSerializer: KSerializer<AtomicInteger> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("AtomicInteger", PrimitiveKind.INT)
+    override fun serialize(encoder: Encoder, value: AtomicInteger) = encoder.encodeInt(value.get())
+    override fun deserialize(decoder: Decoder): AtomicInteger = AtomicInteger(decoder.decodeInt())
+}

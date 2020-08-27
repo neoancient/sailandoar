@@ -24,6 +24,8 @@
 package game
 
 import board.Board
+import kotlinx.serialization.Serializable
+import serialization.AtomicIntegerAsIntSerializer
 import unit.BaseUnit
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -33,11 +35,14 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Manages all aspects of the game including unit state, board, and weather conditions.
  */
+@Serializable
 class Game {
 
     var board = Board(32, 16)
     val weather = Weather()
+    @Serializable(with = AtomicIntegerAsIntSerializer::class)
     private val nextPlayerId = AtomicInteger(1)
+    @Serializable(with = AtomicIntegerAsIntSerializer::class)
     private val nextUnitId = AtomicInteger(1)
     private val players: MutableMap<Int, Player> = ConcurrentHashMap()
     private val units: MutableMap<Int, BaseUnit> = ConcurrentHashMap()

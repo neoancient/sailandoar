@@ -23,10 +23,13 @@
 
 package unit
 
+import kotlinx.serialization.Serializable
+
 /**
  * Base class for physical objects in the game that are not terrain. Primarily ships, but
  * can also include fortresses, ground forces on the shore, or sea monsters
  */
+@Serializable
 abstract class BaseUnit() {
     var unitId = -1
 
