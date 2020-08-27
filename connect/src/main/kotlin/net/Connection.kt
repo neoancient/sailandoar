@@ -23,36 +23,26 @@
 
 package net
 
-import game.Game
-import game.Player
-import kotlinx.serialization.Serializable
-import unit.BaseUnit
-import unit.ShipStats
+/**
+ * Handles communication between the server and the client.
+ */
+interface Connection {
+    /**
+     * A unique identifier for the connection. This should be the same as the {@link Player}'s id
+     * in the {@link Game}.
+     */
+    val id: Int
 
-@Serializable
-sealed class Packet {
-    abstract val clientId: Int
-
-    fun debugString() = "${javaClass.name}, clientId: $clientId"
+    /**
+     * Queues the packet to send to the client
+     */
+    fun send(packet: Packet)
 }
 
-@Serializable
-class InitClientPacket(override val clientId: Int, val game: Game): Packet()
+/**
+ * Implemented by any recipient of packets received by a {@link Connection}.
+ */
+interface PacketReceiver {
+    fun receivePacket(packet: Packet)
+}
 
-@Serializable
-class AddPlayerPacket(override val clientId: Int, val player: Player): Packet()
-
-@Serializable
-class RemovePlayerPacket(override val clientId: Int, val player: Player): Packet()
-
-@Serializable
-class RequestAvailableShipsPacket(override val clientId: Int): Packet()
-
-@Serializable
-class SendAvailableShipsPacket(override val clientId: Int, val ships: Collection<ShipStats>): Packet()
-
-@Serializable
-class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): Packet()
-
-@Serializable
-class RemoveUnitPacket(override val clientId: Int, val unit: BaseUnit): Packet()

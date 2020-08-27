@@ -20,39 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package net
 
-import game.Game
-import game.Player
-import kotlinx.serialization.Serializable
-import unit.BaseUnit
-import unit.ShipStats
-
-@Serializable
-sealed class Packet {
-    abstract val clientId: Int
-
-    fun debugString() = "${javaClass.name}, clientId: $clientId"
+class DirectConnection(override val id: Int, val receiver: PacketReceiver): Connection {
+    override fun send(packet: Packet) {
+        receiver.receivePacket(packet)
+    }
 }
-
-@Serializable
-class InitClientPacket(override val clientId: Int, val game: Game): Packet()
-
-@Serializable
-class AddPlayerPacket(override val clientId: Int, val player: Player): Packet()
-
-@Serializable
-class RemovePlayerPacket(override val clientId: Int, val player: Player): Packet()
-
-@Serializable
-class RequestAvailableShipsPacket(override val clientId: Int): Packet()
-
-@Serializable
-class SendAvailableShipsPacket(override val clientId: Int, val ships: Collection<ShipStats>): Packet()
-
-@Serializable
-class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): Packet()
-
-@Serializable
-class RemoveUnitPacket(override val clientId: Int, val unit: BaseUnit): Packet()
