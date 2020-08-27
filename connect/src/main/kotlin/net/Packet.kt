@@ -37,6 +37,15 @@ sealed class Packet {
 }
 
 @Serializable
+class RequestNamePacket(override val clientId: Int): Packet()
+
+@Serializable
+class SendNamePacket(override val clientId: Int, val name: String): Packet()
+
+@Serializable
+class SuggestNamePacket(override val clientId: Int, val name: String): Packet()
+
+@Serializable
 class InitClientPacket(override val clientId: Int, val game: Game): Packet()
 
 @Serializable

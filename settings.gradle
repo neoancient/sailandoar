@@ -1,5 +1,6 @@
 rootProject.name = 'sailandoar'
 
+include 'client'
 include 'connect'
 include 'core'
 include 'shipeditor'
