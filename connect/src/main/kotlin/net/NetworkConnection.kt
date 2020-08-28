@@ -34,7 +34,7 @@ import java.io.ObjectOutputStream
 import java.net.Socket
 
 @ExperimentalSerializationApi
-class NetworkConnection(override val id: Int,
+class NetworkConnection(override var id: Int,
                         private val socket: Socket,
                         private val receiver: PacketReceiver): Connection, Runnable {
 

@@ -20,10 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net
+package server
 
-class DirectConnection(override var id: Int, val receiver: PacketReceiver): Connection {
-    override fun send(packet: Packet) {
-        receiver.receivePacket(packet)
-    }
+import net.Packet
+
+/**
+ * Executes a game task and provides any reports or client updates for the server.
+ */
+interface ServerPacketHandler {
+    /**
+     * Process the task
+     */
+    fun process()
+
+    /**
+     * Any client updates that need to be sent
+     */
+    fun packetsToSend(): List<Packet> = emptyList()
 }

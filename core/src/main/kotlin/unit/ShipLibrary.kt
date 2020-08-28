@@ -52,5 +52,9 @@ class ShipLibrary private constructor() {
         val instance: ShipLibrary by lazy {
             ShipLibrary()
         }
+
+        fun allShips() = instance.allShips()
+
+        fun getShip(id: UUID) = instance.getShip(id)
     }
 }

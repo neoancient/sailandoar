@@ -20,10 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net
+package server
 
-class DirectConnection(override var id: Int, val receiver: PacketReceiver): Connection {
-    override fun send(packet: Packet) {
-        receiver.receivePacket(packet)
+import net.Packet
+import net.RequestAvailableShipsPacket
+import net.SendAvailableShipsPacket
+import unit.ShipLibrary
+import unit.ShipStats
+
+/**
+ * Handles request for available units. Returns all units available in the ship library.
+ */
+class RequestAvailableShipsHandler(val packet: RequestAvailableShipsPacket): ServerPacketHandler {
+    private val ships = ArrayList<ShipStats>()
+
+    override fun process() {
+        ships.addAll(ShipLibrary.allShips())
+    }
+
+    override fun packetsToSend(): List<Packet> {
+        return listOf(SendAvailableShipsPacket(packet.clientId, ships))
     }
 }

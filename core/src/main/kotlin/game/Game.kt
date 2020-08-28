@@ -78,7 +78,7 @@ class Game {
 
     fun getPlayer(playerId: Int): Player? = players[playerId]
 
-    fun suggestAlternateName(requested: String): String? {
+    fun suggestAlternateName(requested: String): String {
         var append = 0
         var suggested: String
         synchronized(players) {

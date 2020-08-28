@@ -20,10 +20,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net
+package server
 
-class DirectConnection(override var id: Int, val receiver: PacketReceiver): Connection {
-    override fun send(packet: Packet) {
-        receiver.receivePacket(packet)
+import kotlinx.serialization.ExperimentalSerializationApi
+import net.NetworkConnection
+import org.slf4j.LoggerFactory
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.ServerSocket
+
+class ServerSocketListener(private val server: Server): Runnable {
+    private val socket = ServerSocket()
+    private var shutdown = false
+
+    constructor(server: Server, port: Int): this(server) {
+        bind(port)
+    }
+
+    fun bind(port: Int) {
+        val socketAddress = InetSocketAddress(port)
+        socket.bind(socketAddress)
+    }
+
+    fun close() {
+        shutdown = true
+    }
+
+    @ExperimentalSerializationApi
+    override fun run() {
+        while (!shutdown) {
+            try {
+                val s = socket.accept()
+                val conn = NetworkConnection(-1, s, server)
+                server.threadPool.execute(conn)
+            } catch (ex: IOException) {
+                LoggerFactory.getLogger(javaClass).error("Error while accepting connection", ex)
+            }
+        }
+        socket.close()
     }
 }

@@ -31,7 +31,7 @@ interface Connection {
      * A unique identifier for the connection. This should be the same as the {@link Player}'s id
      * in the {@link Game}.
      */
-    val id: Int
+    var id: Int
 
     /**
      * Queues the packet to send to the client
