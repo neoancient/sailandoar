@@ -1,6 +1,7 @@
 rootProject.name = 'sailandoar'
 
 include 'client'
+include 'client-javafx'
 include 'connect'
 include 'core'
 include 'server'

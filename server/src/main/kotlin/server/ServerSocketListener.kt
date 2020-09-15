@@ -53,6 +53,7 @@ class ServerSocketListener(private val server: Server): Runnable {
                 val s = socket.accept()
                 val conn = NetworkConnection(-1, s, server)
                 server.threadPool.execute(conn)
+                server.requestConnection(conn)
             } catch (ex: IOException) {
                 LoggerFactory.getLogger(javaClass).error("Error while accepting connection", ex)
             }

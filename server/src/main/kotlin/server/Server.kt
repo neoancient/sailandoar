@@ -49,7 +49,7 @@ class Server: PacketReceiver, Runnable {
     private var shutdown = false
     private var socketListener: ServerSocketListener? = null
 
-    private fun listen(port: Int) {
+    fun listen(port: Int) {
         val socketListener = ServerSocketListener(this, port)
         threadPool.execute(socketListener)
     }

@@ -25,19 +25,19 @@ package client
 import game.Game
 import game.Player
 import net.*
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.*
 
-class Client: PacketReceiver {
+class Client(name: String): PacketReceiver, Runnable {
     var id = -1
-    var player = Player(id, "New Player")
+    var player = Player(id, name)
     var game: Game? = null
     var connection: Connection? = null
 
     private var shutdown = false
     private val queue: BlockingQueue<Packet> = LinkedBlockingQueue()
     private val listeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
+
+    constructor(): this("New Player")
 
     override fun receivePacket(packet: Packet) {
         queue.add(packet)
@@ -54,6 +54,25 @@ class Client: PacketReceiver {
             }
             is AddPlayerPacket -> game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
+        }
+    }
+
+    fun start(service: ExecutorService = Executors.newSingleThreadExecutor()) {
+        service.execute(this)
+    }
+
+    fun shutdown() {
+        shutdown = true
+    }
+
+    override fun run() {
+        while (!shutdown) {
+            try {
+                val packet = queue.take()
+                handle(packet)
+            } catch (ex: InterruptedException) {
+                Thread.currentThread().interrupt()
+            }
         }
     }
 

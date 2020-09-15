@@ -25,14 +25,14 @@ package client
 /**
  * Listener for events fired when client connects to or disconnects from the server.
  */
-class ConnectionListener {
+interface ConnectionListener {
     /**
      * Called when client connects to the server.
      */
-    fun clientConnected(client: Client) {}
+    fun clientConnected(client: Client)
 
     /**
      * Called when client disconnects from the server.
      */
-    fun clientDisconnected(client: Client) {}
+    fun clientDisconnected(client: Client)
 }
