@@ -3,6 +3,7 @@ package ui
 import client.Client
 import client.ConnectionListener
 import dialog.StartGameDialog
+import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Insets
@@ -125,7 +126,9 @@ class SplashView: View(), ConnectionListener {
     }
 
     override fun clientConnected(client: Client) {
-        replaceWith<MainUI>()
+        Platform.runLater {
+            replaceWith<MainUI>()
+        }
     }
 
     override fun clientDisconnected(client: Client) {

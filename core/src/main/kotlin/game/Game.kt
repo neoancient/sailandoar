@@ -41,21 +41,19 @@ class Game {
     var board = Board(32, 16)
     val weather = Weather()
     @Serializable(with = AtomicIntegerAsIntSerializer::class)
-    private val nextPlayerId = AtomicInteger(1)
-    @Serializable(with = AtomicIntegerAsIntSerializer::class)
     private val nextUnitId = AtomicInteger(1)
     private val players: MutableMap<Int, Player> = ConcurrentHashMap()
     private val units: MutableMap<Int, BaseUnit> = ConcurrentHashMap()
     private val suggestedNames: MutableSet<String> = HashSet()
     private val listeners: MutableList<GameListener> = CopyOnWriteArrayList()
 
-    fun newPlayer(playerName: String): Player? {
+    fun newPlayer(playerName: String, connId: Int): Player? {
         var p: Player
         synchronized(players) {
             if (players.values.stream().anyMatch { player -> player.name == playerName }) {
                 return null
             }
-            p = Player(nextPlayerId.getAndIncrement(), playerName)
+            p = Player(connId, playerName)
         }
         addPlayer(p)
         return p

@@ -31,6 +31,10 @@ import unit.ShipStats
 
 @Serializable
 sealed class Packet {
+    /**
+     * The unique id of the client sending this packet or the client the packet is to
+     * be sent to. If < 0, the server will send it to all connected clients.
+     */
     abstract val clientId: Int
 
     fun debugString() = "${javaClass.name}, clientId: $clientId"

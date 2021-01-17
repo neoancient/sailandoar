@@ -3,7 +3,6 @@ package server
 import game.Game
 import io.ktor.application.Application
 import io.ktor.application.install
-import io.ktor.http.cio.websocket.DefaultWebSocketSession
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
@@ -15,17 +14,15 @@ import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.serialization.json.Json
-import net.InitClientPacket
-import net.Packet
-import net.RequestAvailableShipsPacket
+import net.*
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 class Server(address: String, serverPort: Int) {
-    val game = Game()
+    private val game = Game()
     private val environment = applicationEngineEnvironment {
         module {
-            module(this@Server)
+            module()
         }
         connector {
             host = address
@@ -33,6 +30,7 @@ class Server(address: String, serverPort: Int) {
         }
     }
     private val server = embeddedServer(Netty, environment)
+    private val connections = ConcurrentHashMap<Int, ClientConnection?>()
 
     fun start() {
         server.start(false)
@@ -41,48 +39,54 @@ class Server(address: String, serverPort: Int) {
     fun shutdown() {
 
     }
-}
 
-@Suppress("unused")
-fun Application.module(server: Server) {
-    install(WebSockets)
+    @Suppress("unused")
+    fun Application.module() {
+        install(WebSockets)
 
-    routing {
-        val connections = ConcurrentHashMap<Int, ClientConnection?>()
-        webSocket("/") {
-            println("Adding user")
-            val thisConnection = ClientConnection(this)
-            connections[thisConnection.id] = thisConnection
-            try {
-                val packet = InitClientPacket(thisConnection.id, server.game)
-                send(Json.encodeToString(Packet.serializer(), packet))
-                for (frame in incoming) {
-                    frame as? Frame.Text ?: continue
-                    handlePacket(Json.decodeFromString(Packet.serializer(), frame.readText()), server.game)
+        routing {
+            webSocket("/") {
+                println("Adding user")
+                val thisConnection = ClientConnection(this)
+                connections[thisConnection.id] = thisConnection
+                try {
+                    val packet = RequestNamePacket(thisConnection.id)
+                    send(Json.encodeToString(Packet.serializer(), packet))
+                    for (frame in incoming) {
+                        frame as? Frame.Text ?: continue
+                        handlePacket(Json.decodeFromString(Packet.serializer(), frame.readText()))
+                    }
+                } catch (e: Exception) {
+                    println(e.localizedMessage)
+                } finally {
+                    println("Removing $thisConnection")
+                    connections.remove(thisConnection.id)
                 }
-            } catch (e: Exception) {
-                println(e.localizedMessage)
-            } finally {
-                println("Removing $thisConnection")
-                connections.remove(thisConnection.id)
             }
         }
     }
-}
 
-suspend fun DefaultWebSocketSession.handlePacket(packet: Packet, game: Game) {
-    val handler = when (packet) {
-        is RequestAvailableShipsPacket -> RequestAvailableShipsHandler(packet)
-        else -> null
-    }
-    if (handler != null) {
-        handler.process()
-        handler.packetsToSend().forEach {
-            send(Json.encodeToString(Packet.serializer(), it))
+    private suspend fun handlePacket(packet: Packet) {
+        val handler = when (packet) {
+            is SendNamePacket -> ConnectionNegotiator(packet, game)
+            is RequestAvailableShipsPacket -> RequestAvailableShipsHandler(packet)
+            else -> null
         }
-    } else {
-        LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
+        if (handler != null) {
+            handler.process()
+            handler.packetsToSend().forEach { p ->
+                if (p.clientId < 0) {
+                    connections.values.forEach { c ->
+                        c?.session?.send(Json.encodeToString(Packet.serializer(), p))
+                    }
+                } else {
+                    connections[p.clientId]?.session?.send(Json.encodeToString(Packet.serializer(), p))
+                }
+            }
+        } else {
+            LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
                 ${game.getPlayer(packet.clientId)}""".trimMargin())
+        }
     }
 }
 

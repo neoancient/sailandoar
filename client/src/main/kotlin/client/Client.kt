@@ -97,9 +97,11 @@ class Client(name: String) {
 
     private fun handlePacket(packet: Packet) {
         when (packet) {
-            is RequestNamePacket -> send(SendNamePacket(id, player.name))
-            is InitClientPacket -> {
+            is RequestNamePacket -> {
                 id = packet.clientId
+                send(SendNamePacket(id, player.name))
+            }
+            is InitClientPacket -> {
                 game = requireNotNull(packet.game)
                 player = requireNotNull(game?.getPlayer(id))
                 listeners.forEach { it.clientConnected(this) }
