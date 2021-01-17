@@ -24,25 +24,22 @@
 package net
 
 import game.Player
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromByteArray
-import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-@ExperimentalSerializationApi
 internal class PacketTest {
     @Test
     fun serializePacket() {
         val packet: Packet = RequestAvailableShipsPacket(1)
 
-        val bytes = ProtoBuf.encodeToByteArray(packet)
-        val decoded = ProtoBuf.decodeFromByteArray<Packet>(bytes)
+        val json = Json.encodeToString(packet)
+        val decoded = Json.decodeFromString<Packet>(json)
 
         assertAll(
-                {assertEquals(packet.clientId, decoded.clientId)},
-                {assertTrue(decoded is RequestAvailableShipsPacket)}
+                { assertEquals(packet.clientId, decoded.clientId) },
+                { assertTrue(decoded is RequestAvailableShipsPacket) }
         )
     }
 
@@ -52,13 +49,13 @@ internal class PacketTest {
         val packet: Packet = AddPlayerPacket(3, player)
 
 
-        val bytes = ProtoBuf.encodeToByteArray(packet)
-        val decoded = ProtoBuf.decodeFromByteArray<Packet>(bytes)
+        val json = Json.encodeToString(packet)
+        val decoded = Json.decodeFromString<Packet>(json)
 
         assertAll(
-                {assertEquals(packet.clientId, decoded.clientId)},
-                {assertEquals(player.id, (packet as AddPlayerPacket).player.id)},
-                {assertEquals(player.name, (packet as AddPlayerPacket).player.name)}
+                { assertEquals(packet.clientId, decoded.clientId) },
+                { assertEquals(player.id, (packet as AddPlayerPacket).player.id) },
+                { assertEquals(player.name, (packet as AddPlayerPacket).player.name) }
         )
     }
 }

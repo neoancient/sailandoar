@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test
 
 
 internal class ServerTest {
+    /*
     @Nested
     inner class PacketHandlerTest {
         private lateinit var client: MockClient
@@ -61,4 +62,6 @@ internal class ServerTest {
             this.packet = packet
         }
     }
+
+     */
 }
