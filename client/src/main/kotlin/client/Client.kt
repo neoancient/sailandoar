@@ -39,8 +39,6 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.*
 import org.slf4j.LoggerFactory
@@ -82,7 +80,7 @@ class Client(name: String) {
 
     suspend fun DefaultClientWebSocketSession.sendPackets() {
         for (packet in queue) {
-            send(Json.encodeToString(packet))
+            send(Json.encodeToString(Packet.serializer(), packet))
         }
     }
 
@@ -90,7 +88,7 @@ class Client(name: String) {
         try {
             for (frame in incoming) {
                 frame as? Frame.Text ?: continue
-                handlePacket(Json.decodeFromString(frame.readText()))
+                handlePacket(Json.decodeFromString(Packet.serializer(), frame.readText()))
             }
         } catch (e: Exception) {
             logger.error(e.localizedMessage)
@@ -104,7 +102,7 @@ class Client(name: String) {
                 id = packet.clientId
                 game = requireNotNull(packet.game)
                 player = requireNotNull(game?.getPlayer(id))
-                listeners.forEach{ it.clientConnected(this) }
+                listeners.forEach { it.clientConnected(this) }
             }
             is AddPlayerPacket -> game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)

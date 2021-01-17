@@ -14,8 +14,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.InitClientPacket
 import net.Packet
@@ -57,10 +55,10 @@ fun Application.module(server: Server) {
             connections[thisConnection.id] = thisConnection
             try {
                 val packet = InitClientPacket(thisConnection.id, server.game)
-                send(Json.encodeToString(packet))
+                send(Json.encodeToString(Packet.serializer(), packet))
                 for (frame in incoming) {
                     frame as? Frame.Text ?: continue
-                    handlePacket(Json.decodeFromString(frame.readText()), server.game)
+                    handlePacket(Json.decodeFromString(Packet.serializer(), frame.readText()), server.game)
                 }
             } catch (e: Exception) {
                 println(e.localizedMessage)
@@ -80,7 +78,7 @@ suspend fun DefaultWebSocketSession.handlePacket(packet: Packet, game: Game) {
     if (handler != null) {
         handler.process()
         handler.packetsToSend().forEach {
-            send(Json.encodeToString(it))
+            send(Json.encodeToString(Packet.serializer(), it))
         }
     } else {
         LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
