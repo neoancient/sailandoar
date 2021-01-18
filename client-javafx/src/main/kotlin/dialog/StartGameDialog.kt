@@ -12,9 +12,11 @@ const val DEFAULT_PORT = 1805
 class StartGameDialog : Fragment() {
     val nameProperty = SimpleStringProperty("New Player")
     var name by nameProperty
-    val portProperty = SimpleIntegerProperty(DEFAULT_PORT)
+    private val hostProperty = SimpleStringProperty(params["host"] as? String ?: "")
+    val host by hostProperty
+    private val portProperty = SimpleIntegerProperty(DEFAULT_PORT)
     var port by portProperty
-    val canceledProperty = SimpleBooleanProperty(false)
+    private val canceledProperty = SimpleBooleanProperty(false)
     var canceled by canceledProperty
 
     init {
@@ -26,6 +28,11 @@ class StartGameDialog : Fragment() {
             fieldset {
                 field(messages["playerName"]) {
                     textfield(nameProperty)
+                }
+                if (host.isNotEmpty()) {
+                    field(messages["host"]) {
+                        textfield(hostProperty)
+                    }
                 }
                 field(messages["port"]) {
                     textfield(portProperty.asString())

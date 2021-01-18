@@ -61,9 +61,6 @@ class SplashView: View(), ConnectionListener {
             button(messages["connectToGame"]) {
                 action {handleJoinGame()}
             }
-            button(messages["startServer"]) {
-                action {handleStartServer()}
-            }
         }
     }
 
@@ -76,7 +73,7 @@ class SplashView: View(), ConnectionListener {
     }
 
     private fun handleJoinGame() {
-        val dialog = find<StartGameDialog>()
+        val dialog = find<StartGameDialog>(mapOf("host" to "localhost"))
         dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
         if (!dialog.canceled) {
             try {
@@ -92,19 +89,6 @@ class SplashView: View(), ConnectionListener {
                         ButtonType.OK)
                 alert.showAndWait()
             }
-        }
-    }
-
-    private fun handleStartServer() {
-        server = Server("127.0.0.1", 1805)
-        try {
-            server.start()
-        } catch (ex: IOException) {
-            logger.error("While trying to create server on port 1805", ex)
-            val alert = Alert(AlertType.ERROR,
-                    "Could not create server on port 1805. See log for details.")
-            alert.showAndWait()
-            return
         }
     }
 
