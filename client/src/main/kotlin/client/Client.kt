@@ -58,15 +58,13 @@ class Client(name: String) {
     }
 
     @KtorExperimentalAPI
-    fun start(host: String, port: Int) {
-        runBlocking {
-            client.webSocket(method = HttpMethod.Get, host = host, port = port, path = "/") {
-                val sendRoutine = launch { sendPackets() }
-                val receiveRoutine = launch { receivePackets() }
+    suspend fun start(host: String, port: Int) {
+        client.webSocket(method = HttpMethod.Get, host = host, port = port, path = "/") {
+            val sendRoutine = launch { sendPackets() }
+            val receiveRoutine = launch { receivePackets() }
 
-                receiveRoutine.join()
-                sendRoutine.cancelAndJoin()
-            }
+            receiveRoutine.join()
+            sendRoutine.cancelAndJoin()
         }
         client.close()
         logger.info("Client closed")

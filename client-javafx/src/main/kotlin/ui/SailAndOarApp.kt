@@ -14,6 +14,9 @@ import javafx.scene.control.ButtonType
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.stage.StageStyle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import server.Server
 import tornadofx.*
@@ -75,7 +78,9 @@ class SplashView: View(), ConnectionListener {
             try {
                 client = Client(dialog.name)
                 client.addConnectionListener(this)
-                client.start("localhost", dialog.port)
+                GlobalScope.launch(Dispatchers.IO) {
+                    client.start("localhost", dialog.port)
+                }
             } catch (ex: IOException) {
                 logger.error("While trying to connect to server:", ex)
                 val alert = Alert(AlertType.ERROR,
@@ -115,7 +120,9 @@ class SplashView: View(), ConnectionListener {
         try {
             client = Client(name)
             client.addConnectionListener(this)
-            client.start("localhost", port)
+            GlobalScope.launch(Dispatchers.IO) {
+                client.start("localhost", port)
+            }
         } catch (ex: IOException) {
             logger.error("While trying to connect to server:", ex)
             val alert = Alert(AlertType.ERROR,
