@@ -3,6 +3,8 @@ package dialog
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.geometry.Insets
+import javafx.scene.layout.BorderPane
 import tornadofx.*
 
 const val DEFAULT_PORT = 1805
@@ -41,5 +43,7 @@ class StartGameDialog : Fragment() {
                 }
             }
         }
+        BorderPane.setMargin(center, Insets(5.0, 5.0, 5.0, 5.0))
+        BorderPane.setMargin(bottom, Insets(0.0, 5.0, 10.0, 5.0))
     }
 }

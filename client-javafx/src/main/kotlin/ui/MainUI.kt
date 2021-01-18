@@ -12,8 +12,15 @@ class MainUI: View() {
     @FXML
     private fun menuFileExit() {
         (app as SailAndOarApp).close()
+        close()
     }
 
     @FXML
     private fun menuHelpAbout() {}
+
+    override fun onDock() {
+        currentWindow?.setOnCloseRequest {
+            (app as SailAndOarApp).close()
+        }
+    }
 }

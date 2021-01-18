@@ -37,7 +37,7 @@ class Server(address: String, serverPort: Int) {
     }
 
     fun shutdown() {
-
+        server.stop(1000, 1000)
     }
 
     @Suppress("unused")

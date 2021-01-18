@@ -30,7 +30,10 @@ class SailAndOarApp: App(SplashView::class) {
      * Performs all necessary shutdown.
      */
     fun close() {
+        clientProperty.value?.stop()
         serverProperty.value?.shutdown()
+        Platform.exit()
+        System.exit(0)
     }
 }
 
@@ -65,6 +68,7 @@ class SplashView: View(), ConnectionListener {
 
     private fun handleNewGame() {
         val dialog = find<StartGameDialog>()
+        dialog.title = messages["startNewGame"]
         dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
         if (!dialog.canceled) {
             startGame(dialog.name, dialog.port)
@@ -136,6 +140,7 @@ class SplashView: View(), ConnectionListener {
         Platform.runLater {
             replaceWith<MainUI>()
         }
+        client.removeConnectionListener(this)
     }
 
     override fun clientDisconnected(client: Client) {

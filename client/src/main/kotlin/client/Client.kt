@@ -70,6 +70,11 @@ class Client(name: String) {
         logger.info("Client closed")
     }
 
+    @KtorExperimentalAPI
+    fun stop() {
+        client.close()
+    }
+
     fun send(packet: Packet) {
         runBlocking {
             queue.send(packet)
