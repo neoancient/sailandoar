@@ -35,10 +35,8 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.*
 import org.slf4j.LoggerFactory
@@ -76,9 +74,13 @@ class Client(name: String) {
     }
 
     fun send(packet: Packet) {
-        runBlocking {
+        GlobalScope.launch(Dispatchers.IO) {
             queue.send(packet)
         }
+    }
+
+    fun sendName(name: String) {
+        send(SendNamePacket(id, name))
     }
 
     suspend fun DefaultClientWebSocketSession.sendPackets() {
@@ -103,6 +105,11 @@ class Client(name: String) {
             is RequestNamePacket -> {
                 id = packet.clientId
                 send(SendNamePacket(id, player.name))
+            }
+            is SuggestNamePacket -> {
+                listeners.forEach {
+                    it.nameTaken(this, packet.name, packet.taken)
+                }
             }
             is InitClientPacket -> {
                 game = requireNotNull(packet.game)

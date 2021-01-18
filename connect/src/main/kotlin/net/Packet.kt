@@ -29,6 +29,8 @@ import kotlinx.serialization.Serializable
 import unit.BaseUnit
 import unit.ShipStats
 
+const val ALL_CLIENTS = -1
+
 @Serializable
 sealed class Packet {
     /**
@@ -47,7 +49,7 @@ class RequestNamePacket(override val clientId: Int): Packet()
 class SendNamePacket(override val clientId: Int, val name: String): Packet()
 
 @Serializable
-class SuggestNamePacket(override val clientId: Int, val name: String): Packet()
+class SuggestNamePacket(override val clientId: Int, val name: String, val taken: Set<String>): Packet()
 
 @Serializable
 class InitClientPacket(override val clientId: Int, val game: Game): Packet()

@@ -35,4 +35,11 @@ interface ConnectionListener {
      * Called when client disconnects from the server.
      */
     fun clientDisconnected(client: Client)
+
+    /**
+     * Called when the selected name is already taken. Provides a [suggestion] that
+     * is guaranteed unique, as well as a collection of names that are already
+     * [taken].
+     */
+    fun nameTaken(client: Client, suggestion: String, taken: Set<String>)
 }

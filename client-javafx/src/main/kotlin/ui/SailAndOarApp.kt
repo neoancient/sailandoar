@@ -2,6 +2,7 @@ package ui
 
 import client.Client
 import client.ConnectionListener
+import dialog.SelectNameDialog
 import dialog.StartGameDialog
 import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
@@ -68,7 +69,6 @@ class SplashView: View(), ConnectionListener {
 
     private fun handleNewGame() {
         val dialog = find<StartGameDialog>()
-        dialog.title = messages["startNewGame"]
         dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
         if (!dialog.canceled) {
             startGame(dialog.name, dialog.port)
@@ -145,5 +145,21 @@ class SplashView: View(), ConnectionListener {
 
     override fun clientDisconnected(client: Client) {
         // Do nothing
+    }
+
+    override fun nameTaken(client: Client, suggestion: String, taken: Set<String>) {
+        Platform.runLater {
+            val dialog = find<SelectNameDialog>(
+                params = mapOf(
+                    SelectNameDialog::suggested to suggestion,
+                    SelectNameDialog::taken to taken
+                )
+            )
+            dialog.title = messages["nameTaken"]
+            dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
+            GlobalScope.launch(Dispatchers.IO) {
+                client.sendName(dialog.name)
+            }
+        }
     }
 }

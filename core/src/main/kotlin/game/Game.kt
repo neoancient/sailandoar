@@ -62,8 +62,10 @@ class Game {
     fun allPlayers(): Collection<Player> = players.values
 
     fun addPlayer(player: Player) {
-        players[player.id] = player
-        listeners.forEach { it.playerAdded(player.id) }
+        if (player.id !in players) {
+            players[player.id] = player
+            listeners.forEach { it.playerAdded(player.id) }
+        }
     }
 
     fun removePlayer(playerId: Int): Player? {
@@ -76,19 +78,20 @@ class Game {
 
     fun getPlayer(playerId: Int): Player? = players[playerId]
 
-    fun suggestAlternateName(requested: String): String {
+    fun suggestAlternateName(requested: String): Pair<String, Set<String>> {
         var append = 0
         var suggested: String
-        synchronized(players) {
-            val taken: MutableSet<String> = players.values.map(Player::name).toMutableSet()
-            taken.addAll(suggestedNames)
+        val taken = HashSet<String>()
+        synchronized (players) {
+            taken += players.values.map(Player::name)
+            taken += suggestedNames
             do {
                 append++
                 suggested = "$requested.$append"
             } while (taken.contains(suggested))
-            suggestedNames.add(suggested)
+            suggestedNames += suggested
         }
-        return suggested
+        return suggested to taken
     }
 
     fun addUnit(unit: BaseUnit): Int {

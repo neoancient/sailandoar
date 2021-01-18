@@ -17,6 +17,10 @@ class StartGameDialog : Fragment() {
     val canceledProperty = SimpleBooleanProperty(false)
     var canceled by canceledProperty
 
+    init {
+        title = messages["title"]
+    }
+
     override val root = borderpane {
         center = form {
             fieldset {

@@ -30,7 +30,7 @@ class Server(address: String, serverPort: Int) {
         }
     }
     private val server = embeddedServer(Netty, environment)
-    private val connections = ConcurrentHashMap<Int, ClientConnection?>()
+    private val connections = ConcurrentHashMap<Int, ClientConnection>()
 
     fun start() {
         server.start(false)
@@ -77,7 +77,7 @@ class Server(address: String, serverPort: Int) {
             handler.packetsToSend().forEach { p ->
                 if (p.clientId < 0) {
                     connections.values.forEach { c ->
-                        c?.session?.send(Json.encodeToString(Packet.serializer(), p))
+                        c.session.send(Json.encodeToString(Packet.serializer(), p))
                     }
                 } else {
                     connections[p.clientId]?.session?.send(Json.encodeToString(Packet.serializer(), p))

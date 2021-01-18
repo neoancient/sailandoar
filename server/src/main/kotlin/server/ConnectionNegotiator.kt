@@ -25,10 +25,7 @@
 package server
 
 import game.Game
-import net.InitClientPacket
-import net.Packet
-import net.SendNamePacket
-import net.SuggestNamePacket
+import net.*
 
 class ConnectionNegotiator(val packet: SendNamePacket, val game: Game) : ServerPacketHandler {
     private val responses = ArrayList<Packet>()
@@ -36,9 +33,12 @@ class ConnectionNegotiator(val packet: SendNamePacket, val game: Game) : ServerP
     override fun process() {
         val player = game.newPlayer(packet.name, packet.clientId)
         if (player == null) {
-            responses += SuggestNamePacket(packet.clientId, game.suggestAlternateName(packet.name))
+            game.suggestAlternateName(packet.name).let {
+                responses += SuggestNamePacket(packet.clientId, it.first, it.second)
+            }
         } else {
             responses += InitClientPacket(packet.clientId, game)
+            responses += AddPlayerPacket(ALL_CLIENTS, player)
         }
     }
 
