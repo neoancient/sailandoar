@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory
 import server.Server
 import tornadofx.*
 import java.io.IOException
+import java.net.SocketException
+import java.nio.channels.UnresolvedAddressException
 
 class SailAndOarApp: App(SplashView::class) {
     internal val serverProperty: ObjectProperty<Server> = SimpleObjectProperty()
@@ -36,6 +38,13 @@ class SailAndOarApp: App(SplashView::class) {
         Platform.exit()
         System.exit(0)
     }
+}
+
+fun Alert.wrapContent(width: Double = 400.0) {
+    dialogPane.content = text(contentText) {
+        wrappingWidth = width
+    }
+    dialogPane.style = "-fx-padding:10px"
 }
 
 class SplashView: View(), ConnectionListener {
@@ -76,47 +85,59 @@ class SplashView: View(), ConnectionListener {
         val dialog = find<StartGameDialog>(mapOf("host" to "localhost"))
         dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
         if (!dialog.canceled) {
-            try {
-                client = Client(dialog.name)
-                client.addConnectionListener(this)
-                GlobalScope.launch(Dispatchers.IO) {
-                    client.start("localhost", dialog.port)
+            client = Client(dialog.name)
+            client.addConnectionListener(this)
+            GlobalScope.launch(Dispatchers.IO) {
+                try {
+                    client.start(dialog.host, dialog.port)
+                } catch (ex: Exception) {
+                    Platform.runLater {
+                        Alert(
+                            AlertType.ERROR,
+                            when (ex) {
+                                is UnresolvedAddressException -> "Cannot resolve host"
+                                else -> "While trying to connect to server: ${ex.localizedMessage}"
+                            }
+                        ).apply {
+                            wrapContent()
+                        }.showAndWait()
+                    }
                 }
-            } catch (ex: IOException) {
-                logger.error("While trying to connect to server:", ex)
-                val alert = Alert(AlertType.ERROR,
-                        "Could not connect to server. See log for details.",
-                        ButtonType.OK)
-                alert.showAndWait()
             }
         }
     }
 
     fun startGame(name: String, port: Int) {
-        server = Server("127.0.0.1", port)
+        server = Server("localhost", port)
         try {
             server.start()
-        } catch (ex: IOException) {
-            logger.error("While trying to create server on port $port", ex)
-            val alert = Alert(AlertType.ERROR,
-                    "Could not create server on port $port. See log for details.")
-            alert.showAndWait()
-            return
         } catch (ex: Exception) {
-            logger.error(ex.localizedMessage)
+            Alert(
+                AlertType.ERROR,
+                "Could not create server on port $port: ${ex.localizedMessage}"
+            ).apply {
+                wrapContent()
+            }.showAndWait()
+            return
         }
-        try {
-            client = Client(name)
-            client.addConnectionListener(this)
-            GlobalScope.launch(Dispatchers.IO) {
+        client = Client(name)
+        client.addConnectionListener(this)
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
                 client.start("localhost", port)
+            } catch (ex: Exception) {
+                Platform.runLater {
+                    Alert(
+                        AlertType.ERROR,
+                        when (ex) {
+                            is UnresolvedAddressException -> "Cannot resolve host"
+                            else -> "While trying to connect to server: ${ex.localizedMessage}"
+                        }
+                    ).apply {
+                        wrapContent()
+                    }.showAndWait()
+                }
             }
-        } catch (ex: IOException) {
-            logger.error("While trying to connect to server:", ex)
-            val alert = Alert(AlertType.ERROR,
-                    "Could not connect to server. See log for details.",
-                    ButtonType.OK)
-            alert.showAndWait()
         }
     }
 

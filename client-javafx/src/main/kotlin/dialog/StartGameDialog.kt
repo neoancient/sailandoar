@@ -5,15 +5,16 @@ import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.scene.layout.BorderPane
+import javafx.util.StringConverter
 import tornadofx.*
 
 const val DEFAULT_PORT = 1805
 
 class StartGameDialog : Fragment() {
-    val nameProperty = SimpleStringProperty("New Player")
-    var name by nameProperty
+    private val nameProperty = SimpleStringProperty("New Player")
+    var name: String by nameProperty
     private val hostProperty = SimpleStringProperty(params["host"] as? String ?: "")
-    val host by hostProperty
+    val host: String by hostProperty
     private val portProperty = SimpleIntegerProperty(DEFAULT_PORT)
     var port by portProperty
     private val canceledProperty = SimpleBooleanProperty(false)
@@ -35,7 +36,21 @@ class StartGameDialog : Fragment() {
                     }
                 }
                 field(messages["port"]) {
-                    textfield(portProperty.asString())
+                    textfield {
+                        bind(portProperty, converter = object : StringConverter<Number>() {
+                            override fun toString(value: Number?) =
+                                value?.toInt()?.toString() ?: ""
+
+                            override fun fromString(string: String): Number {
+                                val str = string.replace("[^\\d]".toRegex(), "")
+                                return if (str.isNotEmpty()) {
+                                    str.toInt()
+                                } else {
+                                    0
+                                }
+                            }
+                        })
+                    }
                 }
             }
         }
@@ -49,6 +64,7 @@ class StartGameDialog : Fragment() {
             }
             button(messages["ok"]) {
                 isDefaultButton = true
+                enableWhen(portProperty.greaterThan(0))
                 action {
                     close()
                 }
