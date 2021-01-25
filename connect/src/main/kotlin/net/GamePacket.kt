@@ -32,7 +32,7 @@ import unit.ShipStats
 const val ALL_CLIENTS = -1
 
 @Serializable
-sealed class Packet {
+sealed class GamePacket {
     /**
      * The unique id of the client sending this packet or the client the packet is to
      * be sent to. If < 0, the server will send it to all connected clients.
@@ -43,31 +43,22 @@ sealed class Packet {
 }
 
 @Serializable
-class RequestNamePacket(override val clientId: Int): Packet()
+class SendGamePacket(override val clientId: Int, val game: Game): GamePacket()
 
 @Serializable
-class SendNamePacket(override val clientId: Int, val name: String): Packet()
+class AddPlayerPacket(override val clientId: Int, val player: Player): GamePacket()
 
 @Serializable
-class SuggestNamePacket(override val clientId: Int, val name: String, val taken: Set<String>): Packet()
+class RemovePlayerPacket(override val clientId: Int, val player: Player): GamePacket()
 
 @Serializable
-class InitClientPacket(override val clientId: Int, val game: Game): Packet()
+class RequestAvailableShipsPacket(override val clientId: Int): GamePacket()
 
 @Serializable
-class AddPlayerPacket(override val clientId: Int, val player: Player): Packet()
+class SendAvailableShipsPacket(override val clientId: Int, val ships: Collection<ShipStats>): GamePacket()
 
 @Serializable
-class RemovePlayerPacket(override val clientId: Int, val player: Player): Packet()
+class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): GamePacket()
 
 @Serializable
-class RequestAvailableShipsPacket(override val clientId: Int): Packet()
-
-@Serializable
-class SendAvailableShipsPacket(override val clientId: Int, val ships: Collection<ShipStats>): Packet()
-
-@Serializable
-class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): Packet()
-
-@Serializable
-class RemoveUnitPacket(override val clientId: Int, val unit: BaseUnit): Packet()
+class RemoveUnitPacket(override val clientId: Int, val unit: BaseUnit): GamePacket()

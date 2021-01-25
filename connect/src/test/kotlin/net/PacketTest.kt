@@ -32,10 +32,10 @@ import org.junit.jupiter.api.Test
 internal class PacketTest {
     @Test
     fun serializePacket() {
-        val packet: Packet = RequestAvailableShipsPacket(1)
+        val packet: GamePacket = RequestAvailableShipsPacket(1)
 
         val json = Json.encodeToString(packet)
-        val decoded = Json.decodeFromString<Packet>(json)
+        val decoded = Json.decodeFromString<GamePacket>(json)
 
         assertAll(
                 { assertEquals(packet.clientId, decoded.clientId) },
@@ -46,11 +46,11 @@ internal class PacketTest {
     @Test
     fun serializePacketWithData() {
         val player = Player(2, "Test Player")
-        val packet: Packet = AddPlayerPacket(3, player)
+        val packet: GamePacket = AddPlayerPacket(3, player)
 
 
         val json = Json.encodeToString(packet)
-        val decoded = Json.decodeFromString<Packet>(json)
+        val decoded = Json.decodeFromString<GamePacket>(json)
 
         assertAll(
                 { assertEquals(packet.clientId, decoded.clientId) },

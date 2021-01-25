@@ -22,8 +22,6 @@
  */
 package net
 
-import net.Packet
-
 /**
  * Executes a game task and provides any reports or client updates for the server.
  */
@@ -36,5 +34,5 @@ interface ServerPacketHandler {
     /**
      * Any client updates that need to be sent
      */
-    fun packetsToSend(): List<Packet> = emptyList()
+    fun packetsToSend(): List<GamePacket> = emptyList()
 }

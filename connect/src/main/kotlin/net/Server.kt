@@ -26,7 +26,9 @@ package net
 
 import NetworkServer
 import ServerConnector
+import User
 import game.Game
+import game.Player
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
@@ -42,23 +44,34 @@ class Server(address: String, serverPort: Int) : ServerConnector {
         server.shutdown(1000, 1000)
     }
 
-    override suspend fun handle(data: String) {
-        handlePacket(Json.decodeFromString(Packet.serializer(), data))
+    override suspend fun handle(json: String) {
+        handlePacket(Json.decodeFromString(GamePacket.serializer(), json))
     }
 
-    private suspend fun handlePacket(packet: Packet) {
+    override suspend fun playerConnected(id: Int, name: String) {
+        val player = Player(id, name)
+        game.addPlayer(player)
+        send(SendGamePacket(id, game))
+        send(AddPlayerPacket(ALL_CLIENTS, player))
+    }
+
+    private suspend fun send(packet: GamePacket) {
+        server.send(packet.clientId, Json.encodeToString(GamePacket.serializer(), packet))
+    }
+
+    private suspend fun handlePacket(packet: GamePacket) {
         val handler = when (packet) {
             is RequestAvailableShipsPacket -> RequestAvailableShipsHandler(packet)
-            else -> null
+            else -> {
+                LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
+                    ${game.getPlayer(packet.clientId)}""".trimMargin())
+                null
+            }
         }
         if (handler != null) {
             handler.process()
-            handler.packetsToSend().forEach { p ->
-                server.send(p.clientId, Json.encodeToString(Packet.serializer(), packet))
-            }
+            handler.packetsToSend().forEach { p -> send(p) }
         } else {
-            LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
-                ${game.getPlayer(packet.clientId)}""".trimMargin())
         }
     }
 }

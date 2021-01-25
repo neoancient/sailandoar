@@ -38,7 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 
 public interface ServerConnector {
-    public suspend fun handle(data: String)
+    public suspend fun handle(json: String)
+    public suspend fun playerConnected(id: Int, name: String)
 }
 
 public class NetworkServer(
@@ -98,7 +99,9 @@ public class NetworkServer(
                         connection.send(SuggestNamePacket(it.first, it.second))
                     }
                 } else {
-                    users += User(packet.name)
+                    users += User(packet.name, connection.id)
+                    connection.pending = false
+                    connector.playerConnected(connection.id, packet.name)
                     connection.send(InitClientPacket(connection.id))
                 }
             is TextPacket -> connector.handle(packet.text)
@@ -123,6 +126,7 @@ private class ClientConnection(val session: DefaultWebSocketSession) {
     }
     val id = lastId.getAndIncrement()
     var name: String = "New Player"
+    var pending: Boolean = true
 
     suspend fun send(packet: Packet) {
         session.send(Frame.Text(Json.encodeToString(Packet.serializer(), packet)))

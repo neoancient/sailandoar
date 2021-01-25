@@ -49,37 +49,27 @@ class Client(name: String) : ClientConnector {
         client.stop()
     }
 
-    fun send(packet: Packet) {
-        client.send(Json.encodeToString(Packet.serializer(), packet))
+    fun send(packet: GamePacket) {
+        client.send(Json.encodeToString(GamePacket.serializer(), packet))
     }
 
     suspend fun sendName(name: String) {
         client.changeName(name)
     }
 
-    private fun handlePacket(packet: Packet) {
+    private fun handlePacket(packet: GamePacket) {
         when (packet) {
-            is RequestNamePacket -> {
-                id = packet.clientId
-                send(SendNamePacket(id, player.name))
-            }
-            is SuggestNamePacket -> {
-                listeners.forEach {
-                    it.nameTaken(this, packet.name, packet.taken)
-                }
-            }
-            is InitClientPacket -> {
+            is SendGamePacket -> {
                 game = requireNotNull(packet.game)
                 player = requireNotNull(game?.getPlayer(id))
-                listeners.forEach { it.clientConnected(this) }
             }
-            is AddPlayerPacket -> game?.addPlayer(packet.player)
+            is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
         }
     }
 
     override suspend fun handle(data: String) {
-        handlePacket(Json.decodeFromString(Packet.serializer(), data))
+        handlePacket(Json.decodeFromString(GamePacket.serializer(), data))
     }
 
     override suspend fun nameConflict(suggestion: String, taken: Set<String>) {

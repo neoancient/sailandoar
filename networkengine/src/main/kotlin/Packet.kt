@@ -1,7 +1,7 @@
 import kotlinx.serialization.Serializable
 
 /*
- *  Sail and Oar
+ * Sail and Oar
  * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,8 +23,6 @@ import kotlinx.serialization.Serializable
  * SOFTWARE.
  *
  */
-
-public const val ALL_CLIENTS: Int = -1
 
 @Serializable
 internal sealed class Packet

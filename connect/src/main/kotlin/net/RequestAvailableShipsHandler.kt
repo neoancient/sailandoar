@@ -59,7 +59,7 @@ class RequestAvailableShipsHandler(val packet: RequestAvailableShipsPacket): Ser
         ships.addAll(ShipLibrary.allShips())
     }
 
-    override fun packetsToSend(): List<Packet> {
+    override fun packetsToSend(): List<GamePacket> {
         return listOf(SendAvailableShipsPacket(packet.clientId, ships))
     }
 }

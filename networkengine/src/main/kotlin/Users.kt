@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap
 public data class User(
     val name: String,
     var connectionId: Int = -1,
-): Principal
+) : Principal
 
 public class Users {
     private val users: MutableMap<String, User> = ConcurrentHashMap()
