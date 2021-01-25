@@ -32,9 +32,21 @@ import game.Player
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
-class Server(address: String, serverPort: Int) : ServerConnector {
+class Server(address: String, serverPort: Int) {
     private val game = Game()
-    private val server = NetworkServer(address, serverPort, this)
+    private val connector = object : ServerConnector {
+        override suspend fun handle(json: String) {
+            handlePacket(Json.decodeFromString(GamePacket.serializer(), json))
+        }
+
+        override suspend fun playerConnected(id: Int, name: String) {
+            val player = Player(id, name)
+            game.addPlayer(player)
+            send(SendGamePacket(id, game))
+            send(AddPlayerPacket(ALL_CLIENTS, player))
+        }
+    }
+    private val server = NetworkServer(address, serverPort, connector)
 
     fun start() {
         server.start(false)
@@ -42,17 +54,6 @@ class Server(address: String, serverPort: Int) : ServerConnector {
 
     fun shutdown() {
         server.shutdown(1000, 1000)
-    }
-
-    override suspend fun handle(json: String) {
-        handlePacket(Json.decodeFromString(GamePacket.serializer(), json))
-    }
-
-    override suspend fun playerConnected(id: Int, name: String) {
-        val player = Player(id, name)
-        game.addPlayer(player)
-        send(SendGamePacket(id, game))
-        send(AddPlayerPacket(ALL_CLIENTS, player))
     }
 
     private suspend fun send(packet: GamePacket) {

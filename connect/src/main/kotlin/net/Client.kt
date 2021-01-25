@@ -32,14 +32,33 @@ import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CopyOnWriteArrayList
 
-class Client(name: String) : ClientConnector {
+class Client(name: String) {
     private val logger = LoggerFactory.getLogger(javaClass)
     var id = -1
     var player = Player(id, name)
     var game: Game? = null
     private val listeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
+    private val connector = object : ClientConnector {
+        override suspend fun handle(data: String) {
+            handlePacket(Json.decodeFromString(GamePacket.serializer(), data))
+        }
 
-    val client = NetworkClient(name, this)
+        override suspend fun nameConflict(suggestion: String, taken: Set<String>) {
+            listeners.forEach {
+                it.nameTaken(this@Client, suggestion, taken)
+            }
+        }
+
+        override suspend fun connectionEstablished(clientId: Int) {
+            id = clientId
+            listeners.forEach {
+                it.clientConnected(this@Client)
+            }
+            send(RequestAvailableShipsPacket(id))
+        }
+    }
+
+    val client = NetworkClient(name, connector)
 
     suspend fun start(host: String, port: Int) {
         client.start(host, port)
@@ -66,24 +85,6 @@ class Client(name: String) : ClientConnector {
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
         }
-    }
-
-    override suspend fun handle(data: String) {
-        handlePacket(Json.decodeFromString(GamePacket.serializer(), data))
-    }
-
-    override suspend fun nameConflict(suggestion: String, taken: Set<String>) {
-        listeners.forEach {
-            it.nameTaken(this, suggestion, taken)
-        }
-    }
-
-    override suspend fun connectionEstablished(clientId: Int) {
-        id = clientId
-        listeners.forEach {
-            it.clientConnected(this)
-        }
-        send(RequestAvailableShipsPacket(id))
     }
 
     fun addConnectionListener(l: ConnectionListener) {
