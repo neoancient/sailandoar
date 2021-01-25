@@ -7,6 +7,7 @@ val serializationVersion: String by project
 val slf4jVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
     implementation(project(":connect"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")

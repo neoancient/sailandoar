@@ -59,3 +59,6 @@ internal class TextPacket(val text: String) : Packet()
  */
 @Serializable
 internal class BinaryPacket(val data: ByteArray) : Packet()
+
+@Serializable
+internal class ChatMessagePacket(val clientId: Int, val text: String) : Packet()

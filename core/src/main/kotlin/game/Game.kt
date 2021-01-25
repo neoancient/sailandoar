@@ -44,7 +44,6 @@ class Game {
     private val nextUnitId = AtomicInteger(1)
     private val players: MutableMap<Int, Player> = ConcurrentHashMap()
     private val units: MutableMap<Int, BaseUnit> = ConcurrentHashMap()
-    private val suggestedNames: MutableSet<String> = HashSet()
     private val listeners: MutableList<GameListener> = CopyOnWriteArrayList()
 
     fun newPlayer(playerName: String, connId: Int): Player? {
@@ -78,22 +77,6 @@ class Game {
 
     fun getPlayer(playerId: Int): Player? = players[playerId]
 
-    fun suggestAlternateName(requested: String): Pair<String, Set<String>> {
-        var append = 0
-        var suggested: String
-        val taken = HashSet<String>()
-        synchronized (players) {
-            taken += players.values.map(Player::name)
-            taken += suggestedNames
-            do {
-                append++
-                suggested = "$requested.$append"
-            } while (taken.contains(suggested))
-            suggestedNames += suggested
-        }
-        return suggested to taken
-    }
-
     fun addUnit(unit: BaseUnit): Int {
         unit.initGameState(nextUnitId.getAndIncrement())
         units[unit.unitId] = unit
@@ -104,9 +87,13 @@ class Game {
     fun removeUnit(unitId: Int): BaseUnit? {
         val unit = units.remove(unitId)
         if (unit != null) {
-            listeners.forEach{ it.unitRemoved(unitId) }
+            listeners.forEach { it.unitRemoved(unitId) }
         }
         return unit
+    }
+
+    fun appendChat(text: String) {
+        listeners.forEach { it.appendChat(text) }
     }
 
     fun getUnit(unitId: Int): BaseUnit? = units[unitId]

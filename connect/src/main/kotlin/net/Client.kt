@@ -76,14 +76,20 @@ class Client(name: String) {
         client.changeName(name)
     }
 
+    suspend fun sendChatMessage(text: String) {
+        client.sendChatMessage(id, text)
+    }
+
     private fun handlePacket(packet: GamePacket) {
         when (packet) {
             is SendGamePacket -> {
+                id = packet.clientId
                 game = requireNotNull(packet.game)
                 player = requireNotNull(game?.getPlayer(id))
             }
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
+            is BroadcastChatMessagePacket -> game?.appendChat(packet.text)
         }
     }
 

@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger
 public interface ServerConnector {
     public suspend fun handle(json: String)
     public suspend fun playerConnected(id: Int, name: String)
+    public suspend fun chatMessage(id: Int, text: String)
 }
 
 public class NetworkServer(
@@ -101,10 +102,12 @@ public class NetworkServer(
                 } else {
                     users += User(packet.name, connection.id)
                     connection.pending = false
+                    connections[connection.id] = connection
                     connector.playerConnected(connection.id, packet.name)
                     connection.send(InitClientPacket(connection.id))
                 }
             is TextPacket -> connector.handle(packet.text)
+            is ChatMessagePacket -> connector.chatMessage(packet.clientId, packet.text)
         }
     }
 

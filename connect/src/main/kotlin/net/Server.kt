@@ -26,7 +26,6 @@ package net
 
 import NetworkServer
 import ServerConnector
-import User
 import game.Game
 import game.Player
 import kotlinx.serialization.json.Json
@@ -44,6 +43,11 @@ class Server(address: String, serverPort: Int) {
             game.addPlayer(player)
             send(SendGamePacket(id, game))
             send(AddPlayerPacket(ALL_CLIENTS, player))
+        }
+
+        override suspend fun chatMessage(id: Int, text: String) {
+            val html = renderChatMessage(id, text)
+            send(BroadcastChatMessagePacket(ALL_CLIENTS, html))
         }
     }
     private val server = NetworkServer(address, serverPort, connector)
@@ -74,6 +78,10 @@ class Server(address: String, serverPort: Int) {
             handler.packetsToSend().forEach { p -> send(p) }
         } else {
         }
+    }
+
+    private fun renderChatMessage(clientId: Int, text: String): String {
+        return "<p><b>${game.getPlayer(clientId)?.name ?: "<unknown>"}:</b> $text</p>"
     }
 }
 

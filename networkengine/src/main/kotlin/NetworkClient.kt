@@ -94,6 +94,7 @@ public class NetworkClient(private var name: String, private val handler: Client
             is RequestNamePacket -> queue.send(SendNamePacket(name))
             is SuggestNamePacket -> handler.nameConflict(packet.name, packet.taken)
             is InitClientPacket -> handler.connectionEstablished(packet.clientId)
+            is TextPacket -> handler.handle(packet.text)
         }
     }
 
@@ -106,5 +107,9 @@ public class NetworkClient(private var name: String, private val handler: Client
     public suspend fun changeName(name: String) {
         this.name = name
         queue.send(SendNamePacket(name))
+    }
+
+    public suspend fun sendChatMessage(clientId: Int, text: String) {
+        queue.send(ChatMessagePacket(clientId, text))
     }
 }
