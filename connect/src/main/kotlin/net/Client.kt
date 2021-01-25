@@ -1,5 +1,5 @@
 /*
- *  Sail and Oar
+ * Sail and Oar
  * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,82 +22,39 @@
  *
  */
 
-package client
+package net
 
+import ClientConnector
+import NetworkClient
 import game.Game
 import game.Player
-import io.ktor.client.HttpClient
-import io.ktor.client.features.websocket.DefaultClientWebSocketSession
-import io.ktor.client.features.websocket.WebSockets
-import io.ktor.client.features.websocket.webSocket
-import io.ktor.http.HttpMethod
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readText
-import io.ktor.http.cio.websocket.send
-import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.json.Json
-import net.*
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CopyOnWriteArrayList
 
-class Client(name: String) {
+class Client(name: String) : ClientConnector {
     private val logger = LoggerFactory.getLogger(javaClass)
     var id = -1
     var player = Player(id, name)
     var game: Game? = null
-    private val queue = Channel<Packet>()
     private val listeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
 
-    @KtorExperimentalAPI
-    val client = HttpClient {
-        install(WebSockets)
-    }
+    val client = NetworkClient(name, this)
 
-    @KtorExperimentalAPI
     suspend fun start(host: String, port: Int) {
-        client.webSocket(method = HttpMethod.Get, host = host, port = port, path = "/") {
-            val sendRoutine = launch { sendPackets() }
-            val receiveRoutine = launch { receivePackets() }
-
-            receiveRoutine.join()
-            sendRoutine.cancelAndJoin()
-        }
-        client.close()
-        logger.info("Client closed")
+        client.start(host, port)
     }
 
-    @KtorExperimentalAPI
     fun stop() {
-        client.close()
+        client.stop()
     }
 
     fun send(packet: Packet) {
-        GlobalScope.launch(Dispatchers.IO) {
-            queue.send(packet)
-        }
+        client.send(Json.encodeToString(Packet.serializer(), packet))
     }
 
-    fun sendName(name: String) {
-        send(SendNamePacket(id, name))
-    }
-
-    suspend fun DefaultClientWebSocketSession.sendPackets() {
-        for (packet in queue) {
-            send(Json.encodeToString(Packet.serializer(), packet))
-        }
-    }
-
-    suspend fun DefaultClientWebSocketSession.receivePackets() {
-        try {
-            for (frame in incoming) {
-                frame as? Frame.Text ?: continue
-                handlePacket(Json.decodeFromString(Packet.serializer(), frame.readText()))
-            }
-        } catch (e: Exception) {
-            logger.error(e.localizedMessage)
-        }
+    suspend fun sendName(name: String) {
+        client.changeName(name)
     }
 
     private fun handlePacket(packet: Packet) {
@@ -119,6 +76,24 @@ class Client(name: String) {
             is AddPlayerPacket -> game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
         }
+    }
+
+    override suspend fun handle(data: String) {
+        handlePacket(Json.decodeFromString(Packet.serializer(), data))
+    }
+
+    override suspend fun nameConflict(suggestion: String, taken: Set<String>) {
+        listeners.forEach {
+            it.nameTaken(this, suggestion, taken)
+        }
+    }
+
+    override suspend fun connectionEstablished(clientId: Int) {
+        id = clientId
+        listeners.forEach {
+            it.clientConnected(this)
+        }
+        send(RequestAvailableShipsPacket(id))
     }
 
     fun addConnectionListener(l: ConnectionListener) {

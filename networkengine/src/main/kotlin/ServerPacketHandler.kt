@@ -1,6 +1,6 @@
-/*
- *  Sail and Oar
- * Copyright (c) 2021 Carl W Spain
+/**
+ * Sail and Oar
+ * Copyright (c) 2020 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,18 +19,19 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package server
+/**
+ * Executes a game task and provides any reports or client updates for the server.
+ */
+internal interface ServerPacketHandler {
+    /**
+     * Process the task
+     */
+    fun process()
 
-import io.ktor.http.cio.websocket.DefaultWebSocketSession
-import java.util.concurrent.atomic.AtomicInteger
-
-class ClientConnection(val session: DefaultWebSocketSession) {
-    companion object {
-        val lastId = AtomicInteger(0)
-    }
-    val id = lastId.getAndIncrement()
-    var name: String = "New Player"
+    /**
+     * Any client updates that need to be sent
+     */
+    fun packetsToSend(): List<Packet> = emptyList()
 }

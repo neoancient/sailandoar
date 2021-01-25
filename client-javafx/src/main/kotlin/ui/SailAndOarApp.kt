@@ -1,7 +1,5 @@
 package ui
 
-import client.Client
-import client.ConnectionListener
 import dialog.SelectNameDialog
 import dialog.StartGameDialog
 import javafx.application.Platform
@@ -11,18 +9,17 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.ButtonType
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.stage.StageStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import net.Client
+import net.ConnectionListener
 import org.slf4j.LoggerFactory
-import server.Server
+import net.Server
 import tornadofx.*
-import java.io.IOException
-import java.net.SocketException
 import java.nio.channels.UnresolvedAddressException
 
 class SailAndOarApp: App(SplashView::class) {

@@ -1,2 +1,3 @@
 rootProject.name = "sailandoar"
-include ("client", "client-javafx", "connect", "core", "server", "shipeditor")
+include ("client-javafx", "connect", "core", "shipeditor")
+include("networkengine")

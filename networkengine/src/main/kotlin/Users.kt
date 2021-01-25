@@ -1,5 +1,8 @@
+import io.ktor.auth.Principal
+import java.util.concurrent.ConcurrentHashMap
+
 /*
- *  Sail and Oar
+ * Sail and Oar
  * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,25 +25,37 @@
  *
  */
 
-package server
+public data class User(
+    val name: String,
+    var connectionId: Int = -1,
+): Principal
 
-import game.Game
-import net.*
+public class Users {
+    private val users: MutableMap<String, User> = ConcurrentHashMap()
+    private val suggestedNames = HashSet<String>()
 
-class ConnectionNegotiator(val packet: SendNamePacket, val game: Game) : ServerPacketHandler {
-    private val responses = ArrayList<Packet>()
-
-    override fun process() {
-        val player = game.newPlayer(packet.name, packet.clientId)
-        if (player == null) {
-            game.suggestAlternateName(packet.name).let {
-                responses += SuggestNamePacket(packet.clientId, it.first, it.second)
-            }
-        } else {
-            responses += InitClientPacket(packet.clientId, game)
-            responses += AddPlayerPacket(ALL_CLIENTS, player)
-        }
+    public operator fun get(key: String): User? = users[key]
+    public operator fun contains(key: String): Boolean = key in users
+    public operator fun plusAssign(user: User) {
+        users[user.name] = user
+    }
+    public operator fun minusAssign(user: User) {
+        users.remove(user.name)
     }
 
-    override fun packetsToSend() = responses
+    internal fun suggestAlternateName(requested: String): Pair<String, Set<String>> {
+        var append = 0
+        var suggested: String
+        val taken = HashSet<String>()
+        synchronized (users) {
+            taken += users.values.map(User::name)
+            taken += suggestedNames
+            do {
+                append++
+                suggested = "$requested.$append"
+            } while (taken.contains(suggested))
+            suggestedNames += suggested
+        }
+        return suggested to taken
+    }
 }
