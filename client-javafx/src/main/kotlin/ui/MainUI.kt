@@ -1,27 +1,25 @@
 package ui
 
-import game.GameListener
-import javafx.application.Platform
-import javafx.concurrent.Worker
 import javafx.fxml.FXML
-import javafx.scene.control.Button
-import javafx.scene.control.TextField
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.StackPane
-import javafx.scene.web.WebView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import tornadofx.*
 
 class MainUI: View() {
     val chatWindow: ChatWindow by inject()
 
     override val root: BorderPane by fxml()
-    private val panCenter: StackPane by fxid()
+    private val panCenter: AnchorPane by fxid()
+    private val panChat: AnchorPane by fxid()
 
     init {
-        root.bottom = chatWindow.root
+        panChat.children.setAll(chatWindow.root)
+        with(chatWindow.root) {
+            AnchorPane.setTopAnchor(this, 0.0)
+            AnchorPane.setBottomAnchor(this, 0.0)
+            AnchorPane.setLeftAnchor(this, 0.0)
+            AnchorPane.setRightAnchor(this, 0.0)
+        }
     }
 
     @FXML
