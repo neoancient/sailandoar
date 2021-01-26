@@ -43,6 +43,7 @@ public interface ClientConnector {
     public suspend fun handle(data: String)
     public suspend fun nameConflict(suggestion: String, taken: Set<String>)
     public suspend fun connectionEstablished(clientId: Int)
+    public suspend fun receiveChatMessage(html: String)
 }
 
 public class NetworkClient(private var name: String, private val handler: ClientConnector) {
@@ -95,6 +96,7 @@ public class NetworkClient(private var name: String, private val handler: Client
             is SuggestNamePacket -> handler.nameConflict(packet.name, packet.taken)
             is InitClientPacket -> handler.connectionEstablished(packet.clientId)
             is TextPacket -> handler.handle(packet.text)
+            is ChatMessagePacket -> handler.receiveChatMessage(packet.message.toHtml())
         }
     }
 
@@ -110,6 +112,6 @@ public class NetworkClient(private var name: String, private val handler: Client
     }
 
     public suspend fun sendChatMessage(clientId: Int, text: String) {
-        queue.send(ChatMessagePacket(clientId, text))
+        queue.send(ChatCommandPacket(clientId, text))
     }
 }

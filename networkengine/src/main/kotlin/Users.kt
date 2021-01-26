@@ -30,17 +30,17 @@ public data class User(
     var connectionId: Int = -1,
 ) : Principal
 
-public class Users {
+internal class Users {
     private val users: MutableMap<String, User> = ConcurrentHashMap()
     private val suggestedNames = HashSet<String>()
 
-    public operator fun get(key: String): User? = users[key]
-    public operator fun contains(key: String): Boolean = key in users
-    public operator fun plusAssign(user: User) {
-        users[user.name] = user
+    operator fun get(key: String): User? = users[key.toLowerCase()]
+    operator fun contains(key: String): Boolean = key.toLowerCase() in users
+    operator fun plusAssign(user: User) {
+        users[user.name.toLowerCase()] = user
     }
-    public operator fun minusAssign(user: User) {
-        users.remove(user.name)
+    operator fun minusAssign(user: User) {
+        users.remove(user.name.toLowerCase())
     }
 
     internal fun suggestAlternateName(requested: String): Pair<String, Set<String>> {

@@ -25,44 +25,31 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-internal sealed class Packet
-
-/**
- * Sent by the server to request the name to use for the client
- */
-@Serializable
-internal class RequestNamePacket : Packet()
-
-/**
- * Sent by the client to request a user name
- */
-@Serializable
-internal class SendNamePacket(val name: String) : Packet()
-
-/**
- * Sent by the server when the requested name is already taken
- */
-@Serializable
-internal class SuggestNamePacket(val name: String, val taken: Set<String>) : Packet()
+public sealed class ChatMessage {
+    abstract public fun toHtml(): String
+}
 
 @Serializable
-internal class InitClientPacket(val clientId: Int) : Packet()
-
-/**
- * Wrapper for text data
- */
-@Serializable
-internal class TextPacket(val text: String) : Packet()
-
-/**
- * Wrapper for binary data
- */
-@Serializable
-internal class BinaryPacket(val data: ByteArray) : Packet()
+public data class SystemMessage(val text: String) : ChatMessage() {
+    override fun toHtml(): String = "<p><b>$text</b></p>"
+}
 
 @Serializable
-internal class ChatCommandPacket(val clientId: Int, val text: String) : Packet()
+public data class InfoMessage(val text: String) : ChatMessage() {
+    override fun toHtml(): String = "<p><i>$text</i></p>"
+}
 
 @Serializable
-internal class ChatMessagePacket(val message: ChatMessage) : Packet()
+public data class SimpleMessage(val user: String, val text: String) : ChatMessage() {
+    override fun toHtml(): String = "<p><b>$user:</b> $text</p>"
+}
 
+@Serializable
+public data class WhisperMessage(val sender: String, val recipient: String, val text: String) : ChatMessage() {
+    override fun toHtml(): String = "<p>$sender &gt; $recipient: $text</p>"
+}
+
+@Serializable
+public data class EmoteMessage(val user: String, val text: String) : ChatMessage() {
+    override fun toHtml(): String = "<p>$user $text</p>"
+}

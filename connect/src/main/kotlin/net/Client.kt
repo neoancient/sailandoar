@@ -56,9 +56,13 @@ class Client(name: String) {
             }
             send(RequestAvailableShipsPacket(id))
         }
+
+        override suspend fun receiveChatMessage(html: String) {
+            game?.appendChat(html)
+        }
     }
 
-    val client = NetworkClient(name, connector)
+    private val client = NetworkClient(name, connector)
 
     suspend fun start(host: String, port: Int) {
         client.start(host, port)
@@ -89,7 +93,6 @@ class Client(name: String) {
             }
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
-            is BroadcastChatMessagePacket -> game?.appendChat(packet.text)
         }
     }
 

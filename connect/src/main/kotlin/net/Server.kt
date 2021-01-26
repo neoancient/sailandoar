@@ -44,12 +44,8 @@ class Server(address: String, serverPort: Int) {
             send(SendGamePacket(id, game))
             send(AddPlayerPacket(ALL_CLIENTS, player))
         }
-
-        override suspend fun chatMessage(id: Int, text: String) {
-            val html = renderChatMessage(id, text)
-            send(BroadcastChatMessagePacket(ALL_CLIENTS, html))
-        }
     }
+
     private val server = NetworkServer(address, serverPort, connector)
 
     fun start() {
@@ -76,12 +72,7 @@ class Server(address: String, serverPort: Int) {
         if (handler != null) {
             handler.process()
             handler.packetsToSend().forEach { p -> send(p) }
-        } else {
         }
-    }
-
-    private fun renderChatMessage(clientId: Int, text: String): String {
-        return "<p><b>${game.getPlayer(clientId)?.name ?: "<unknown>"}:</b> $text</p>"
     }
 }
 

@@ -1,7 +1,6 @@
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.http.cio.websocket.*
-import io.ktor.http.cio.websocket.readText
 import io.ktor.routing.routing
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
@@ -40,7 +39,6 @@ import java.util.concurrent.atomic.AtomicInteger
 public interface ServerConnector {
     public suspend fun handle(json: String)
     public suspend fun playerConnected(id: Int, name: String)
-    public suspend fun chatMessage(id: Int, text: String)
 }
 
 public class NetworkServer(
@@ -58,7 +56,7 @@ public class NetworkServer(
     }
     private val server = embeddedServer(Netty, environment)
     private val connections = ConcurrentHashMap<Int, ClientConnection>()
-    public val users: Users = Users()
+    private val users: Users = Users()
 
     public fun start(wait: Boolean = false) {
         server.start(wait)
@@ -101,13 +99,14 @@ public class NetworkServer(
                     }
                 } else {
                     users += User(packet.name, connection.id)
+                    connection.name = packet.name
                     connection.pending = false
                     connections[connection.id] = connection
                     connector.playerConnected(connection.id, packet.name)
                     connection.send(InitClientPacket(connection.id))
                 }
             is TextPacket -> connector.handle(packet.text)
-            is ChatMessagePacket -> connector.chatMessage(packet.clientId, packet.text)
+            is ChatCommandPacket -> processChatMessage(packet)
         }
     }
 
@@ -119,6 +118,51 @@ public class NetworkServer(
             }
         } else {
             connections[id]?.send(packet)
+        }
+    }
+
+    private suspend fun processChatMessage(packet: ChatCommandPacket) {
+        fun name(id: Int) = connections[id]?.name ?: "<unknown>"
+        fun shiftToken(text: String): Pair<String, String> {
+            if (text.startsWith("\"")) {
+                text.substring(1).indexOf("\"").takeIf { it > 0 }?.let {
+                    return text.substring(1, it + 1) to text.substring(it + 2).trim()
+                } ?: return "" to text
+            } else {
+                return text.indexOf(" ").takeIf { it > 0 }?.let {
+                    text.substring(0, it) to text.substring(it).trim()
+                } ?: text to ""
+            }
+        }
+
+        val response = if (packet.text.startsWith("/")) {
+            val (command, remainder) = shiftToken(packet.text)
+
+            when (command) {
+                "/em", "/me" -> EmoteMessage(name(packet.clientId), remainder)
+                "/w" -> {
+                    val (recipient, message) = shiftToken(remainder)
+                    users[recipient]?.let {
+                        WhisperMessage(name(packet.clientId), it.name, message)
+                    } ?: InfoMessage("Unknown user $recipient")
+                }
+                else -> InfoMessage("Unknown command")
+            }
+        } else {
+            SimpleMessage(name(packet.clientId), packet.text)
+        }
+        val sendPacket = ChatMessagePacket(response)
+        when (response) {
+            is InfoMessage -> connections[packet.clientId]?.send(sendPacket)
+            is WhisperMessage -> {
+                connections[packet.clientId]?.send(sendPacket)
+                users[response.recipient]?.connectionId?.takeUnless {
+                    it == packet.clientId
+                }?.let {
+                    connections[it]?.send(sendPacket)
+                }
+            }
+            else -> connections.values.forEach { it.send(sendPacket) }
         }
     }
 }
