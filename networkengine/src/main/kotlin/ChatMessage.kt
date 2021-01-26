@@ -1,5 +1,3 @@
-import kotlinx.serialization.Serializable
-
 /*
  * Sail and Oar
  * Copyright (c) 2021 Carl W Spain
@@ -24,6 +22,23 @@ import kotlinx.serialization.Serializable
  *
  */
 
+import kotlinx.serialization.Serializable
+import org.commonmark.ext.autolink.AutolinkExtension
+import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
+import org.commonmark.ext.ins.InsExtension
+import org.commonmark.parser.Parser
+import org.commonmark.renderer.html.HtmlRenderer
+
+private val extensions = listOf(
+    StrikethroughExtension.create(),
+    AutolinkExtension.create(),
+    InsExtension.create(),
+)
+
+private val parser = Parser.builder().extensions(extensions).build()
+private val renderer = HtmlRenderer.builder().extensions(extensions).build()
+private fun String.render(): String = renderer.render(parser.parse(this))
+
 @Serializable
 public sealed class ChatMessage {
     abstract public fun toHtml(): String
@@ -31,25 +46,25 @@ public sealed class ChatMessage {
 
 @Serializable
 public data class SystemMessage(val text: String) : ChatMessage() {
-    override fun toHtml(): String = "<p><b>$text</b></p>"
+    override fun toHtml(): String = "**$text**".render()
 }
 
 @Serializable
 public data class InfoMessage(val text: String) : ChatMessage() {
-    override fun toHtml(): String = "<p><i>$text</i></p>"
+    override fun toHtml(): String = "*$text*".render()
 }
 
 @Serializable
 public data class SimpleMessage(val user: String, val text: String) : ChatMessage() {
-    override fun toHtml(): String = "<p><b>$user:</b> $text</p>"
+    override fun toHtml(): String = "**$user:** $text".render()
 }
 
 @Serializable
 public data class WhisperMessage(val sender: String, val recipient: String, val text: String) : ChatMessage() {
-    override fun toHtml(): String = "<p>$sender &gt; $recipient: $text</p>"
+    override fun toHtml(): String = "**$sender &gt; $recipient:** $text".render()
 }
 
 @Serializable
 public data class EmoteMessage(val user: String, val text: String) : ChatMessage() {
-    override fun toHtml(): String = "<p>$user $text</p>"
+    override fun toHtml(): String = "$user $text".render()
 }
