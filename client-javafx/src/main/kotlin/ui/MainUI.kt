@@ -2,6 +2,7 @@ package ui
 
 import game.GameListener
 import javafx.application.Platform
+import javafx.concurrent.Worker
 import javafx.fxml.FXML
 import javafx.scene.control.Button
 import javafx.scene.control.TextField
@@ -22,9 +23,18 @@ class MainUI: GameListener, View() {
 
     private val chatMessages = StringBuilder()
 
+    private var chatWindowAtBottom = true
+
     init {
         btnSend.enableWhen(txtChatEntry.textProperty().isNotEmpty)
         (app as SailAndOarApp).clientProperty.value?.game?.addListener(this)
+        txtChatWindow.engine.loadWorker.stateProperty().onChange {
+            it?.let { state ->
+                if (state == Worker.State.SUCCEEDED && chatWindowAtBottom) {
+                    txtChatWindow.engine.executeScript("window.scrollTo(0, document.body.scrollHeight)")
+                }
+            }
+        }
     }
 
     @FXML
@@ -67,7 +77,10 @@ class MainUI: GameListener, View() {
     override fun appendChat(text: String) {
         Platform.runLater {
             chatMessages.append(text)
-            txtChatWindow.engine.loadContent(chatMessages.toString())
+            with (txtChatWindow.engine) {
+                chatWindowAtBottom = executeScript("(window.innerHeight + window.scrollY) >= document.body.offsetHeight") as Boolean
+                loadContent(chatMessages.toString())
+            }
         }
     }
 }
