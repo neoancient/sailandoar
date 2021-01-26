@@ -46,18 +46,6 @@ class Game {
     private val units: MutableMap<Int, BaseUnit> = ConcurrentHashMap()
     private val listeners: MutableList<GameListener> = CopyOnWriteArrayList()
 
-    fun newPlayer(playerName: String, connId: Int): Player? {
-        var p: Player
-        synchronized(players) {
-            if (players.values.stream().anyMatch { player -> player.name == playerName }) {
-                return null
-            }
-            p = Player(connId, playerName)
-        }
-        addPlayer(p)
-        return p
-    }
-
     fun allPlayers(): Collection<Player> = players.values
 
     fun addPlayer(player: Player) {
@@ -65,6 +53,12 @@ class Game {
             players[player.id] = player
             listeners.forEach { it.playerAdded(player.id) }
         }
+    }
+
+    fun newPlayer(id: Int, name: String): Player {
+        val player = Player(id, name)
+        addPlayer(player)
+        return player
     }
 
     fun removePlayer(playerId: Int): Player? {

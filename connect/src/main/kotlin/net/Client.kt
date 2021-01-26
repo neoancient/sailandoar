@@ -32,12 +32,14 @@ import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CopyOnWriteArrayList
 
+@Suppress("EXPERIMENTAL_API_USAGE")
 class Client(name: String) {
     private val logger = LoggerFactory.getLogger(javaClass)
     var id = -1
     var player = Player(id, name)
     var game: Game? = null
     private val listeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
+
     private val connector = object : ClientConnector {
         override suspend fun handle(data: String) {
             handlePacket(Json.decodeFromString(GamePacket.serializer(), data))
@@ -93,6 +95,7 @@ class Client(name: String) {
             }
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
+            else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
 

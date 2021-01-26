@@ -19,14 +19,14 @@ internal class GameTest {
     @Test
     fun findPlayerByID() {
         val playerName = "Test Player"
-        val p = game.newPlayer(playerName)
-        assertEquals(playerName, game.getPlayer(p!!.id)?.name)
+        val p = game.newPlayer(0, playerName)
+        assertEquals(playerName, game.getPlayer(p.id)?.name)
     }
 
     @Test
     fun allPlayersAdded() {
-        val p1 = game.newPlayer("Player 1")
-        val p2 = game.newPlayer("Player 2")
+        val p1 = game.newPlayer(0, "Player 1")
+        val p2 = game.newPlayer(1, "Player 2")
         val all: Collection<Player?> = game.allPlayers()
         assertAll(
                 { assertEquals(2, all.size) },
@@ -58,24 +58,24 @@ internal class GameTest {
     fun addPlayerNotifiesListener() {
         val listener: GameListener = Mockito.mock(GameListener::class.java)
         game.addListener(listener)
-        val p = game.newPlayer("Test Player")
-        Mockito.verify(listener, Mockito.times(1)).playerAdded(p!!.id)
+        val p = game.newPlayer(0, "Test Player")
+        Mockito.verify(listener, Mockito.times(1)).playerAdded(p.id)
     }
 
     @Test
     fun removePlayerNotifiesListener() {
         val listener: GameListener = Mockito.mock(GameListener::class.java)
         game.addListener(listener)
-        val p = game.newPlayer("Test Player")
-        game.removePlayer(p!!.id)
+        val p = game.newPlayer(0, "Test Player")
+        game.removePlayer(p.id)
         Mockito.verify(listener, Mockito.times(1)).playerAdded(p.id)
     }
 
     @Test
     fun canRemovePlayer() {
-        val p1 = game.newPlayer("Player 1")
-        game.newPlayer("Player 2")
-        game.removePlayer(p1!!.id)
+        val p1 = game.newPlayer(0, "Player 1")
+        game.newPlayer(1, "Player 2")
+        game.removePlayer(p1.id)
         assertAll(
                 { assertEquals(1, game.allPlayers().size) },
                 { assertFalse(game.allPlayers().contains(p1)) })
