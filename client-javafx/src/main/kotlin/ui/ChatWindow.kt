@@ -30,6 +30,7 @@ import javafx.concurrent.Worker
 import javafx.fxml.FXML
 import javafx.scene.control.Button
 import javafx.scene.control.TextField
+import javafx.scene.input.ScrollEvent
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,16 @@ class ChatWindow : GameListener, View() {
                 if (state == Worker.State.SUCCEEDED && chatWindowAtBottom) {
                     txtChatWindow.engine.executeScript("window.scrollTo(0, document.body.scrollHeight)")
                 }
+            }
+        }
+        txtChatWindow.addEventFilter(ScrollEvent.SCROLL) {
+            if (it.isControlDown) {
+                if (it.deltaY > 0) {
+                    txtChatWindow.zoom *= 1.1
+                } else if (it.deltaY < 0) {
+                    txtChatWindow.zoom /= 1.1
+                }
+                it.consume()
             }
         }
     }
