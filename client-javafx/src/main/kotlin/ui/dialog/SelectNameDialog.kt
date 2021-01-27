@@ -22,7 +22,7 @@
  *
  */
 
-package dialog
+package ui.dialog
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets

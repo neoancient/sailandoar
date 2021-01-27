@@ -1,7 +1,7 @@
 package ui
 
-import dialog.SelectNameDialog
-import dialog.StartGameDialog
+import ui.dialog.SelectNameDialog
+import ui.dialog.StartGameDialog
 import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty

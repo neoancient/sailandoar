@@ -1,4 +1,4 @@
-package dialog
+package ui.dialog
 
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
