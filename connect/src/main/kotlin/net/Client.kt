@@ -28,16 +28,19 @@ import ClientConnector
 import NetworkClient
 import game.Game
 import game.Player
+import game.PlayerColor
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
+import unit.ShipStats
 import java.util.concurrent.CopyOnWriteArrayList
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class Client(name: String) {
     private val logger = LoggerFactory.getLogger(javaClass)
     var id = -1
-    var player = Player(id, name)
+    var player = Player(id, name, id, PlayerColor.BLUE)
     var game: Game? = null
+    private val availableShips = ArrayList<ShipStats>()
     private val listeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
 
     private val connector = object : ClientConnector {
@@ -95,9 +98,15 @@ class Client(name: String) {
             }
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
+            is SendAvailableShipsPacket -> {
+                availableShips.clear()
+                availableShips.addAll(packet.ships)
+            }
             else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
+
+    fun getAvailableShips(): List<ShipStats> = availableShips
 
     fun addConnectionListener(l: ConnectionListener) {
         listeners += l

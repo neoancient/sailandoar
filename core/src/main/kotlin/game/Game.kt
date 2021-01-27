@@ -56,9 +56,16 @@ class Game {
     }
 
     fun newPlayer(id: Int, name: String): Player {
-        val player = Player(id, name)
+        val player = Player(id, name, id, selectColor())
         addPlayer(player)
         return player
+    }
+
+    fun selectColor(): PlayerColor {
+        val used = players.values.map { it.color }.toSet()
+        return PlayerColor.values().firstOrNull {
+            it !in used
+        } ?: PlayerColor.values()[0]
     }
 
     fun removePlayer(playerId: Int): Player? {

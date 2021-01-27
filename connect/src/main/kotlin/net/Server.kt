@@ -27,7 +27,6 @@ package net
 import NetworkServer
 import ServerConnector
 import game.Game
-import game.Player
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
@@ -39,8 +38,7 @@ class Server(address: String, serverPort: Int) {
         }
 
         override suspend fun playerConnected(id: Int, name: String) {
-            val player = Player(id, name)
-            game.addPlayer(player)
+            val player = game.newPlayer(id, name)
             send(SendGamePacket(id, game))
             send(AddPlayerPacket(ALL_CLIENTS, player))
         }
