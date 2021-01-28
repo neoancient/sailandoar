@@ -34,6 +34,11 @@ import org.slf4j.LoggerFactory
 import unit.ShipStats
 import java.util.concurrent.CopyOnWriteArrayList
 
+interface ClientListener {
+    fun receiveGame()
+    fun receiveAvailableShips()
+}
+
 @Suppress("EXPERIMENTAL_API_USAGE")
 class Client(name: String) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -41,7 +46,8 @@ class Client(name: String) {
     var player = Player(id, name, id, PlayerColor.BLUE)
     var game: Game? = null
     private val availableShips = ArrayList<ShipStats>()
-    private val listeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
+    private val clientListeners: MutableList<ClientListener> = CopyOnWriteArrayList()
+    private val connectionListeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
 
     private val connector = object : ClientConnector {
         override suspend fun handle(data: String) {
@@ -49,14 +55,14 @@ class Client(name: String) {
         }
 
         override suspend fun nameConflict(suggestion: String, taken: Set<String>) {
-            listeners.forEach {
+            connectionListeners.forEach {
                 it.nameTaken(this@Client, suggestion, taken)
             }
         }
 
         override suspend fun connectionEstablished(clientId: Int) {
             id = clientId
-            listeners.forEach {
+            connectionListeners.forEach {
                 it.clientConnected(this@Client)
             }
             send(RequestAvailableShipsPacket(id))
@@ -108,11 +114,19 @@ class Client(name: String) {
 
     fun getAvailableShips(): List<ShipStats> = availableShips
 
+    fun addClientListener(l: ClientListener) {
+        clientListeners += l
+    }
+
+    fun removeClientListener(l: ClientListener) {
+        clientListeners -= l
+    }
+
     fun addConnectionListener(l: ConnectionListener) {
-        listeners += l
+        connectionListeners += l
     }
 
     fun removeConnectionListener(l: ConnectionListener) {
-        listeners -= l
+        connectionListeners -= l
     }
 }

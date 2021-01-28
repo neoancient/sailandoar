@@ -30,18 +30,30 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import net.Client
+import net.ClientListener
 import tornadofx.*
 import ui.SailAndOarApp
+import unit.ShipStats
 
-internal class GameModel : GameListener, ViewModel() {
-    val gameProperty: ObjectProperty<Game> = SimpleObjectProperty((app as SailAndOarApp).clientProperty.value?.game ?: Game())
-    val game by gameProperty
+internal class GameModel : GameListener, ClientListener, ViewModel() {
+    val clientProperty: ObjectProperty<Client> = bind { (app as SailAndOarApp).clientProperty }
+    val client by clientProperty
+    val gameProperty: ObjectProperty<Game> = SimpleObjectProperty(client?.game ?: Game())
+    private var game by gameProperty
 
-    val players: ObservableList<PlayerModel> = FXCollections.observableArrayList() {
+    val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty)
     }
+    val availableShips: ObservableList<ShipStats> = FXCollections.observableArrayList()
 
     init {
+        client?.addClientListener(this)
+        clientProperty.addListener {_, old, new ->
+            old?.removeClientListener(this)
+            new.addClientListener(this)
+            game = new.game
+        }
         gameProperty.addListener { _, old, new ->
             old.removeListener(this)
             new.addListener(this)
@@ -52,6 +64,7 @@ internal class GameModel : GameListener, ViewModel() {
 
     private fun refreshGame() {
         players.setAll(game.allPlayers().map { PlayerModel(it) }.toList())
+        receiveAvailableShips()
     }
 
     override fun playerAdded(playerId: Int) {
@@ -75,5 +88,13 @@ internal class GameModel : GameListener, ViewModel() {
     }
 
     override fun appendChat(text: String) {
+    }
+
+    override fun receiveGame() {
+        game = client.game
+    }
+
+    override fun receiveAvailableShips() {
+        availableShips.setAll(client.getAvailableShips().sortedBy { it.name })
     }
 }

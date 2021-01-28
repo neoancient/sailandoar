@@ -65,5 +65,23 @@ internal class LobbyView : View() {
                 }
             }
         }
+        lstAvailableShips.items = model.availableShips
+        lstAvailableShips.setCellFactory {
+            object : ListCell<ShipStats>() {
+                override fun updateItem(item: ShipStats?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    if (item == null || empty) {
+                        text = null
+                    } else {
+                        text = item.name
+                    }
+                }
+            }
+        }
+        btnAdd.enableWhen {
+            booleanBinding(lstAvailableShips.selectionModel.selectedItems) {
+                isNotEmpty()
+            }
+        }
     }
 }
