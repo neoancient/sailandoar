@@ -51,6 +51,23 @@ internal class LobbyView : View() {
         tblPlayers.items = model.players
         colPlayerName.setCellValueFactory { it.value.nameProperty }
         colPlayerTeam.setCellValueFactory { it.value.teamProperty }
+        colPlayerTeam.setCellFactory {
+            object : TableCell<PlayerModel, Int>() {
+                override fun updateItem(item: Int?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    if (item == null || empty) {
+                        text = null
+                        style = ""
+                    } else if (item < 0) {
+                        text = messages["noTeam"]
+                        style = "-fx-alignment:center"
+                    } else {
+                        text = item.toString()
+                        style = "-fx-alignment:center"
+                    }
+                }
+            }
+        }
         colPlayerColor.setCellValueFactory { it.value.colorProperty }
         colPlayerColor.setCellFactory {
             object : TableCell<PlayerModel, PlayerColor>() {

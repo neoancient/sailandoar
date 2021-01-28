@@ -25,6 +25,8 @@ package game
 
 import kotlinx.serialization.Serializable
 
+const val NO_TEAM = -1
+
 /**
  * A participant in the game. Each player should have an id that is assigned by the {@link Game}
  * to ensure that it is unique.
@@ -36,5 +38,5 @@ data class Player(
     var team: Int,
     var color: PlayerColor
 ) {
-    constructor (id: Int, name: String) : this(id, name, id, PlayerColor.BLUE)
+    constructor (id: Int, name: String) : this(id, name, NO_TEAM, PlayerColor.BLUE)
 }

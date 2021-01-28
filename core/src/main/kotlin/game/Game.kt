@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
 
-
 /**
  * Manages all aspects of the game including unit state, board, and weather conditions.
  */
@@ -56,7 +55,7 @@ class Game {
     }
 
     fun newPlayer(id: Int, name: String): Player {
-        val player = Player(id, name, id, selectColor())
+        val player = Player(id, name, NO_TEAM, selectColor())
         addPlayer(player)
         return player
     }
