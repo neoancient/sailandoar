@@ -24,6 +24,8 @@ import kotlinx.serialization.Serializable
  *
  */
 
+internal const val ALL_CLIENTS = -1
+
 @Serializable
 internal sealed class Packet
 

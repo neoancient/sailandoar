@@ -104,14 +104,14 @@ public class NetworkServer(
                     connections[connection.id] = connection
                     connector.playerConnected(connection.id, packet.name)
                     connection.send(InitClientPacket(connection.id))
+                    send(packet = ChatMessagePacket(SystemMessage("${packet.name} joined")))
                 }
             is TextPacket -> connector.handle(packet.text)
             is ChatCommandPacket -> processChatMessage(packet)
         }
     }
 
-    public suspend fun send(id: Int, data: String) {
-        val packet = TextPacket(data)
+    internal suspend fun send(id: Int = ALL_CLIENTS, packet: Packet) {
         if (id < 0) {
             connections.values.forEach {
                 it.send(packet)
@@ -119,6 +119,10 @@ public class NetworkServer(
         } else {
             connections[id]?.send(packet)
         }
+    }
+
+    public suspend fun send(id: Int, data: String) {
+        send(id, TextPacket(data))
     }
 
     private suspend fun processChatMessage(packet: ChatCommandPacket) {

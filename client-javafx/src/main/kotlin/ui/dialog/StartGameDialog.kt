@@ -11,7 +11,7 @@ import tornadofx.*
 const val DEFAULT_PORT = 1805
 
 class StartGameDialog : Fragment() {
-    private val nameProperty = SimpleStringProperty("New Player")
+    private val nameProperty = SimpleStringProperty("Player")
     var name: String by nameProperty
     private val hostProperty = SimpleStringProperty(params["host"] as? String ?: "")
     val host: String by hostProperty
