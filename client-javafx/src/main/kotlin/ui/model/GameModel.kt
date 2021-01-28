@@ -49,6 +49,7 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
 
     init {
         client?.addClientListener(this)
+        game.addListener(this)
         clientProperty.addListener {_, old, new ->
             old?.removeClientListener(this)
             new.addClientListener(this)
