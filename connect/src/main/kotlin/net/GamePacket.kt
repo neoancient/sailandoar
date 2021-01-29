@@ -26,8 +26,10 @@ package net
 import game.Game
 import game.Player
 import kotlinx.serialization.Serializable
+import serialization.UUIDAsStringSerializer
 import unit.BaseUnit
 import unit.ShipStats
+import java.util.*
 
 const val ALL_CLIENTS = -1
 
@@ -56,6 +58,10 @@ class RequestAvailableShipsPacket(override val clientId: Int): GamePacket()
 
 @Serializable
 class SendAvailableShipsPacket(override val clientId: Int, val ships: Collection<ShipStats>): GamePacket()
+
+@Serializable
+class AddShipToForcePacket(override val clientId: Int,
+                           @Serializable(with = UUIDAsStringSerializer::class) val id: UUID): GamePacket()
 
 @Serializable
 class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): GamePacket()

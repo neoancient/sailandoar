@@ -38,11 +38,11 @@ class Ship(@Serializable(with = UUIDAsStringSerializer::class)
         requireNotNull(ShipLibrary.instance.getShip(shipStatId))
     }
     private var shipCondition = ShipCondition(shipStats)
-    private var shipGameState = ShipGameState(-1)
+    private var shipGameState = ShipGameState(-1, "")
 
     override fun initGameState(unitId: Int) {
         super.initGameState(unitId)
-        shipGameState = ShipGameState(unitId)
+        shipGameState = ShipGameState(unitId, shipStats.name)
     }
 
     val sizeClass by shipStats::sizeClass
@@ -73,6 +73,7 @@ class Ship(@Serializable(with = UUIDAsStringSerializer::class)
     var rowerCount by shipCondition::rowerCount
     var marineCount by shipCondition::marineCount
 
+    override var name by shipGameState::name
     override var playerId by shipGameState::playerId
     override var facing by shipGameState::facing
     override var primaryPosition by shipGameState::primaryPosition

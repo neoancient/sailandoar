@@ -77,10 +77,22 @@ class Game {
 
     fun getPlayer(playerId: Int): Player? = players[playerId]
 
+    /**
+     * Initializes a [unit], assigns an id, and adds it to the game. Returns the
+     * assigned id.
+     */
     fun addUnit(unit: BaseUnit): Int {
         unit.initGameState(nextUnitId.getAndIncrement())
+        return replaceUnit(unit.unitId, unit)
+    }
+
+    /**
+     * Add an initailized [unit] to the game with [unitId]. If there is alreayd
+     * a unit with this id, it is replaced.
+     */
+    fun replaceUnit(unitId: Int, unit: BaseUnit): Int {
         units[unit.unitId] = unit
-        listeners.forEach{ it.unitAdded(unit.unitId) }
+        listeners.forEach { it.unitAdded(unit.unitId) }
         return unit.unitId
     }
 

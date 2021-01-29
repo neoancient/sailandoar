@@ -1,5 +1,5 @@
 /*
- *  Sail and Oar
+ * Sail and Oar
  * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -44,8 +44,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net
+package net.handler
 
+import game.Game
+import net.GamePacket
+import net.RequestAvailableShipsPacket
+import net.SendAvailableShipsPacket
 import unit.ShipLibrary
 import unit.ShipStats
 
@@ -55,7 +59,7 @@ import unit.ShipStats
 class RequestAvailableShipsHandler(val packet: RequestAvailableShipsPacket): ServerPacketHandler {
     private val ships = ArrayList<ShipStats>()
 
-    override fun process() {
+    override fun process(game: Game) {
         ships.addAll(ShipLibrary.allShips())
     }
 

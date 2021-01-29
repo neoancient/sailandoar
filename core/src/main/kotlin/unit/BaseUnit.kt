@@ -38,6 +38,7 @@ abstract class BaseUnit() {
         this.unitId = unitId
     }
 
+    abstract var name: String
     abstract var playerId: Int
     abstract var facing: Int
     abstract var primaryPosition: HexCoords?

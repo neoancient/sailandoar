@@ -31,8 +31,11 @@ import game.Player
 import game.PlayerColor
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
+import serialization.polymorphismModule
 import unit.ShipStats
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.collections.ArrayList
 
 interface ClientListener {
     fun receiveGame()
@@ -51,7 +54,10 @@ class Client(name: String) {
 
     private val connector = object : ClientConnector {
         override suspend fun handle(data: String) {
-            handlePacket(Json.decodeFromString(GamePacket.serializer(), data))
+            handlePacket(Json {
+                serializersModule = polymorphismModule
+
+            }.decodeFromString(GamePacket.serializer(), data))
         }
 
         override suspend fun nameConflict(suggestion: String, taken: Set<String>) {
@@ -84,7 +90,10 @@ class Client(name: String) {
     }
 
     fun send(packet: GamePacket) {
-        client.send(Json.encodeToString(GamePacket.serializer(), packet))
+        client.send(Json {
+            serializersModule = polymorphismModule
+
+        }.encodeToString(GamePacket.serializer(), packet))
     }
 
     suspend fun sendName(name: String) {
@@ -108,11 +117,16 @@ class Client(name: String) {
                 availableShips.clear()
                 availableShips.addAll(packet.ships)
             }
+            is AddUnitPacket -> game?.replaceUnit(packet.unit.unitId, packet.unit)
             else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
 
     fun getAvailableShips(): List<ShipStats> = availableShips
+
+    fun addUnit(shipId: UUID) {
+        send(AddShipToForcePacket(id, shipId))
+    }
 
     fun addClientListener(l: ClientListener) {
         clientListeners += l

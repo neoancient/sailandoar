@@ -1,6 +1,6 @@
-/**
+/*
  * Sail and Oar
- * Copyright (c) 2020 Carl W Spain
+ * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,20 +19,27 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
-package net
 
-/**
- * Executes a game task and provides any reports or client updates for the server.
- */
-interface ServerPacketHandler {
-    /**
-     * Process the task
-     */
-    fun process()
+package net.handler
 
-    /**
-     * Any client updates that need to be sent
-     */
-    fun packetsToSend(): List<GamePacket> = emptyList()
+import game.Game
+import net.ALL_CLIENTS
+import net.AddShipToForcePacket
+import net.AddUnitPacket
+import net.GamePacket
+import unit.Ship
+
+internal class AddShipHandler(val packet: AddShipToForcePacket) : ServerPacketHandler {
+    val toSend = ArrayList<GamePacket>()
+
+    override fun process(game: Game) {
+        val ship = Ship(packet.id)
+        ship.playerId = packet.clientId
+        game.addUnit(ship)
+        toSend += AddUnitPacket(ALL_CLIENTS, ship)
+    }
+
+    override fun packetsToSend() = toSend
 }

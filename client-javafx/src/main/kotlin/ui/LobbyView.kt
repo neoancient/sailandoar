@@ -25,12 +25,13 @@
 package ui
 
 import game.PlayerColor
+import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
-import unit.Ship
+import ui.model.UnitModel
 import unit.ShipStats
 
 internal class LobbyView : View() {
@@ -43,9 +44,9 @@ internal class LobbyView : View() {
     internal val colPlayerColor: TableColumn<PlayerModel, PlayerColor> by fxid()
     internal val lstAvailableShips: ListView<ShipStats> by fxid()
     internal val btnAdd: Button by fxid()
-    internal val tblShips: TableView<Ship> by fxid()
-    internal val colShip: TableColumn<Ship, Ship> by fxid()
-    internal val colDeployment: TableColumn<Ship, Number> by fxid()
+    internal val tblShips: TableView<UnitModel> by fxid()
+    internal val colShip: TableColumn<UnitModel, String> by fxid()
+    internal val colDeployment: TableColumn<UnitModel, Number> by fxid()
 
     init {
         tblPlayers.items = model.players
@@ -99,6 +100,15 @@ internal class LobbyView : View() {
             booleanBinding(lstAvailableShips.selectionModel.selectedItems) {
                 isNotEmpty()
             }
+        }
+        tblShips.items = model.units
+        colShip.setCellValueFactory { it.value.nameProperty }
+    }
+
+    @FXML
+    fun onAdd() {
+        lstAvailableShips.selectionModel.selectedItems.forEach {
+            model.client.addUnit(it.id)
         }
     }
 }

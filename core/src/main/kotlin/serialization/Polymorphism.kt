@@ -22,32 +22,15 @@
  *
  */
 
-package ui.model
+package serialization
 
-import board.HexCoords
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.Property
-import javafx.beans.property.StringProperty
-import tornadofx.*
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import unit.BaseUnit
 import unit.Ship
 
-open class UnitModel(val unit: BaseUnit) {
-    val unitId: Int by unit::unitId
-    val nameProperty: ObjectProperty<String> = unit.observable(BaseUnit::name)
-    var name: String by nameProperty
-    val playerIdProperty: Property<Int> = unit.observable(BaseUnit::playerId)
-    var playerId: Int by playerIdProperty
-    val facingProperty: Property<Int> = unit.observable(BaseUnit::facing)
-    var facing: Int by facingProperty
-    val primaryPositionPropety: ObjectProperty<HexCoords?> = unit.observable(BaseUnit::primaryPosition)
-    var primaryPosition: HexCoords? by primaryPositionPropety
-
-    companion object {
-        fun createModel(unit: BaseUnit) =
-            when (unit) {
-                is Ship -> ShipModel(unit)
-                else -> UnitModel(unit)
-            }
+val polymorphismModule = SerializersModule {
+    polymorphic(BaseUnit::class) {
+        subclass(Ship::class, Ship.serializer())
     }
 }

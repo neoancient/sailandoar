@@ -28,13 +28,19 @@ import NetworkServer
 import ServerConnector
 import game.Game
 import kotlinx.serialization.json.Json
+import net.handler.AddShipHandler
+import net.handler.RequestAvailableShipsHandler
 import org.slf4j.LoggerFactory
+import serialization.polymorphismModule
 
 class Server(address: String, serverPort: Int) {
     private val game = Game()
     private val connector = object : ServerConnector {
         override suspend fun handle(json: String) {
-            handlePacket(Json.decodeFromString(GamePacket.serializer(), json))
+            handlePacket(Json {
+                serializersModule = polymorphismModule
+
+            }.decodeFromString(GamePacket.serializer(), json))
         }
 
         override suspend fun playerConnected(id: Int, name: String) {
@@ -55,12 +61,16 @@ class Server(address: String, serverPort: Int) {
     }
 
     private suspend fun send(packet: GamePacket) {
-        server.send(packet.clientId, Json.encodeToString(GamePacket.serializer(), packet))
+        server.send(packet.clientId, Json {
+            serializersModule = polymorphismModule
+
+        }.encodeToString(GamePacket.serializer(), packet))
     }
 
     private suspend fun handlePacket(packet: GamePacket) {
         val handler = when (packet) {
             is RequestAvailableShipsPacket -> RequestAvailableShipsHandler(packet)
+            is AddShipToForcePacket -> AddShipHandler(packet)
             else -> {
                 LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
                     ${game.getPlayer(packet.clientId)}""".trimMargin())
@@ -68,7 +78,7 @@ class Server(address: String, serverPort: Int) {
             }
         }
         if (handler != null) {
-            handler.process()
+            handler.process(game)
             handler.packetsToSend().forEach { p -> send(p) }
         }
     }
