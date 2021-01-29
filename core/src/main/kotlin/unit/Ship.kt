@@ -72,4 +72,8 @@ class Ship(@Serializable(with = UUIDAsStringSerializer::class)
     var sailorCount by shipCondition::sailorCount
     var rowerCount by shipCondition::rowerCount
     var marineCount by shipCondition::marineCount
+
+    override var playerId by shipGameState::playerId
+    override var facing by shipGameState::facing
+    override var primaryPosition by shipGameState::primaryPosition
 }

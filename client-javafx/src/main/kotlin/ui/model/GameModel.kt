@@ -45,6 +45,8 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty)
     }
+    val units: ObservableList<UnitModel> = FXCollections.observableArrayList()
+
     val availableShips: ObservableList<ShipStats> = FXCollections.observableArrayList()
 
     init {
@@ -65,6 +67,7 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
 
     private fun refreshGame() {
         players.setAll(game.allPlayers().map { PlayerModel(it) }.toList())
+        units.setAll(game.allUnits().map { UnitModel.createModel(it) }.toList())
         receiveAvailableShips()
     }
 
@@ -81,11 +84,15 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     }
 
     override fun unitAdded(unitId: Int) {
-        TODO("Not yet implemented")
+        game.getUnit(unitId)?.let {
+            units.add(UnitModel.createModel(it))
+        }
     }
 
     override fun unitRemoved(unitId: Int) {
-        TODO("Not yet implemented")
+        units.removeIf {
+            it.unitId == unitId
+        }
     }
 
     override fun appendChat(text: String) {

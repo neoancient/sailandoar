@@ -1,6 +1,6 @@
-/**
+/*
  * Sail and Oar
- * Copyright (c) 2020 Carl W Spain
+ * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,26 +19,32 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package unit
+package ui.model
 
 import board.HexCoords
-import kotlinx.serialization.Serializable
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.Property
+import tornadofx.*
+import unit.BaseUnit
+import unit.Ship
 
-/**
- * Base class for physical objects in the game that are not terrain. Primarily ships, but
- * can also include fortresses, ground forces on the shore, or sea monsters
- */
-@Serializable
-abstract class BaseUnit() {
-    var unitId = -1
+open class UnitModel(val unit: BaseUnit) {
+    val unitId: Int by unit::unitId
+    val playerIdProperty: Property<Int> = unit.observable(BaseUnit::playerId)
+    var playerId by playerIdProperty
+    val facingProperty: Property<Int> = unit.observable(BaseUnit::facing)
+    var facing by facingProperty
+    val primaryPositionPropety: ObjectProperty<HexCoords?> = unit.observable(BaseUnit::primaryPosition)
+    var primaryPosition by primaryPositionPropety
 
-    open fun initGameState(unitId: Int) {
-        this.unitId = unitId
+    companion object {
+        fun createModel(unit: BaseUnit) =
+            when (unit) {
+                is Ship -> ShipModel(unit)
+                else -> UnitModel(unit)
+            }
     }
-
-    abstract var playerId: Int
-    abstract var facing: Int
-    abstract var primaryPosition: HexCoords?
 }
