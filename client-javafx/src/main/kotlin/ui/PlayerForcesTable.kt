@@ -22,35 +22,34 @@
  *
  */
 
-package ui.model
+package ui
 
-import board.HexCoords
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.Property
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
+import javafx.beans.binding.Bindings
+import javafx.scene.layout.AnchorPane
 import tornadofx.*
-import unit.BaseUnit
-import unit.Ship
+import ui.model.GameModel
+import ui.model.PlayerModel
+import ui.model.UnitModel
 
-open class UnitModel(val unit: BaseUnit) {
-    val unitId: Int by unit::unitId
-    val nameProperty: StringProperty = SimpleStringProperty().apply {
-        bind(unit.observable(BaseUnit::name))
-    }
-    var name: String by nameProperty
-    val playerIdProperty: Property<Int> = unit.observable(BaseUnit::playerId)
-    var playerId: Int by playerIdProperty
-    val facingProperty: Property<Int> = unit.observable(BaseUnit::facing)
-    var facing: Int by facingProperty
-    val primaryPositionPropety: ObjectProperty<HexCoords?> = unit.observable(BaseUnit::primaryPosition)
-    var primaryPosition: HexCoords? by primaryPositionPropety
-
-    companion object {
-        fun createModel(unit: BaseUnit) =
-            when (unit) {
-                is Ship -> ShipModel(unit)
-                else -> UnitModel(unit)
+class PlayerForcesTable : View() {
+    private val model: GameModel by inject()
+    override val root = tableview(model.players) {
+        readonlyColumn(messages["name"], PlayerModel::name).remainingWidth()
+        column(messages["team"], PlayerModel::team).cellFormat {
+            text = if (it < 0) messages["noTeam"] else it.toString()
+            style = "-fx-alignment:center"
+        }
+        column(messages["color"], PlayerModel::color).cellFormat {
+            style = "-fx-background-color:#${item.rgb.toString(16)}"
+        }
+        smartResize()
+        rowExpander { player ->
+            paddingLeft = expanderColumn.width
+            expanded = true
+            tableview(model.units.filtered { it.playerId == player.id }) {
+                readonlyColumn(messages["unit"], UnitModel::name)
+                smartResize()
             }
+        }
     }
 }

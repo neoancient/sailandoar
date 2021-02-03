@@ -24,65 +24,25 @@
 
 package ui
 
-import game.PlayerColor
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Pane
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
-import ui.model.UnitModel
 import unit.ShipStats
 
 internal class LobbyView : View() {
     override val root: AnchorPane by fxml()
     internal val model: GameModel by inject()
+    internal val tblForces: PlayerForcesTable by inject()
 
-    internal val tblPlayers: TableView<PlayerModel> by fxid()
-    internal val colPlayerName: TableColumn<PlayerModel, String> by fxid()
-    internal val colPlayerTeam: TableColumn<PlayerModel, Int> by fxid()
-    internal val colPlayerColor: TableColumn<PlayerModel, PlayerColor> by fxid()
     internal val lstAvailableShips: ListView<ShipStats> by fxid()
     internal val btnAdd: Button by fxid()
-    internal val tblShips: TableView<UnitModel> by fxid()
-    internal val colShip: TableColumn<UnitModel, String> by fxid()
-    internal val colDeployment: TableColumn<UnitModel, Number> by fxid()
+    internal val panForces: Pane by fxid()
 
     init {
-        tblPlayers.items = model.players
-        colPlayerName.setCellValueFactory { it.value.nameProperty }
-        colPlayerTeam.setCellValueFactory { it.value.teamProperty }
-        colPlayerTeam.setCellFactory {
-            object : TableCell<PlayerModel, Int>() {
-                override fun updateItem(item: Int?, empty: Boolean) {
-                    super.updateItem(item, empty)
-                    if (item == null || empty) {
-                        text = null
-                        style = ""
-                    } else if (item < 0) {
-                        text = messages["noTeam"]
-                        style = "-fx-alignment:center"
-                    } else {
-                        text = item.toString()
-                        style = "-fx-alignment:center"
-                    }
-                }
-            }
-        }
-        colPlayerColor.setCellValueFactory { it.value.colorProperty }
-        colPlayerColor.setCellFactory {
-            object : TableCell<PlayerModel, PlayerColor>() {
-                override fun updateItem(item: PlayerColor?, empty: Boolean) {
-                    super.updateItem(item, empty)
-                    if (item == null || empty) {
-                        text = null
-                        style = ""
-                    } else {
-                        style = "-fx-background-color:#${item.rgb.toString(16)}"
-                    }
-                }
-            }
-        }
         lstAvailableShips.items = model.availableShips
         lstAvailableShips.setCellFactory {
             object : ListCell<ShipStats>() {
@@ -101,8 +61,7 @@ internal class LobbyView : View() {
                 isNotEmpty()
             }
         }
-        tblShips.items = model.units
-        colShip.setCellValueFactory { it.value.nameProperty }
+        panForces.children.setAll(tblForces.root)
     }
 
     @FXML
