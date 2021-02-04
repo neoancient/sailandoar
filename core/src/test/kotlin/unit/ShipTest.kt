@@ -23,6 +23,7 @@
 
 package unit
 
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -64,6 +65,24 @@ internal class ShipTest {
                 {assertTrue(ship.mastCount < ship.originalMastCount)},
                 {assertTrue(ship.hullPoints < ship.originalHullPoints)},
                 {assertTrue(ship.sailorCount < ship.originalSailorCount)}
+        )
+    }
+
+    @Test
+    fun testSerialization() {
+        val shipStats = ShipLibrary.instance.allShips().first()
+        val ship = Ship(shipStats.id)
+        ship.hullPoints--
+        ship.unitId = 2
+        ship.playerId = 3
+
+        val json = Json.encodeToString(Ship.serializer(), ship)
+        val decoded = Json.decodeFromString(Ship.serializer(), json)
+
+        assertAll (
+            { assertEquals(2, decoded.unitId) },
+            { assertEquals(shipStats.hullPoints - 1, decoded.hullPoints) },
+            { assertEquals(3, decoded.playerId) },
         )
     }
 }

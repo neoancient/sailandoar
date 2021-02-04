@@ -37,7 +37,7 @@ internal class GameTest {
     @Test
     fun findUnitById() {
         val unit = Ship(ShipLibrary.instance.allShips().first().id)
-        val id = game.addUnit(unit)
+        val id = game.addUnit(unit, 0)
         assertEquals(game.getUnit(id), unit)
     }
 
@@ -45,8 +45,8 @@ internal class GameTest {
     fun allUnitsAdded() {
         val unit1 = Ship(ShipLibrary.instance.allShips().first().id)
         val unit2 = Ship(ShipLibrary.instance.allShips().last().id)
-        game.addUnit(unit1)
-        game.addUnit(unit2)
+        game.addUnit(unit1, 0)
+        game.addUnit(unit2, 0)
         val all = game.allUnits()
         assertAll(
                 { assertEquals(2, all.size) },

@@ -32,7 +32,7 @@ import board.HexCoords
  * campaign purposes is tracked by {@link AbstractUnitCondition}
  */
 @Serializable
-sealed class AbstractUnitGameState() {
+sealed class AbstractUnitGameState {
     abstract val unitId: Int
     abstract var name: String
     var playerId: Int = 0

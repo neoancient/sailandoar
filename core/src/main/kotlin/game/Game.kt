@@ -78,11 +78,12 @@ class Game {
     fun getPlayer(playerId: Int): Player? = players[playerId]
 
     /**
-     * Initializes a [unit], assigns an id, and adds it to the game. Returns the
-     * assigned id.
+     * Initializes a [unit], assigns a unit id and a [playerId], and adds it to the game.
+     * Returns the assigned id.
      */
-    fun addUnit(unit: BaseUnit): Int {
+    fun addUnit(unit: BaseUnit, playerId: Int): Int {
         unit.initGameState(nextUnitId.getAndIncrement())
+        unit.playerId = playerId
         return replaceUnit(unit.unitId, unit)
     }
 

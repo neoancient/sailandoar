@@ -26,6 +26,9 @@ package unit
 import serialization.UUIDAsStringSerializer
 import java.util.*
 import kotlinx.serialization.Serializable
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KProperty
 
 /**
  * The primary unit of the game
@@ -64,17 +67,35 @@ class Ship(@Serializable(with = UUIDAsStringSerializer::class)
     val originalRowerCount by shipStats::rowerCount
     val originalMarineCount by shipStats::marineCount
 
-    var mastCount by shipCondition::mastCount
-    var gunCount by shipCondition::gunCount
-    var hullPoints by shipCondition::hullPoints
-    var riggingPoints by shipCondition::riggingPoints
-    var oarPoints by shipCondition::oarPoints
-    var sailorCount by shipCondition::sailorCount
-    var rowerCount by shipCondition::rowerCount
-    var marineCount by shipCondition::marineCount
+    var mastCount by dynamic { shipCondition::mastCount }
+    var gunCount by dynamic { shipCondition::gunCount }
+    var hullPoints by dynamic { shipCondition::hullPoints }
+    var riggingPoints by dynamic { shipCondition::riggingPoints }
+    var oarPoints by dynamic { shipCondition::oarPoints }
+    var sailorCount by dynamic { shipCondition::sailorCount }
+    var rowerCount by dynamic { shipCondition::rowerCount }
+    var marineCount by dynamic { shipCondition::marineCount }
 
-    override var name by shipGameState::name
-    override var playerId by shipGameState::playerId
-    override var facing by shipGameState::facing
-    override var primaryPosition by shipGameState::primaryPosition
+    override var name by dynamic { shipGameState::name }
+    override var playerId by dynamic { shipGameState::playerId }
+    override var facing by dynamic { shipGameState::facing }
+    override var primaryPosition by dynamic { shipGameState::primaryPosition }
 }
+
+/**
+ * Allows delegating a property to a property of another class when the instance of
+ * the other class is not static
+ */
+fun <T>dynamic(supplier: () -> KProperty<T>): ReadWriteProperty<Any?, T> =
+    object  : ReadWriteProperty<Any?, T> {
+        override operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
+            supplier.invoke().getter.call()
+
+        override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+            supplier.invoke().takeIf {
+                it is KMutableProperty<*>
+            }?.let {
+                (it as KMutableProperty<*>).setter.call(value)
+            }
+        }
+    }

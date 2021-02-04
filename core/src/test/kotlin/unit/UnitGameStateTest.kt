@@ -24,17 +24,20 @@
 package unit
 
 import board.Board
+import board.HexCoords
 import board.V_DIR_NW
 import board.V_DIR_SE
+import kotlinx.serialization.json.Json
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 
-internal class AbstractUnitGameStateTest {
+internal class UnitGameStateTest {
 
     @Test
     fun addedPositionCorrectRelativeToPrimary() {
-        val state = ShipGameState(1)
+        val state = ShipGameState(1, "Test Unit")
         val board = Board(10, 10)
         val primary = board.createCoords(6, 6)
         val relative = board.createCoords(0, 1)
@@ -46,7 +49,7 @@ internal class AbstractUnitGameStateTest {
 
     @Test
     fun secondaryPositionRotatesWithUnit() {
-        val state = ShipGameState(1)
+        val state = ShipGameState(1, "Test Unit")
         val board = Board(10, 10)
         val primary = board.createCoords(6, 6)
         val relative = board.createCoords(0, 1)
@@ -56,4 +59,25 @@ internal class AbstractUnitGameStateTest {
         state.facing = V_DIR_NW
         assertTrue(absolute in state.allPositions())
     }
+
+    @Test
+    fun testSerialization() {
+        val state = ShipGameState(42, "Test Unit")
+        state.playerId = 4
+        state.facing = 5
+        state.primaryPosition = HexCoords(4, 4, false)
+        state.addSecondaryPosition(HexCoords(4, 3, false))
+
+        val json = Json.encodeToString(ShipGameState.serializer(), state)
+        val decoded = Json.decodeFromString(ShipGameState.serializer(), json)
+
+        Assertions.assertAll(
+            { Assertions.assertEquals(42, decoded.unitId) },
+            { Assertions.assertEquals("Test Unit", decoded.name) },
+            { Assertions.assertEquals(4, decoded.playerId) },
+            { Assertions.assertEquals(5, decoded.facing) },
+            { Assertions.assertEquals(HexCoords(4, 4, false), decoded.primaryPosition) },
+        )
+    }
+
 }

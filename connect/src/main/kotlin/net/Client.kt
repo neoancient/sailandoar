@@ -56,7 +56,6 @@ class Client(name: String) {
         override suspend fun handle(data: String) {
             handlePacket(Json {
                 serializersModule = polymorphismModule
-
             }.decodeFromString(GamePacket.serializer(), data))
         }
 

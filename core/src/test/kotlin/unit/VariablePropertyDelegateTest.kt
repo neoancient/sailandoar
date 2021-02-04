@@ -22,23 +22,49 @@
  *
  */
 
-package net.handler
+package unit
 
-import game.Game
-import net.ALL_CLIENTS
-import net.AddShipToForcePacket
-import net.AddUnitPacket
-import net.GamePacket
-import unit.Ship
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
-internal class AddShipHandler(val packet: AddShipToForcePacket) : ServerPacketHandler {
-    val toSend = ArrayList<GamePacket>()
+class InnerClass(var prop: Int)
 
-    override fun process(game: Game) {
-        val ship = Ship(packet.id)
-        game.addUnit(ship, packet.clientId)
-        toSend += AddUnitPacket(ALL_CLIENTS, ship)
+private class TestClass(var inner: InnerClass) {
+    var variable by dynamic { inner::prop }
+}
+
+internal class VariablePropertyDelegateTest {
+    @Test
+    fun getFromInitialValue() {
+        val test = TestClass(InnerClass(5))
+
+        assertEquals(5, test.variable)
     }
 
-    override fun packetsToSend() = toSend
+    @Test
+    fun setFromInitialValue() {
+        val test = TestClass(InnerClass(5))
+        test.variable = 8
+
+        assertEquals(8, test.variable)
+    }
+
+    @Test
+    fun getAfterChangingValue() {
+        val test = TestClass(InnerClass(5))
+        test.inner = InnerClass(10)
+
+
+        assertEquals(10, test.variable)
+    }
+
+    @Test
+    fun setAfterChangingValue() {
+        val test = TestClass(InnerClass(5))
+        test.inner = InnerClass(10)
+        test.variable = 15
+
+
+        assertEquals(15, test.variable)
+    }
 }
