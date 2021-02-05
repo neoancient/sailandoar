@@ -67,7 +67,7 @@ class AddShipToForcePacket(override val clientId: Int,
 class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): GamePacket()
 
 @Serializable
-class RemoveUnitPacket(override val clientId: Int, val unit: BaseUnit): GamePacket()
+class RemoveUnitPacket(override val clientId: Int, val unitId: Int): GamePacket()
 
 @Serializable
 class BroadcastChatMessagePacket(override val clientId: Int, val text: String): GamePacket()

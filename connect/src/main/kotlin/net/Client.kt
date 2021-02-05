@@ -117,6 +117,7 @@ class Client(name: String) {
                 availableShips.addAll(packet.ships)
             }
             is AddUnitPacket -> game?.replaceUnit(packet.unit.unitId, packet.unit)
+            is RemoveUnitPacket -> game?.removeUnit(packet.unitId)
             else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
@@ -125,6 +126,10 @@ class Client(name: String) {
 
     fun addUnit(shipId: UUID) {
         send(AddShipToForcePacket(id, shipId))
+    }
+
+    fun removeUnit(unitId: Int) {
+        send(RemoveUnitPacket(id, unitId))
     }
 
     fun addClientListener(l: ClientListener) {

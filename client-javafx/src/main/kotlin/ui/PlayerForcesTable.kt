@@ -25,7 +25,7 @@
 package ui
 
 import javafx.beans.binding.Bindings
-import javafx.scene.layout.AnchorPane
+import javafx.scene.input.KeyCode
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
@@ -50,7 +50,17 @@ class PlayerForcesTable : View() {
                 smartResize()
                 fixedCellSize = 30.0
                 prefHeightProperty().bind(Bindings.size(items).multiply(fixedCellSizeProperty()).add(30.0))
+                setOnKeyPressed { event ->
+                    if (event.code == KeyCode.DELETE) {
+                        selectionModel.selectedItem?.takeIf {
+                            it.playerId == model.client.id
+                        }?.let {
+                            model.client.removeUnit(it.unitId)
+                        }
+                    }
+                }
             }
         }
+        smartResize()
     }
 }

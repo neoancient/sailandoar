@@ -29,6 +29,7 @@ import ServerConnector
 import game.Game
 import kotlinx.serialization.json.Json
 import net.handler.AddShipHandler
+import net.handler.RemoveUnitHandler
 import net.handler.RequestAvailableShipsHandler
 import org.slf4j.LoggerFactory
 import serialization.polymorphismModule
@@ -71,6 +72,7 @@ class Server(address: String, serverPort: Int) {
         val handler = when (packet) {
             is RequestAvailableShipsPacket -> RequestAvailableShipsHandler(packet)
             is AddShipToForcePacket -> AddShipHandler(packet)
+            is RemoveUnitPacket -> RemoveUnitHandler(packet)
             else -> {
                 LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
                     ${game.getPlayer(packet.clientId)}""".trimMargin())
