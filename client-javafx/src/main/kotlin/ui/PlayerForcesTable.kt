@@ -42,13 +42,14 @@ class PlayerForcesTable : View() {
         column(messages["color"], PlayerModel::color).cellFormat {
             style = "-fx-background-color:#${item.rgb.toString(16)}"
         }
-        smartResize()
         rowExpander { player ->
             paddingLeft = expanderColumn.width
-            expanded = true
-            tableview(model.units.filtered { it.playerId == player.id }) {
+            val unitList = model.units.filtered { it.playerId == player.id }
+            tableview(unitList) {
                 readonlyColumn(messages["unit"], UnitModel::name)
                 smartResize()
+                fixedCellSize = 30.0
+                prefHeightProperty().bind(Bindings.size(items).multiply(fixedCellSizeProperty()).add(30.0))
             }
         }
     }
