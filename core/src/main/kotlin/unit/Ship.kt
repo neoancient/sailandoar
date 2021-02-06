@@ -49,6 +49,7 @@ class Ship(@Serializable(with = UUIDAsStringSerializer::class)
     }
 
     val sizeClass by shipStats::sizeClass
+    val era by shipStats::era
     val cargoSpace by shipStats::cargoSpace
     val riggingType by shipStats::riggingType
     val originalMastCount by shipStats::mastCount

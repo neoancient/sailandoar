@@ -11,7 +11,7 @@ internal class ShipStatsTest {
     @Test
     fun testSerialization() {
         val ship = ShipStats(UUID.randomUUID(), "Irish Rover",
-            SizeClass.VERY_LARGE, 10000000, RiggingType.FORE_AND_AFT,
+            SizeClass.VERY_LARGE, Era.GOLDEN, 10000000, RiggingType.FORE_AND_AFT,
             23, 6, 1, 2, false, 0, 0,
             0, RamType.NONE, 400, 200, 0, 8, 0, 0)
 

@@ -27,5 +27,5 @@ package unit
  * Types of sail configuration, affecting speed and maneuverability
  */
 enum class RiggingType {
-    SQUARE, FORE_AND_AFT, LATEEN
+    SQUARE, FORE_AND_AFT, JUNK
 }
