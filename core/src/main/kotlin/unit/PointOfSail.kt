@@ -23,6 +23,8 @@
 
 package unit
 
+import kotlin.math.roundToInt
+
 /**
  * Represents angle between ship facing and wind direction
  */
@@ -30,5 +32,26 @@ enum class PointOfSail {
     RUNNING,
     REACHING,
     BEATING,
-    INTO_WIND
+    INTO_WIND;
+
+    fun sailSpeed(baseSpeed: Int, rigging: RiggingType) =
+        if (baseSpeed == 0) 0
+        else when (this) {
+            REACHING -> baseSpeed
+            RUNNING -> (baseSpeed *
+                if (rigging == RiggingType.JUNK) 0.75
+                else 0.67).roundToInt().coerceAtLeast(1)
+            BEATING -> (baseSpeed *
+                    if (rigging == RiggingType.FORE_AND_AFT) 0.33
+                    else 0.25).roundToInt().coerceAtLeast(1)
+            INTO_WIND -> 0
+        }
+
+    fun rowingSpeed(baseSpeed: Int) =
+        if (baseSpeed == 0) 0
+        else when (this) {
+            RUNNING -> baseSpeed + 1
+            INTO_WIND -> baseSpeed - 1
+            else -> baseSpeed
+        }
 }
