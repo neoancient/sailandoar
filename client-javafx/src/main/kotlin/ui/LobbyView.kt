@@ -29,6 +29,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import tornadofx.*
+import ui.dialog.AddUnitsDialog
 import ui.model.GameModel
 import ui.model.PlayerModel
 import unit.ShipStats
@@ -38,36 +39,15 @@ internal class LobbyView : View() {
     internal val model: GameModel by inject()
     internal val tblForces: PlayerForcesTable by inject()
 
-    internal val lstAvailableShips: ListView<ShipStats> by fxid()
-    internal val btnAdd: Button by fxid()
     internal val panForces: Pane by fxid()
 
     init {
-        lstAvailableShips.items = model.availableShips
-        lstAvailableShips.setCellFactory {
-            object : ListCell<ShipStats>() {
-                override fun updateItem(item: ShipStats?, empty: Boolean) {
-                    super.updateItem(item, empty)
-                    if (item == null || empty) {
-                        text = null
-                    } else {
-                        text = item.name
-                    }
-                }
-            }
-        }
-        btnAdd.enableWhen {
-            booleanBinding(lstAvailableShips.selectionModel.selectedItems) {
-                isNotEmpty()
-            }
-        }
         panForces.children.setAll(tblForces.root)
     }
 
     @FXML
-    fun onAdd() {
-        lstAvailableShips.selectionModel.selectedItems.forEach {
-            model.client.addUnit(it.id)
-        }
+    fun addUnits() {
+        val view = find<AddUnitsDialog>(AddUnitsDialog::playerId to model.client.id)
+        view.openModal()
     }
 }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -32,11 +35,15 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <Pane fx:id="panForces" HBox.hgrow="SOMETIMES" />
-      <VBox>
-         <children>
-            <Button mnemonicParsing="false" onAction="#addUnits" text="%btnAddUnits" />
-         </children>
+      <VBox spacing="5.0">
+         <Label text="%availableShips" VBox.vgrow="NEVER" />
+         <ListView fx:id="lstAvailableShips" VBox.vgrow="SOMETIMES" />
+         <ButtonBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
+            <buttons>
+               <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#onAdd" text="%add" />
+            </buttons>
+         </ButtonBar>
       </VBox>
+      <Pane fx:id="panUnitDisplay" HBox.hgrow="SOMETIMES" />
    </HBox>
 </AnchorPane>
