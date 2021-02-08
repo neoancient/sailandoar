@@ -53,5 +53,6 @@ data class ShipStats (
         val oarPoints: Int,
         val sailorCount: Int,
         val rowerCount: Int,
-        val marineCount: Int
+        val marineCount: Int,
+        val image: String
 )

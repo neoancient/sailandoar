@@ -20,7 +20,8 @@
         "oarPoints": 10,
         "sailorCount": 2,
         "rowerCount": 18,
-        "marineCount": 4
+        "marineCount": 4,
+        "image": "bireme.png"
     },
     {
         "id": "7db4e913-d8b3-4fee-a1d5-7e5d620c522c",
@@ -43,7 +44,8 @@
         "oarPoints": 14,
         "sailorCount": 3,
         "rowerCount": 24,
-        "marineCount": 6
+        "marineCount": 6,
+        "image": "trireme_aphract.png"
     },
     {
         "id": "e8d82d9b-e3eb-4b36-9937-088404d1811d",
@@ -66,7 +68,8 @@
         "oarPoints": 14,
         "sailorCount": 3,
         "rowerCount": 24,
-        "marineCount": 6
+        "marineCount": 6,
+        "image": "trireme_kataphract.png"
     },
     {
         "id": "36469d27-4797-477b-b5aa-5e819a635131",
@@ -75,7 +78,7 @@
         "era": "ANCIENT",
         "cargoSpace": 0,
         "riggingType": "SQUARE",
-        "mastCount": 1,
+        "mastCount": 2,
         "baseSailSpeed": 2,
         "maxTurns": 2,
         "turnCost": 2,
@@ -89,7 +92,8 @@
         "oarPoints": 20,
         "sailorCount": 4,
         "rowerCount": 28,
-        "marineCount": 4
+        "marineCount": 4,
+        "image": "quadrireme.png"
     },
     {
         "id": "40d50444-51c8-4052-aff8-0dc5e1af1938",
@@ -112,7 +116,8 @@
         "oarPoints": 14,
         "sailorCount": 21,
         "rowerCount": 0,
-        "marineCount": 0
+        "marineCount": 0,
+        "image": "longship.png"
     },
     {
         "id": "6874aa2d-d587-49b3-9f89-5424ce3170c6",
@@ -135,7 +140,8 @@
         "oarPoints": 0,
         "sailorCount": 12,
         "rowerCount": 0,
-        "marineCount": 10
+        "marineCount": 10,
+        "image": "cog.png"
     },
     {
         "id": "dee0fe14-2a85-4516-831a-d2d42ebf7084",
@@ -158,7 +164,8 @@
         "oarPoints": 0,
         "sailorCount": 6,
         "rowerCount": 0,
-        "marineCount": 7
+        "marineCount": 7,
+        "image": "caravel.png"
     },
     {
         "id": "bff77050-fc56-4a14-ac31-7ddec50a995b",
@@ -181,7 +188,8 @@
         "oarPoints": 0,
         "sailorCount": 20,
         "rowerCount": 0,
-        "marineCount": 23
+        "marineCount": 23,
+        "image": "carrack.png"
     },
     {
         "id": "8ea138a9-6214-40d7-98d9-78e2d48592eb",
@@ -204,7 +212,8 @@
         "oarPoints": 0,
         "sailorCount": 50,
         "rowerCount": 0,
-        "marineCount": 40
+        "marineCount": 40,
+        "image": "galleon.png"
     },
     {
         "id": "da6531f0-b744-4618-8b4f-6a77ab945685",
@@ -227,7 +236,8 @@
         "oarPoints": 0,
         "sailorCount": 6,
         "rowerCount": 0,
-        "marineCount": 4
+        "marineCount": 4,
+        "image": "cutter.png"
     },
     {
         "id": "9a1bfd51-099d-4d55-b122-cb09b5e2824b",
@@ -250,7 +260,8 @@
         "oarPoints": 0,
         "sailorCount": 14,
         "rowerCount": 0,
-        "marineCount": 12
+        "marineCount": 12,
+        "image": "brig.png"
     },
     {
         "id": "eedf0564-ae8b-4a6c-b5ae-5550bf296df2",
@@ -273,7 +284,8 @@
         "oarPoints": 0,
         "sailorCount": 20,
         "rowerCount": 0,
-        "marineCount": 20
+        "marineCount": 20,
+        "image": "frigate.png"
     },
     {
         "id": "55be0f0e-763a-488d-a86a-c73f935da03e",
@@ -296,7 +308,8 @@
         "oarPoints": 0,
         "sailorCount": 40,
         "rowerCount": 0,
-        "marineCount": 30
+        "marineCount": 30,
+        "image": "sol_iv.png"
     },
     {
         "id": "ea8d7aeb-d319-4e57-9a35-564fdec3d832",
@@ -319,7 +332,8 @@
         "oarPoints": 0,
         "sailorCount": 0,
         "rowerCount": 0,
-        "marineCount": 35
+        "marineCount": 35,
+        "image": "sol_iii.png"
     },
     {
         "id": "c2030985-81ed-443a-8276-ba0e6aadaf9b",
@@ -342,7 +356,8 @@
         "oarPoints": 0,
         "sailorCount": 50,
         "rowerCount": 0,
-        "marineCount": 40
+        "marineCount": 40,
+        "image": "sol_ii.png"
     },
     {
         "id": "0b3692e5-23b9-463e-ad58-bbed87c0bda3",
@@ -365,6 +380,7 @@
         "oarPoints": 0,
         "sailorCount": 50,
         "rowerCount": 0,
-        "marineCount": 40
+        "marineCount": 40,
+        "image": "sol_ii.png"
     }
 ]
