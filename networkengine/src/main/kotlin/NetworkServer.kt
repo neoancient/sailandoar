@@ -1,17 +1,3 @@
-import io.ktor.application.Application
-import io.ktor.application.install
-import io.ktor.http.cio.websocket.*
-import io.ktor.routing.routing
-import io.ktor.server.engine.applicationEngineEnvironment
-import io.ktor.server.engine.connector
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.websocket.WebSockets
-import io.ktor.websocket.webSocket
-import kotlinx.serialization.json.Json
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
-
 /*
  * Sail and Oar
  * Copyright (c) 2021 Carl W Spain
@@ -35,6 +21,20 @@ import java.util.concurrent.atomic.AtomicInteger
  * SOFTWARE.
  *
  */
+
+import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.http.cio.websocket.*
+import io.ktor.routing.routing
+import io.ktor.server.engine.applicationEngineEnvironment
+import io.ktor.server.engine.connector
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.websocket.WebSockets
+import io.ktor.websocket.webSocket
+import kotlinx.serialization.json.Json
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
 public interface ServerConnector {
     public suspend fun handle(json: String)
