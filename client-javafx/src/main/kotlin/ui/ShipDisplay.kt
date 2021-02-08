@@ -52,10 +52,8 @@ class ShipDisplay : Fragment() {
         lblSpeedBeating.text = formatSpeed(PointOfSail.BEATING)
         lblSpeedIntoWind.text = formatSpeed(PointOfSail.INTO_WIND)
 
-        ShipStats::class.java.getResourceAsStream(ship.image)?.let {
-            val img = Image(it)
-            imgShip.image = img
-
+        ImageCache[ship]?.let {
+            imgShip.image = it
         }
     }
 
