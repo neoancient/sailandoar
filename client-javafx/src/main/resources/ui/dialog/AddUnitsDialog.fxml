@@ -35,7 +35,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <VBox spacing="5.0">
+      <VBox minWidth="200.0" spacing="5.0">
          <Label text="%availableShips" VBox.vgrow="NEVER" />
          <ListView fx:id="lstAvailableShips" VBox.vgrow="SOMETIMES" />
          <ButtonBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
