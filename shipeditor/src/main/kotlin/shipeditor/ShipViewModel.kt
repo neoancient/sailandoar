@@ -26,7 +26,9 @@ import tornadofx.*
 
 internal class ShipViewModel: ItemViewModel<ShipModel>() {
     val name = bind(ShipModel::nameProperty, true)
+    val imageFile = bind(ShipModel::imageFileProperty, true)
     val sizeClass = bind(ShipModel::sizeClassProperty, true)
+    val era = bind(ShipModel::eraProperty, true)
     val cargoSpace = bind(ShipModel::cargoSpaceProperty, true).asObject()
 
     val rigging = bind(ShipModel::riggingProperty, true)

@@ -24,13 +24,13 @@ package shipeditor
 
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory
 import javafx.scene.layout.AnchorPane
 import javafx.util.Callback
 import tornadofx.*
+import unit.Era
 import unit.RamType
 import unit.RiggingType
 import unit.SizeClass
@@ -45,6 +45,8 @@ class EditorPane: View() {
     private val txtName: TextField by fxid()
     private val cbSize: ComboBox<SizeClass> by fxid()
     private val spnCargo: Spinner<Int> by fxid()
+    private val chEra: ChoiceBox<Era> by fxid()
+    private val txtImage: TextField by fxid()
     private val cbRigging: ComboBox<RiggingType> by fxid()
     private val spnMasts: Spinner<Int> by fxid()
     private val spnSailSpeed: Spinner<Int> by fxid()
@@ -69,6 +71,7 @@ class EditorPane: View() {
         cbSize.items.setAll(*SizeClass.values())
         cbRigging.items.setAll(*RiggingType.values())
         cbRam.items.setAll(*RamType.values())
+        chEra.items.setAll(*Era.values())
 
         lstShips.cellFactory = Callback {
             object: ListCell<ShipModel>() {
@@ -95,6 +98,8 @@ class EditorPane: View() {
 
         txtName.textProperty().bindBidirectional(model.name)
         cbSize.valueProperty().bindBidirectional(model.sizeClass)
+        chEra.bind(model.era)
+        txtImage.bind(model.imageFile)
         spnCargo.valueFactory.valueProperty().bindBidirectional(model.cargoSpace)
         cbRigging.valueProperty().bindBidirectional(model.rigging)
         spnMasts.valueFactory.valueProperty().bindBidirectional(model.mastCount)
@@ -154,5 +159,4 @@ class EditorPane: View() {
             (app as ShipEditor).ships.removeAt(selected)
         }
     }
-
 }

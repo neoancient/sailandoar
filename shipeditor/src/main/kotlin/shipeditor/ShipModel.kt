@@ -25,10 +25,7 @@ package shipeditor
 
 import javafx.beans.property.*
 import tornadofx.*
-import unit.RamType
-import unit.RiggingType
-import unit.ShipStats
-import unit.SizeClass
+import unit.*
 import java.util.*
 
 
@@ -42,9 +39,13 @@ internal class ShipModel() {
     private var id: UUID by idProperty
     val nameProperty = SimpleStringProperty("New Ship")
     var name: String by nameProperty
+    val imageFileProperty = SimpleStringProperty("")
+    private var imageFile by imageFileProperty
 
     val sizeClassProperty = SimpleObjectProperty(SizeClass.MEDIUM)
     private var sizeClass: SizeClass by sizeClassProperty
+    val eraProperty = SimpleObjectProperty(Era.GOLDEN)
+    var era by eraProperty
     val cargoSpaceProperty = SimpleIntegerProperty(0)
     private var cargoSpace by cargoSpaceProperty
 
@@ -95,6 +96,7 @@ internal class ShipModel() {
             name = name,
             sizeClass = sizeClass,
             cargoSpace = cargoSpace,
+            era = era,
             riggingType = rigging,
             mastCount = mastCount,
             baseSailSpeed = baseSailSpeed,
@@ -110,13 +112,15 @@ internal class ShipModel() {
             oarPoints = oarPoints,
             sailorCount = numSailors,
             rowerCount = numRowers,
-            marineCount = numMarines
+            marineCount = numMarines,
+            image = imageFile
     )
 
     private fun import(ship: ShipStats) {
         id = ship.id
         name = ship.name
         sizeClass = ship.sizeClass
+        era = ship.era
         cargoSpace = ship.cargoSpace
         rigging = ship.riggingType
         mastCount = ship.mastCount
@@ -134,5 +138,6 @@ internal class ShipModel() {
         numSailors = ship.sailorCount
         numRowers = ship.rowerCount
         numMarines = ship.marineCount
+        imageFile = ship.image
     }
 }
