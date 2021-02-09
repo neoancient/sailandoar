@@ -25,12 +25,11 @@
 package ui
 
 import javafx.scene.control.Label
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import tornadofx.*
 import unit.PointOfSail
-import unit.Ship
+import unit.RowingPace
 import unit.ShipStats
 
 class ShipDisplay : Fragment() {
@@ -43,29 +42,34 @@ class ShipDisplay : Fragment() {
     internal val lblSpeedReaching: Label by fxid()
     internal val lblSpeedBeating: Label by fxid()
     internal val lblSpeedIntoWind: Label by fxid()
+    internal val lblRowingSpeed: Label by fxid()
     internal val imgShipSprite: ImageView by fxid()
 
     init {
         lblName.text = ship.name
-        lblSpeedRunning.text = formatSpeed(PointOfSail.RUNNING)
-        lblSpeedReaching.text = formatSpeed(PointOfSail.REACHING)
-        lblSpeedBeating.text = formatSpeed(PointOfSail.BEATING)
-        lblSpeedIntoWind.text = formatSpeed(PointOfSail.INTO_WIND)
+        lblSpeedRunning.text = formatSailingSpeed(PointOfSail.RUNNING)
+        lblSpeedReaching.text = formatSailingSpeed(PointOfSail.REACHING)
+        lblSpeedBeating.text = formatSailingSpeed(PointOfSail.BEATING)
+        lblSpeedIntoWind.text = formatSailingSpeed(PointOfSail.INTO_WIND)
+        if (ship.baseOarSpeed > 0) {
+            lblRowingSpeed.text = messages["oarSpeed"] + RowingPace.values().map {
+                it.calc.invoke(ship.baseOarSpeed, ship.sizeClass, ship.oarBankCount).toString()
+            }.joinToString("/")
+        } else {
+            lblRowingSpeed.isVisible = false
+        }
 
         ImageCache[ship]?.let {
             imgShip.image = it
         }
     }
 
-    private fun formatSpeed(direction: PointOfSail) =
-        if (ship.rowerCount > 0) {
-            direction.rowingSpeed(ship.baseOarSpeed).toString()
+    private fun formatSailingSpeed(direction: PointOfSail): String {
+        val full = direction.sailSpeed(ship.baseSailSpeed, ship.riggingType)
+        if (ship.hasBattleSails) {
+            return "${direction.sailSpeed(((ship.baseSailSpeed + 1) / 2), ship.riggingType)} ($full)"
         } else {
-            val full = direction.sailSpeed(ship.baseSailSpeed, ship.riggingType)
-            if (ship.hasBattleSails) {
-                "${direction.sailSpeed(((ship.baseSailSpeed + 1) / 2), ship.riggingType)} ($full)"
-            } else {
-                full.toString()
-            }
+            return full.toString()
         }
+    }
 }

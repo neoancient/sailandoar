@@ -45,7 +45,12 @@
            <ImageView fx:id="imgShip" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
          <AnchorPane>
             <children>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="62.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="61.0" AnchorPane.topAnchor="25.0">
+               <Label fx:id="lblRowingSpeed" alignment="CENTER_RIGHT" layoutX="149.0" layoutY="170.0" text="0/0/0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                  <font>
+                     <Font name="System Bold" size="13.0" />
+                  </font>
+               </Label>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="62.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="61.0" AnchorPane.topAnchor="25.0">
                       <Image url="@point_of_sail.png" />
                   </ImageView>
                <Label fx:id="lblSpeedRunning" alignment="CENTER" layoutX="80.0" layoutY="6.0" text="0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="6.0">

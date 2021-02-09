@@ -86,7 +86,7 @@ class EditorPane: View() {
         spnSailSpeed.valueFactory = IntegerSpinnerValueFactory(0, 12, 0, 1)
         spnMaxTurns.valueFactory = IntegerSpinnerValueFactory(1, 3, 2, 1)
         spnTurnCost.valueFactory = IntegerSpinnerValueFactory(1, 3, 2, 1)
-        spnOarSpeed.valueFactory = IntegerSpinnerValueFactory(0, 6, 0, 1)
+        spnOarSpeed.valueFactory = IntegerSpinnerValueFactory(0, 10, 0, 1)
         spnOarBanks.valueFactory = IntegerSpinnerValueFactory(0, 3, 0, 1)
         spnNumGuns.valueFactory = IntegerSpinnerValueFactory(0, Int.MAX_VALUE, 0, 1)
         spnHullPoints.valueFactory = IntegerSpinnerValueFactory(1, Int.MAX_VALUE, 0, 1)
