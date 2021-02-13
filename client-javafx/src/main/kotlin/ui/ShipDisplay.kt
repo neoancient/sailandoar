@@ -45,6 +45,21 @@ class ShipDisplay : Fragment() {
     internal val lblRowingSpeed: Label by fxid()
     internal val imgShipSprite: ImageView by fxid()
 
+    private val lblSizeClass: Label by fxid()
+    private val lblCargoSpace: Label by fxid()
+    private val lblRigging: Label by fxid()
+    private val lblMasts: Label by fxid()
+    private val lblOarBanks: Label by fxid()
+    private val lblTurnMode: Label by fxid()
+    private val lblHullPoints: Label by fxid()
+    private val lblRiggingPoints: Label by fxid()
+    private val lblOarPoints: Label by fxid()
+    private val lblGuns: Label by fxid()
+    private val lblRam: Label by fxid()
+    private val lblSailors: Label by fxid()
+    private val lblRowers: Label by fxid()
+    private val lblMarines: Label by fxid()
+
     init {
         lblName.text = ship.name
         lblSpeedRunning.text = formatSailingSpeed(PointOfSail.RUNNING)
@@ -62,6 +77,21 @@ class ShipDisplay : Fragment() {
         ImageCache[ship]?.let {
             imgShip.image = it
         }
+
+        lblSizeClass.text = messages[ship.sizeClass.name]
+        lblCargoSpace.text = ship.cargoSpace.toString()
+        lblRigging.text = messages[ship.riggingType.name]
+        lblMasts.text = ship.mastCount.toString()
+        lblOarBanks.text = ship.oarBankCount.toString()
+        lblTurnMode.text = ship.turnCost.toString()
+        lblHullPoints.text = ship.hullPoints.toString()
+        lblRiggingPoints.text = ship.riggingPoints.toString()
+        lblOarPoints.text = ship.oarPoints.toString()
+        lblGuns.text = ship.gunCount.toString()
+        lblRam.text = messages[ship.ramType.name]
+        lblSailors.text = ship.sailorCount.toString()
+        lblRowers.text = ship.rowerCount.toString()
+        lblMarines.text = ship.marineCount.toString()
     }
 
     private fun formatSailingSpeed(direction: PointOfSail): String {

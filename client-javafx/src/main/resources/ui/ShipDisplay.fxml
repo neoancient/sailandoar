@@ -5,6 +5,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -32,7 +35,7 @@
   ~
   -->
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <Label fx:id="lblName" text="Label" BorderPane.alignment="CENTER">
          <font>
@@ -78,4 +81,62 @@
          </AnchorPane>
        </VBox>
    </left>
+   <center>
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="%sizeClass" />
+            <Label fx:id="lblSizeClass" text="Label" GridPane.columnIndex="1" />
+            <Label text="%cargoSpace" GridPane.columnIndex="2" />
+            <Label fx:id="lblCargoSpace" text="Label" GridPane.columnIndex="3" />
+            <Label text="%rigging" GridPane.rowIndex="2" />
+            <Label fx:id="lblRigging" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="%oarBanks" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label fx:id="lblOarBanks" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label text="%masts" GridPane.rowIndex="3" />
+            <Label fx:id="lblMasts" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="%turnMode" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label fx:id="lblTurnMode" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Label text="%movement" GridPane.rowIndex="1" />
+            <Label text="%defense" GridPane.rowIndex="4" />
+            <Label text="%offense" GridPane.rowIndex="7" />
+            <Label text="%crew" GridPane.rowIndex="9" />
+            <Label text="%hullPoints" GridPane.rowIndex="5" />
+            <Label fx:id="lblHullPoints" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="%oarPoints" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Label fx:id="lblOarPoints" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Label text="%riggingPoints" GridPane.rowIndex="6" />
+            <Label fx:id="lblRiggingPoints" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="%guns" GridPane.rowIndex="8" />
+            <Label fx:id="lblGuns" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Label text="%ram" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+            <Label fx:id="lblRam" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+            <Label text="%sailors" GridPane.rowIndex="10" />
+            <Label fx:id="lblSailors" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <Label text="%rowers" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+            <Label fx:id="lblRowers" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="10" />
+            <Label text="%marines" GridPane.rowIndex="11" />
+            <Label fx:id="lblMarines" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+         </children>
+      </GridPane>
+   </center>
 </BorderPane>

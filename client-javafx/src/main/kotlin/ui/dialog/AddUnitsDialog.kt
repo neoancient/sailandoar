@@ -66,6 +66,7 @@ class AddUnitsDialog : Fragment() {
             it?.let {
                 val view = find<ShipDisplay>(ShipDisplay::ship to it)
                 panUnitDisplay.children.setAll(view.root)
+                currentWindow?.sizeToScene()
             }
         }
     }
