@@ -25,19 +25,57 @@
 package ui
 
 import javafx.scene.image.Image
+import javafx.scene.image.WritableImage
 import unit.ShipStats
+import java.io.InputStream
 import java.util.*
 import kotlin.collections.HashMap
+
+const val SPRITE_WIDTH = 320
+const val SPRITE_HEIGHT = 180
 
 class ImageCache {
     companion object {
         private val imageMap = HashMap<UUID, Image>()
+        private val spriteMap = HashMap<SpriteKey, Image>()
 
         operator fun get(ship: ShipStats): Image? =
+            imageMap[ship.id] ?:
             ShipStats::class.java.getResourceAsStream(ship.image)?.let {
-                imageMap.getOrPut(ship.id) {
-                    Image(it)
+                Image(it).apply {
+                    imageMap[ship.id] = this
                 }
             }
+
+        fun get(ship: ShipStats, windDirection: Int,
+                         facing: Int, isometric: Boolean): Image? =
+            get(ship, SpriteKey(ship.id, windDirection, facing, isometric))
+
+        fun get(ship: ShipStats, key: SpriteKey): Image? =
+            spriteMap[key] ?:
+            ShipStats::class.java.getResourceAsStream(ship.spriteImage)?.let {
+                fillSpriteRow(Image(it), key)
+            }
+
+        private fun fillSpriteRow(atlas: Image, key: SpriteKey): Image? {
+            val y = SPRITE_HEIGHT * if (key.isometric) 6 else key.windDirection
+            for (facing in 0..5) {
+                val x = SPRITE_WIDTH * if (key.isometric) {
+                    (6 - key.windDirection + facing) % 6
+                } else {
+                    facing
+                }
+                spriteMap[SpriteKey(key.shipId, key.windDirection, facing, key.isometric)] =
+                    WritableImage(atlas.pixelReader, x, y, SPRITE_WIDTH, SPRITE_HEIGHT)
+            }
+            return spriteMap[key]
+        }
     }
 }
+
+data class SpriteKey(
+    val shipId: UUID,
+    val windDirection: Int,
+    val facing: Int,
+    val isometric: Boolean
+)

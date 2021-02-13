@@ -21,7 +21,8 @@
         "sailorCount": 2,
         "rowerCount": 18,
         "marineCount": 4,
-        "image": "bireme.png"
+        "image": "bireme.png",
+        "spriteImage": "bireme_atlas.png"
     },
     {
         "id": "7db4e913-d8b3-4fee-a1d5-7e5d620c522c",
@@ -45,7 +46,8 @@
         "sailorCount": 3,
         "rowerCount": 24,
         "marineCount": 6,
-        "image": "trireme_aphract.png"
+        "image": "trireme_aphract.png",
+        "spriteImage": "trireme_aphract_atlas.png"
     },
     {
         "id": "e8d82d9b-e3eb-4b36-9937-088404d1811d",
@@ -69,7 +71,8 @@
         "sailorCount": 3,
         "rowerCount": 24,
         "marineCount": 6,
-        "image": "trireme_kataphract.png"
+        "image": "trireme_kataphract.png",
+        "spriteImage": "trireme_kataphract_atlas.png"
     },
     {
         "id": "36469d27-4797-477b-b5aa-5e819a635131",
@@ -93,7 +96,8 @@
         "sailorCount": 4,
         "rowerCount": 28,
         "marineCount": 4,
-        "image": "quadrireme.png"
+        "image": "quadrireme.png",
+        "spriteImage": "quadrireme_atlas.png"
     },
     {
         "id": "40d50444-51c8-4052-aff8-0dc5e1af1938",
@@ -117,7 +121,8 @@
         "sailorCount": 21,
         "rowerCount": 0,
         "marineCount": 0,
-        "image": "longship.png"
+        "image": "longship.png",
+        "spriteImage": "longship_atlas.png"
     },
     {
         "id": "6874aa2d-d587-49b3-9f89-5424ce3170c6",
@@ -141,7 +146,8 @@
         "sailorCount": 12,
         "rowerCount": 0,
         "marineCount": 10,
-        "image": "cog.png"
+        "image": "cog.png",
+        "spriteImage": "cog_atlas.png"
     },
     {
         "id": "dee0fe14-2a85-4516-831a-d2d42ebf7084",
@@ -165,7 +171,8 @@
         "sailorCount": 6,
         "rowerCount": 0,
         "marineCount": 7,
-        "image": "caravel.png"
+        "image": "caravel.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "bff77050-fc56-4a14-ac31-7ddec50a995b",
@@ -189,7 +196,8 @@
         "sailorCount": 20,
         "rowerCount": 0,
         "marineCount": 23,
-        "image": "carrack.png"
+        "image": "carrack.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "8ea138a9-6214-40d7-98d9-78e2d48592eb",
@@ -213,7 +221,8 @@
         "sailorCount": 50,
         "rowerCount": 0,
         "marineCount": 40,
-        "image": "galleon.png"
+        "image": "galleon.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "da6531f0-b744-4618-8b4f-6a77ab945685",
@@ -237,7 +246,8 @@
         "sailorCount": 6,
         "rowerCount": 0,
         "marineCount": 4,
-        "image": "cutter.png"
+        "image": "cutter.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "9a1bfd51-099d-4d55-b122-cb09b5e2824b",
@@ -261,7 +271,8 @@
         "sailorCount": 14,
         "rowerCount": 0,
         "marineCount": 12,
-        "image": "brig.png"
+        "image": "brig.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "eedf0564-ae8b-4a6c-b5ae-5550bf296df2",
@@ -285,7 +296,8 @@
         "sailorCount": 20,
         "rowerCount": 0,
         "marineCount": 20,
-        "image": "frigate.png"
+        "image": "frigate.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "55be0f0e-763a-488d-a86a-c73f935da03e",
@@ -309,7 +321,8 @@
         "sailorCount": 40,
         "rowerCount": 0,
         "marineCount": 30,
-        "image": "sol_iv.png"
+        "image": "sol_iv.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "ea8d7aeb-d319-4e57-9a35-564fdec3d832",
@@ -333,7 +346,8 @@
         "sailorCount": 0,
         "rowerCount": 0,
         "marineCount": 35,
-        "image": "sol_iii.png"
+        "image": "sol_iii.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "c2030985-81ed-443a-8276-ba0e6aadaf9b",
@@ -357,7 +371,8 @@
         "sailorCount": 50,
         "rowerCount": 0,
         "marineCount": 40,
-        "image": "sol_ii.png"
+        "image": "sol_ii.png",
+        "spriteImage": "_atlas.png"
     },
     {
         "id": "0b3692e5-23b9-463e-ad58-bbed87c0bda3",
@@ -381,6 +396,7 @@
         "sailorCount": 50,
         "rowerCount": 0,
         "marineCount": 40,
-        "image": "sol_ii.png"
+        "image": "sol_ii.png",
+        "spriteImage": "_atlas.png"
     }
 ]

@@ -76,7 +76,7 @@
                      <Font name="System Bold" size="13.0" />
                   </font>
                </Label>
-               <ImageView fx:id="imgShipSprite" fitHeight="72.0" fitWidth="42.0" layoutX="62.0" layoutY="64.0" pickOnBounds="true" preserveRatio="true" />
+               <ImageView fx:id="imgShipSprite" fitHeight="114.0" fitWidth="73.0" layoutX="46.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true" />
             </children>
          </AnchorPane>
        </VBox>

@@ -113,7 +113,8 @@ internal class ShipModel() {
             sailorCount = numSailors,
             rowerCount = numRowers,
             marineCount = numMarines,
-            image = imageFile
+            image = imageFile,
+            spriteImage = imageFile.replaceBeforeLast(".", "_atlas")
     )
 
     private fun import(ship: ShipStats) {

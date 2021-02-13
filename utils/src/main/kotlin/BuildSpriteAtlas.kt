@@ -54,13 +54,13 @@ const val HEIGHT = 180
  * every 20 frames. The extra frames are for the wind animation to fill the sails.
  */
 val indices = arrayOf(
-    arrayOf("016", "036", "056", "076", "096", "116"),
     arrayOf("013", "034", "055", "070", "091", "112"),
     arrayOf("113", "014", "035", "050", "071", "092"),
     arrayOf("093", "114", "015", "030", "051", "072"),
     arrayOf("073", "094", "115", "010", "031", "052"),
     arrayOf("053", "074", "095", "110", "011", "032"),
-    arrayOf("033", "054", "075", "090", "111", "012"),
+    arrayOf("033", "054", "075", "090", "031", "012"),
+    arrayOf("016", "116", "096", "076", "056", "036"),
 )
 
 fun processDirectory(dir: File): BufferedImage {

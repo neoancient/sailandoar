@@ -31,6 +31,7 @@ import tornadofx.*
 import unit.PointOfSail
 import unit.RowingPace
 import unit.ShipStats
+import java.lang.Double.min
 
 class ShipDisplay : Fragment() {
     val ship: ShipStats by param()
@@ -76,6 +77,15 @@ class ShipDisplay : Fragment() {
 
         ImageCache[ship]?.let {
             imgShip.image = it
+        }
+        ImageCache.get(ship, 0, 0, true)?.let {
+            imgShipSprite.rotate = -90.0
+            imgShipSprite.image = it
+            val scale = min( imgShipSprite.fitWidth / it.width, imgShipSprite.fitHeight / it.height)
+            with (imgShipSprite) {
+                x = (fitWidth - it.width * scale) * 0.5
+                y = (fitHeight - it.height * scale) * 0.5
+            }
         }
 
         lblSizeClass.text = messages[ship.sizeClass.name]
