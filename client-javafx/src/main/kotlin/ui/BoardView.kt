@@ -25,9 +25,6 @@
 package ui
 
 import board.Board
-import board.TerrainType
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
@@ -41,26 +38,38 @@ class BoardView(board: Board) : Canvas() {
     internal val boardProperty = SimpleObjectProperty(board)
     internal var board by boardProperty
 
-    internal val scaleProperty = SimpleDoubleProperty(1.0)
-    internal var scale by scaleProperty
-
-    internal val xOffsetProperty = SimpleIntegerProperty(0)
-    internal var xOffset by xOffsetProperty
-    internal val yOffsetProperty = SimpleIntegerProperty(0)
-    internal var yOffset by yOffsetProperty
-
     private val borderX = listOf(HEX_WIDTH * 0.25, HEX_WIDTH * 0.75, HEX_WIDTH,
         HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)
     private val borderY = listOf(0.0, 0.0, HEX_HEIGHT * 0.5, HEX_HEIGHT, HEX_HEIGHT, HEX_HEIGHT * 0.5)
 
+    private var mouseX = 0.0
+    private var mouseY = 0.0
+
     init {
         width = board.width * HEX_WIDTH
         height = (board.height + 0.5) * HEX_HEIGHT
+        setOnScroll {
+            if (it.deltaY < 0.0) {
+                graphicsContext2D.scale(0.95, 0.95)
+            } else {
+                graphicsContext2D.scale(1.05, 1.05)
+            }
+            redraw()
+        }
+        setOnMousePressed {
+            mouseX = it.sceneX
+            mouseY = it.sceneY
+        }
+        setOnMouseDragged {
+            graphicsContext2D.translate(it.sceneX - mouseX, it.sceneY - mouseY)
+            redraw()
+        }
         redraw()
     }
 
     private fun redraw() {
         with (graphicsContext2D) {
+            clearRect(0.0, 0.0, width, height)
             var x = 0.0
             for (col in 0..board.width) {
                 var y = if ((col % 2 == 1) == board.oddOffset) 0.0 else 0.5 * HEX_HEIGHT

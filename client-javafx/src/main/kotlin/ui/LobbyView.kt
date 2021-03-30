@@ -33,6 +33,7 @@ import ui.dialog.AddUnitsDialog
 import ui.model.GameModel
 import ui.model.PlayerModel
 import unit.ShipStats
+import java.lang.Double.max
 
 internal class LobbyView : View() {
     override val root: AnchorPane by fxml()

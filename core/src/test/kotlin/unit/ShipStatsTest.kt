@@ -14,7 +14,7 @@ internal class ShipStatsTest {
             SizeClass.VERY_LARGE, Era.GOLDEN, 10000000, RiggingType.FORE_AND_AFT,
             23, 6, 1, 2, false, 0, 0,
             0, RamType.NONE, 400, 200, 0, 8, 0, 0,
-        "rover.png")
+        "rover.png", "rover_atlas.png")
 
         val json = Json.encodeToString(ship)
         val decoded = Json.decodeFromString<ShipStats>(json)
