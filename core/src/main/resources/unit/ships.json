@@ -172,7 +172,7 @@
         "rowerCount": 0,
         "marineCount": 7,
         "image": "caravel.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "caravel_atlas.png"
     },
     {
         "id": "bff77050-fc56-4a14-ac31-7ddec50a995b",
@@ -180,7 +180,7 @@
         "sizeClass": "MEDIUM",
         "era": "DISCOVERY",
         "cargoSpace": 400,
-        "riggingType": "FORE_AND_AFT",
+        "riggingType": "SQUARE",
         "mastCount": 3,
         "baseSailSpeed": 7,
         "maxTurns": 1,
@@ -197,7 +197,7 @@
         "rowerCount": 0,
         "marineCount": 23,
         "image": "carrack.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "carrack_atlas.png"
     },
     {
         "id": "8ea138a9-6214-40d7-98d9-78e2d48592eb",
@@ -222,7 +222,7 @@
         "rowerCount": 0,
         "marineCount": 40,
         "image": "galleon.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "galleon_atlas.png"
     },
     {
         "id": "da6531f0-b744-4618-8b4f-6a77ab945685",
@@ -247,7 +247,7 @@
         "rowerCount": 0,
         "marineCount": 4,
         "image": "cutter.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "cutter_atlas.png"
     },
     {
         "id": "9a1bfd51-099d-4d55-b122-cb09b5e2824b",
@@ -272,7 +272,7 @@
         "rowerCount": 0,
         "marineCount": 12,
         "image": "brig.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "brig_atlas.png"
     },
     {
         "id": "eedf0564-ae8b-4a6c-b5ae-5550bf296df2",
@@ -297,7 +297,7 @@
         "rowerCount": 0,
         "marineCount": 20,
         "image": "frigate.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "frigate_atlas.png"
     },
     {
         "id": "55be0f0e-763a-488d-a86a-c73f935da03e",
@@ -322,7 +322,7 @@
         "rowerCount": 0,
         "marineCount": 30,
         "image": "sol_iv.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "sol_iv_atlas.png"
     },
     {
         "id": "ea8d7aeb-d319-4e57-9a35-564fdec3d832",
@@ -347,7 +347,7 @@
         "rowerCount": 0,
         "marineCount": 35,
         "image": "sol_iii.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "sol_iii_atlas.png"
     },
     {
         "id": "c2030985-81ed-443a-8276-ba0e6aadaf9b",
@@ -372,7 +372,7 @@
         "rowerCount": 0,
         "marineCount": 40,
         "image": "sol_ii.png",
-        "spriteImage": "_atlas.png"
+        "spriteImage": "sol_ii_atlas.png"
     },
     {
         "id": "0b3692e5-23b9-463e-ad58-bbed87c0bda3",
@@ -396,7 +396,7 @@
         "sailorCount": 50,
         "rowerCount": 0,
         "marineCount": 40,
-        "image": "sol_ii.png",
-        "spriteImage": "_atlas.png"
+        "image": "sol_i.png",
+        "spriteImage": "sol_i_atlas.png"
     }
 ]

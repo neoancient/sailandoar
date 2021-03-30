@@ -40,9 +40,12 @@ internal class LobbyView : View() {
     internal val tblForces: PlayerForcesTable by inject()
 
     internal val panForces: Pane by fxid()
+    internal val panMapView: Pane by fxid()
 
     init {
         panForces.children.setAll(tblForces.root)
+        val boardView = BoardView(model.gameProperty.get().board)
+        panMapView.children.setAll(boardView)
     }
 
     @FXML

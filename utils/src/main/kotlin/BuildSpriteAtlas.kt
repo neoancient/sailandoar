@@ -36,7 +36,7 @@ fun main() {
         for (file in it) {
             if (file.isDirectory) {
                 val atlas = processDirectory(file)
-                ImageIO.write(atlas, "png", File(file, "${file.name}_atlas.png"))
+                ImageIO.write(atlas, "png", File(dir, "${file.name}_atlas.png"))
             }
         }
     }

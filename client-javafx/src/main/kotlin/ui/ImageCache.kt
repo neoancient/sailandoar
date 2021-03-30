@@ -24,6 +24,7 @@
 
 package ui
 
+import board.TerrainType
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import unit.ShipStats
@@ -38,6 +39,7 @@ class ImageCache {
     companion object {
         private val imageMap = HashMap<UUID, Image>()
         private val spriteMap = HashMap<SpriteKey, Image>()
+        private val terrainMap = HashMap<TerrainType, Image>()
 
         operator fun get(ship: ShipStats): Image? =
             imageMap[ship.id] ?:
@@ -70,6 +72,14 @@ class ImageCache {
             }
             return spriteMap[key]
         }
+
+        fun get(terrain: TerrainType): Image? =
+            terrainMap[terrain] ?:
+            TerrainType::class.java.getResourceAsStream(terrain.name.toLowerCase() + ".png")?.let {
+                Image(it).apply {
+                    terrainMap[terrain] = this
+                }
+            }
     }
 }
 
