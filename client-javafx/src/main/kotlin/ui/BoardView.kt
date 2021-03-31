@@ -46,8 +46,8 @@ class BoardView(board: Board) : Canvas() {
     private var mouseY = 0.0
 
     init {
-        width = board.width * HEX_WIDTH
-        height = (board.height + 0.5) * HEX_HEIGHT
+        width = (board.width + 4) * HEX_WIDTH
+        height = (board.height + 6.5) * HEX_HEIGHT
         setOnScroll {
             if (it.deltaY < 0.0) {
                 graphicsContext2D.scale(0.95, 0.95)
@@ -70,9 +70,9 @@ class BoardView(board: Board) : Canvas() {
     private fun redraw() {
         with (graphicsContext2D) {
             clearRect(0.0, 0.0, width, height)
-            var x = 0.0
+            var x = HEX_WIDTH * 2
             for (col in 0..board.width) {
-                var y = if ((col % 2 == 1) == board.oddOffset) 0.0 else 0.5 * HEX_HEIGHT
+                var y = HEX_HEIGHT * (if ((col % 2 == 1) == board.oddOffset) 3.0 else 3.5)
                 for (row in 0..board.height) {
                     val terrain = board.getHex(col, row).terrain
                     val xCoords = borderX.map { x + it }.toDoubleArray()
