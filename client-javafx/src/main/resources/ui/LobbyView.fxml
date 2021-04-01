@@ -38,10 +38,10 @@
             <Button mnemonicParsing="false" onAction="#addUnits" text="%btnAddUnits" />
          </children>
       </VBox>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="SOMETIMES">
+      <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="SOMETIMES">
          <children>
-            <Pane fx:id="panMapView" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+            <Pane fx:id="panMapView" />
          </children>
-      </AnchorPane>
+      </VBox>
    </HBox>
 </AnchorPane>
