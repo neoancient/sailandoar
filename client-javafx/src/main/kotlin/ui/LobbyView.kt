@@ -25,16 +25,13 @@
 package ui
 
 import javafx.fxml.FXML
-import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import tornadofx.*
 import ui.board.BoardView
+import ui.board.BoardViewMapLayer
 import ui.dialog.AddUnitsDialog
 import ui.model.GameModel
-import ui.model.PlayerModel
-import unit.ShipStats
-import java.lang.Double.max
 
 internal class LobbyView : View() {
     override val root: AnchorPane by fxml()
@@ -46,8 +43,7 @@ internal class LobbyView : View() {
 
     init {
         panForces.children.setAll(tblForces.root)
-        val boardView = BoardView(model.gameProperty.get().board)
-        panMapView.children.setAll(boardView)
+        panMapView.children.setAll(find<BoardView>().root)
     }
 
     @FXML
