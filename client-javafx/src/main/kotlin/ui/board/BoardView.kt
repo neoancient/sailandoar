@@ -30,6 +30,11 @@ import tornadofx.pane
 import ui.model.GameModel
 import kotlin.math.min
 
+const val HEX_WIDTH = 180.0
+const val HEX_HEIGHT = 156.0
+const val HEX_DX = HEX_WIDTH * 0.75
+const val MAP_BORDER = HEX_WIDTH * 2
+
 class BoardView : Fragment() {
     internal val gameModel: GameModel by inject()
     internal val viewportWidth: Double by param()
@@ -47,8 +52,7 @@ class BoardView : Fragment() {
         layers.forEach {
             it.width = w
             it.height = h
-            it.graphicsContext2D.translate(-MAP_BORDER, -MAP_BORDER)
-//            it.graphicsContext2D.scale(scale, scale)
+            it.graphicsContext2D.scale(scale, scale)
             it.redraw()
         }
         children.setAll(layers)

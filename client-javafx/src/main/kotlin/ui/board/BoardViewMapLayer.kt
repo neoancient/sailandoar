@@ -28,11 +28,6 @@ import board.Board
 import javafx.scene.paint.Color
 import ui.ImageCache
 
-const val HEX_WIDTH = 180.0
-const val HEX_HEIGHT = 156.0
-const val HEX_DX = HEX_WIDTH * 0.75
-const val MAP_BORDER = HEX_WIDTH * 2
-
 internal class BoardViewMapLayer(board: Board) : BoardViewLayer(board) {
 
     override fun redraw() {
