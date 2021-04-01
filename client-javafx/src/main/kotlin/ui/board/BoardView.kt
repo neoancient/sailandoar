@@ -25,6 +25,7 @@
 package ui.board
 
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.scene.transform.Affine
 import tornadofx.Fragment
 import tornadofx.pane
 import ui.model.GameModel
@@ -40,14 +41,19 @@ class BoardView : Fragment() {
     internal val viewportWidth: Double by param()
     internal val viewportHeight: Double by param()
 
-    internal val scaleProperty = SimpleDoubleProperty()
+    private var scale = 1.0
+    private var translateX = 0.0
+    private var translateY = 0.0
+    private var mouseX = 0.0
+    private var mouseY = 0.0
+
 
     private val layers = ArrayList<BoardViewLayer>()
 
     override val root = pane {
         val w = gameModel.gameProperty.value.board.width * HEX_WIDTH + MAP_BORDER * 2
         val h = (gameModel.gameProperty.value.board.height + 0.5) * HEX_HEIGHT + MAP_BORDER * 2
-        val scale = min(viewportWidth / w, viewportHeight / h).coerceAtMost(1.0)
+        scale = min(viewportWidth / w, viewportHeight / h).coerceAtMost(1.0)
         layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
         layers.forEach {
             it.width = w
@@ -55,6 +61,38 @@ class BoardView : Fragment() {
             it.graphicsContext2D.scale(scale, scale)
             it.redraw()
         }
+        addListeners(layers.last())
         children.setAll(layers)
+    }
+
+    private fun addListeners(layer: BoardViewLayer) {
+        with (layer) {
+            setOnScroll {
+                if (it.deltaY < 0.0) {
+                    scale *= 0.95
+                } else {
+                    scale *= 1.05
+                }
+                redrawLayers()
+            }
+            setOnMousePressed {
+                mouseX = it.sceneX
+                mouseY = it.sceneY
+            }
+            setOnMouseDragged {
+                translateX += (it.sceneX - mouseX) * scale
+                translateY += (it.sceneY - mouseY) * scale
+                redrawLayers()
+            }
+        }
+    }
+
+    private fun redrawLayers() {
+        val transform = Affine(scale, 0.0, translateX * scale,
+            0.0, scale, translateY * scale)
+        layers.forEach {
+            it.graphicsContext2D.transform = transform
+            it.redraw()
+        }
     }
 }

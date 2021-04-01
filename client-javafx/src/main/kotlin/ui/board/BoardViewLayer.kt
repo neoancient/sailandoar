@@ -37,27 +37,5 @@ abstract internal class BoardViewLayer(board: Board) : Canvas() {
         HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)
     protected val borderY = listOf(0.0, 0.0, HEX_HEIGHT * 0.5, HEX_HEIGHT, HEX_HEIGHT, HEX_HEIGHT * 0.5)
 
-    private var mouseX = 0.0
-    private var mouseY = 0.0
-
-    init {
-        setOnScroll {
-            if (it.deltaY < 0.0) {
-                graphicsContext2D.scale(0.95, 0.95)
-            } else {
-                graphicsContext2D.scale(1.05, 1.05)
-            }
-            redraw()
-        }
-        setOnMousePressed {
-            mouseX = it.sceneX
-            mouseY = it.sceneY
-        }
-        setOnMouseDragged {
-            graphicsContext2D.translate(it.sceneX - mouseX, it.sceneY - mouseY)
-            redraw()
-        }
-    }
-
     abstract fun redraw()
 }
