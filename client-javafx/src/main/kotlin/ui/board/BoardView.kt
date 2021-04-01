@@ -22,13 +22,14 @@
  *
  */
 
-package ui
+package ui.board
 
 import board.Board
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 import tornadofx.*
+import ui.ImageCache
 
 const val HEX_WIDTH = 180.0
 const val HEX_HEIGHT = 156.0

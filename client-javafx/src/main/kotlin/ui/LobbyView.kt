@@ -29,6 +29,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import tornadofx.*
+import ui.board.BoardView
 import ui.dialog.AddUnitsDialog
 import ui.model.GameModel
 import ui.model.PlayerModel
