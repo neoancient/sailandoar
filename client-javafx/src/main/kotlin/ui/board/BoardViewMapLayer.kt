@@ -25,55 +25,22 @@
 package ui.board
 
 import board.Board
-import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
-import tornadofx.*
 import ui.ImageCache
 
 const val HEX_WIDTH = 180.0
 const val HEX_HEIGHT = 156.0
 const val HEX_DX = HEX_WIDTH * 0.75
+const val MAP_BORDER = HEX_WIDTH * 2
 
-class BoardViewMapLayer(board: Board) : Canvas() {
-    internal val boardProperty = SimpleObjectProperty(board)
-    internal var board by boardProperty
+internal class BoardViewMapLayer(board: Board) : BoardViewLayer(board) {
 
-    private val borderX = listOf(HEX_WIDTH * 0.25, HEX_WIDTH * 0.75, HEX_WIDTH,
-        HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)
-    private val borderY = listOf(0.0, 0.0, HEX_HEIGHT * 0.5, HEX_HEIGHT, HEX_HEIGHT, HEX_HEIGHT * 0.5)
-
-    private var mouseX = 0.0
-    private var mouseY = 0.0
-
-    init {
-        width = (board.width + 4) * HEX_WIDTH
-        height = (board.height + 6.5) * HEX_HEIGHT
-        setOnScroll {
-            if (it.deltaY < 0.0) {
-                graphicsContext2D.scale(0.95, 0.95)
-            } else {
-                graphicsContext2D.scale(1.05, 1.05)
-            }
-            redraw()
-        }
-        setOnMousePressed {
-            mouseX = it.sceneX
-            mouseY = it.sceneY
-        }
-        setOnMouseDragged {
-            graphicsContext2D.translate(it.sceneX - mouseX, it.sceneY - mouseY)
-            redraw()
-        }
-        redraw()
-    }
-
-    private fun redraw() {
+    override fun redraw() {
         with (graphicsContext2D) {
             clearRect(0.0, 0.0, width, height)
-            var x = HEX_WIDTH * 2
+            var x = MAP_BORDER
             for (col in 0..board.width) {
-                var y = HEX_HEIGHT * (if ((col % 2 == 1) == board.oddOffset) 3.0 else 3.5)
+                var y = MAP_BORDER + if ((col % 2 == 1) == board.oddOffset) 0.0 else HEX_HEIGHT * 0.5
                 for (row in 0..board.height) {
                     val terrain = board.getHex(col, row).terrain
                     val xCoords = borderX.map { x + it }.toDoubleArray()

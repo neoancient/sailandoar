@@ -24,14 +24,33 @@
 
 package ui.board
 
+import javafx.beans.property.SimpleDoubleProperty
 import tornadofx.Fragment
 import tornadofx.pane
 import ui.model.GameModel
+import kotlin.math.min
 
 class BoardView : Fragment() {
     internal val gameModel: GameModel by inject()
+    internal val viewportWidth: Double by param()
+    internal val viewportHeight: Double by param()
+
+    internal val scaleProperty = SimpleDoubleProperty()
+
+    private val layers = ArrayList<BoardViewLayer>()
 
     override val root = pane {
-        children.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
+        val w = gameModel.gameProperty.value.board.width * HEX_WIDTH + MAP_BORDER * 2
+        val h = (gameModel.gameProperty.value.board.height + 0.5) * HEX_HEIGHT + MAP_BORDER * 2
+        val scale = min(viewportWidth / w, viewportHeight / h).coerceAtMost(1.0)
+        layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
+        layers.forEach {
+            it.width = w
+            it.height = h
+            it.graphicsContext2D.translate(-MAP_BORDER, -MAP_BORDER)
+//            it.graphicsContext2D.scale(scale, scale)
+            it.redraw()
+        }
+        children.setAll(layers)
     }
 }

@@ -22,35 +22,42 @@
  *
  */
 
-package ui
+package ui.board
 
-import javafx.fxml.FXML
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.Pane
-import tornadofx.*
-import ui.board.BoardView
-import ui.dialog.AddUnitsDialog
-import ui.model.GameModel
+import board.Board
+import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.canvas.Canvas
+import tornadofx.getValue
 
-internal class LobbyView : View() {
-    override val root: AnchorPane by fxml()
-    internal val model: GameModel by inject()
-    internal val tblForces: PlayerForcesTable by inject()
+abstract internal class BoardViewLayer(board: Board) : Canvas() {
+    protected val boardProperty = SimpleObjectProperty(board)
+    protected val board by boardProperty
 
-    internal val panForces: Pane by fxid()
-    internal val panMapView: Pane by fxid()
+    protected val borderX = listOf(HEX_WIDTH * 0.25, HEX_WIDTH * 0.75, HEX_WIDTH,
+        HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)
+    protected val borderY = listOf(0.0, 0.0, HEX_HEIGHT * 0.5, HEX_HEIGHT, HEX_HEIGHT, HEX_HEIGHT * 0.5)
+
+    private var mouseX = 0.0
+    private var mouseY = 0.0
 
     init {
-        panForces.children.setAll(tblForces.root)
-        panMapView.children.setAll(find<BoardView>(mapOf(
-            BoardView::viewportWidth to panMapView.prefWidth,
-            BoardView::viewportHeight to panMapView.prefHeight
-        )).root)
+        setOnScroll {
+            if (it.deltaY < 0.0) {
+                graphicsContext2D.scale(0.95, 0.95)
+            } else {
+                graphicsContext2D.scale(1.05, 1.05)
+            }
+            redraw()
+        }
+        setOnMousePressed {
+            mouseX = it.sceneX
+            mouseY = it.sceneY
+        }
+        setOnMouseDragged {
+            graphicsContext2D.translate(it.sceneX - mouseX, it.sceneY - mouseY)
+            redraw()
+        }
     }
 
-    @FXML
-    fun addUnits() {
-        val view = find<AddUnitsDialog>(AddUnitsDialog::playerId to model.client.id)
-        view.openModal()
-    }
+    abstract fun redraw()
 }
