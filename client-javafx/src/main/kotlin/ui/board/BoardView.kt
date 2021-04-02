@@ -84,17 +84,21 @@ class BoardView : Fragment() {
         }
     }
 
-    val minTranslateX = doubleBinding(viewportWidthProperty, layerWidth, scaleProperty) {
-        (value - layerWidth.value * scale).coerceAtMost(0.0)
+    /**
+     * Calculates the limit on scrolling left and right
+     * If < 0, this is the minimum and the maximum is 0.0.
+     * If > 0, this is the maximum and the minimum is 0.0.
+     */
+    val limitX = doubleBinding(viewportWidthProperty, layerWidth, scaleProperty) {
+        (value - layerWidth.value * scale)
     }
-    val minTranslateY = doubleBinding(viewportHeightProperty, layerHeight, scaleProperty) {
-        (value - layerHeight.value * scale).coerceAtMost(0.0)
-    }
-    val maxTranslateX = doubleBinding(viewportWidthProperty, layerWidth, scaleProperty) {
-        (value - layerWidth.value * scale).coerceAtLeast(0.0)
-    }
-    val maxTranslateY = doubleBinding(viewportHeightProperty, layerHeight, scaleProperty) {
-        (value - layerHeight.value * scale).coerceAtLeast(0.0)
+    /**
+     * Calculates the limit on scrolling up and down
+     * If < 0, this is the minimum and the maximum is 0.0.
+     * If > 0, this is the maximum and the minimum is 0.0.
+     */
+    val limitY = doubleBinding(viewportHeightProperty, layerHeight, scaleProperty) {
+        (value - layerHeight.value * scale)
     }
 
     private fun addListeners(layer: BoardViewLayer) {
@@ -115,11 +119,11 @@ class BoardView : Fragment() {
             }
             setOnMouseDragged {
                 translateX = (translateX + (it.sceneX - mouseX) * scale)
-                    .coerceAtLeast(minTranslateX.value)
-                    .coerceAtMost(maxTranslateX.value)
+                    .coerceAtLeast(limitX.value.coerceAtMost(0.0))
+                    .coerceAtMost(limitX.value.coerceAtLeast(0.0))
                 translateY = (translateY + (it.sceneY - mouseY) * scale)
-                    .coerceAtLeast(minTranslateY.value)
-                    .coerceAtMost(maxTranslateY.value)
+                    .coerceAtLeast(limitY.value.coerceAtMost(0.0))
+                    .coerceAtMost(limitY.value.coerceAtLeast(0.0))
                 redrawLayers()
             }
         }
