@@ -26,10 +26,9 @@ package ui.board
 
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.scene.layout.Pane
 import javafx.scene.transform.Affine
-import tornadofx.Fragment
-import tornadofx.doubleBinding
-import tornadofx.pane
+import tornadofx.*
 import ui.model.GameModel
 import kotlin.math.min
 
@@ -40,12 +39,16 @@ const val MAP_BORDER = HEX_WIDTH * 2
 
 class BoardView : Fragment() {
     internal val gameModel: GameModel by inject()
-    internal val viewportWidth: Double by param()
-    internal val viewportHeight: Double by param()
+
+    private val viewportWidthProperty = SimpleDoubleProperty(params["width"] as Double)
+    private val viewportHeightProperty = SimpleDoubleProperty(params["height"] as Double)
+    private val viewportWidth by viewportWidthProperty
+    internal val viewportHeight by viewportHeightProperty
 
     private val boardWidthProperty = SimpleIntegerProperty(gameModel.gameProperty.value.board.width)
     private val boardHeightProperty = SimpleIntegerProperty(gameModel.gameProperty.value.board.height)
-    private var scale = 1.0
+    private val scaleProperty = SimpleDoubleProperty(1.0)
+    private var scale by scaleProperty
     private var translateX = 0.0
     private var translateY = 0.0
     private var mouseX = 0.0
@@ -53,14 +56,13 @@ class BoardView : Fragment() {
 
     private val layers = ArrayList<BoardViewLayer>()
     val layerWidth = boardWidthProperty.multiply(HEX_WIDTH).add(MAP_BORDER * 2)
-    val layerHeight = boardWidthProperty.add(0.5).multiply(HEX_HEIGHT).add(MAP_BORDER * 2)
+    val layerHeight = boardHeightProperty.add(0.5).multiply(HEX_HEIGHT).add(MAP_BORDER * 2)
     val minScale = doubleBinding(layerWidth, layerHeight) {
         min(
             viewportWidth / layerWidth.value,
             viewportHeight / layerHeight.value
         )
     }
-
     override val root = pane {
         scale = minScale.value.coerceAtMost(1.0)
         layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
@@ -72,6 +74,27 @@ class BoardView : Fragment() {
         }
         addListeners(layers.last())
         children.setAll(layers)
+        parentProperty().onChange { p ->
+            (p as? Pane)?.let {
+                viewportWidthProperty.unbind()
+                viewportHeightProperty.unbind()
+                viewportWidthProperty.bind(it.widthProperty())
+                viewportHeightProperty.bind(it.heightProperty())
+            }
+        }
+    }
+
+    val minTranslateX = doubleBinding(viewportWidthProperty, layerWidth, scaleProperty) {
+        (value - layerWidth.value * scale).coerceAtMost(0.0)
+    }
+    val minTranslateY = doubleBinding(viewportHeightProperty, layerHeight, scaleProperty) {
+        (value - layerHeight.value * scale).coerceAtMost(0.0)
+    }
+    val maxTranslateX = doubleBinding(viewportWidthProperty, layerWidth, scaleProperty) {
+        (value - layerWidth.value * scale).coerceAtLeast(0.0)
+    }
+    val maxTranslateY = doubleBinding(viewportHeightProperty, layerHeight, scaleProperty) {
+        (value - layerHeight.value * scale).coerceAtLeast(0.0)
     }
 
     private fun addListeners(layer: BoardViewLayer) {
@@ -91,8 +114,12 @@ class BoardView : Fragment() {
                 mouseY = it.sceneY
             }
             setOnMouseDragged {
-                translateX += (it.sceneX - mouseX) * scale
-                translateY += (it.sceneY - mouseY) * scale
+                translateX = (translateX + (it.sceneX - mouseX) * scale)
+                    .coerceAtLeast(minTranslateX.value)
+                    .coerceAtMost(maxTranslateX.value)
+                translateY = (translateY + (it.sceneY - mouseY) * scale)
+                    .coerceAtLeast(minTranslateY.value)
+                    .coerceAtMost(maxTranslateY.value)
                 redrawLayers()
             }
         }
