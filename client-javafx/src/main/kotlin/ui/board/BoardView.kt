@@ -69,9 +69,8 @@ class BoardView : Fragment() {
         layers.forEach {
             it.widthProperty().bind(layerWidth)
             it.heightProperty().bind(layerHeight)
-            it.graphicsContext2D.scale(scale, scale)
-            it.redraw()
         }
+        redrawLayers()
         addListeners(layers.last())
         children.setAll(layers)
         parentProperty().onChange { p ->
@@ -118,10 +117,10 @@ class BoardView : Fragment() {
                 mouseY = it.sceneY
             }
             setOnMouseDragged {
-                translateX = (translateX + (it.sceneX - mouseX) * scale)
+                this@BoardView.translateX = (this@BoardView.translateX + (it.sceneX - mouseX) * scale)
                     .coerceAtLeast(limitX.value.coerceAtMost(0.0))
                     .coerceAtMost(limitX.value.coerceAtLeast(0.0))
-                translateY = (translateY + (it.sceneY - mouseY) * scale)
+                this@BoardView.translateY = (this@BoardView.translateY + (it.sceneY - mouseY) * scale)
                     .coerceAtLeast(limitY.value.coerceAtMost(0.0))
                     .coerceAtMost(limitY.value.coerceAtLeast(0.0))
                 redrawLayers()
@@ -130,11 +129,12 @@ class BoardView : Fragment() {
     }
 
     private fun redrawLayers() {
-        val transform = Affine(scale, 0.0, translateX * scale,
-            0.0, scale, translateY * scale)
+        val transform = Affine(scale, 0.0, translateX,
+            0.0, scale, translateY)
         layers.forEach {
             it.graphicsContext2D.transform = transform
-            it.redraw()
+            it.redraw(-translateX / scale, -translateY / scale,
+                viewportWidth / scale, viewportHeight / scale)
         }
     }
 }

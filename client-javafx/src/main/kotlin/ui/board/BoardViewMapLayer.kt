@@ -27,31 +27,40 @@ package ui.board
 import board.Board
 import javafx.scene.paint.Color
 import ui.ImageCache
+import kotlin.math.ceil
+import kotlin.math.floor
 
 internal class BoardViewMapLayer(board: Board) : BoardViewLayer(board) {
 
-    override fun redraw() {
+    override fun redraw(x: Double, y: Double, w: Double, h: Double) {
         with (graphicsContext2D) {
-            clearRect(0.0, 0.0, width, height)
-            var x = MAP_BORDER
-            for (col in 0..board.width) {
-                var y = MAP_BORDER + if ((col % 2 == 1) == board.oddOffset) 0.0 else HEX_HEIGHT * 0.5
-                for (row in 0..board.height) {
+            clearRect(x, y, w, h)
+            save()
+            beginPath()
+            rect(x, y, w, h)
+            clip()
+            var xPos = MAP_BORDER
+            for (col in floor(colFor(xPos)).toInt().coerceAtLeast(0)..
+                    ceil(colFor(xPos + w)).toInt().coerceAtMost(board.width)) {
+                var yPos = MAP_BORDER + if ((col % 2 == 1) == board.oddOffset) 0.0 else HEX_HEIGHT * 0.5
+                for (row in floor(rowFor(yPos) - 1.0).toInt().coerceAtLeast(0)..
+                        ceil(rowFor(yPos + h) + 1.5).toInt().coerceAtMost(board.height)) {
                     val terrain = board.getHex(col, row).terrain
-                    val xCoords = borderX.map { x + it }.toDoubleArray()
-                    val yCoords = borderY.map { y + it }.toDoubleArray()
+                    val xCoords = borderX.map { xPos + it }.toDoubleArray()
+                    val yCoords = borderY.map { yPos + it }.toDoubleArray()
                     ImageCache.get(terrain)?.let {
-                        drawImage(it, x, y)
+                        drawImage(it, xPos, yPos)
                     } ?: run {
                         fill = Color.rgb(terrain.r, terrain.g, terrain.b)
                         fillPolygon(xCoords, yCoords, 6)
                     }
                     stroke = Color.BLACK
                     strokePolygon(xCoords, yCoords, 6)
-                    y += HEX_HEIGHT
+                    yPos += HEX_HEIGHT
                 }
-                x += HEX_DX
+                xPos += HEX_DX
             }
+            restore()
         }
     }
 }

@@ -37,5 +37,8 @@ abstract internal class BoardViewLayer(board: Board) : Canvas() {
         HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)
     protected val borderY = listOf(0.0, 0.0, HEX_HEIGHT * 0.5, HEX_HEIGHT, HEX_HEIGHT, HEX_HEIGHT * 0.5)
 
-    abstract fun redraw()
+    abstract fun redraw(x: Double, y: Double, w: Double, h: Double)
+
+    fun colFor(x: Double) = (x - MAP_BORDER) / HEX_WIDTH
+    fun rowFor(y: Double) = (y - MAP_BORDER) / HEX_HEIGHT
 }
