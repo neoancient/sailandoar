@@ -66,6 +66,7 @@ class BoardView : Fragment() {
     override val root = pane {
         scale = minScale.value.coerceAtMost(1.0)
         layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
+        layers.add(BoardViewGridLayer(gameModel.gameProperty.value.board))
         layers.forEach {
             it.widthProperty().bind(layerWidth)
             it.heightProperty().bind(layerHeight)

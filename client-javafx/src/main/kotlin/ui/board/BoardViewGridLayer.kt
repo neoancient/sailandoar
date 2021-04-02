@@ -30,10 +30,9 @@ import ui.ImageCache
 import kotlin.math.ceil
 import kotlin.math.floor
 
-internal class BoardViewMapLayer(board: Board) : BoardViewLayer(board) {
-
+internal class BoardViewGridLayer(board: Board) : BoardViewLayer(board) {
     override fun redraw(x: Double, y: Double, w: Double, h: Double) {
-        with (graphicsContext2D) {
+        with(graphicsContext2D) {
             clearRect(0.0, 0.0, width, height)
             save()
             beginPath()
@@ -45,15 +44,14 @@ internal class BoardViewMapLayer(board: Board) : BoardViewLayer(board) {
                 var yPos = MAP_BORDER + if ((col % 2 == 1) == board.oddOffset) 0.0 else HEX_HEIGHT * 0.5
                 for (row in floor(rowFor(yPos) - 1.0).toInt().coerceAtLeast(0)..
                         ceil(rowFor(yPos + h) + 1.0).toInt().coerceAtMost(board.height)) {
-                    val terrain = board.getHex(col, row).terrain
-                    ImageCache.get(terrain)?.let {
-                        drawImage(it, xPos, yPos)
-                    } ?: run {
-                        fill = Color.rgb(terrain.r, terrain.g, terrain.b)
-                        val xCoords = borderX.map { xPos + it }.toDoubleArray()
-                        val yCoords = borderY.map { yPos + it }.toDoubleArray()
-                        fillPolygon(xCoords, yCoords, 6)
-                    }
+                    val xCoords = borderX.map { xPos + it }.toDoubleArray()
+                    val yCoords = borderY.map { yPos + it }.toDoubleArray()
+                    stroke = Color.WHITE
+                    lineWidth = 3.0
+                    strokePolygon(xCoords, yCoords, 6)
+                    stroke = Color.BLACK
+                    lineWidth = 1.0
+                    strokePolygon(xCoords, yCoords, 6)
                     yPos += HEX_HEIGHT
                 }
                 xPos += HEX_DX
