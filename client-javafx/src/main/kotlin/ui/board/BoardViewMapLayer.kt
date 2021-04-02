@@ -32,19 +32,12 @@ import kotlin.math.floor
 
 internal class BoardViewMapLayer(board: Board) : BoardViewLayer(board) {
 
-    override fun redraw(x: Double, y: Double, w: Double, h: Double) {
+    override fun drawHexes(firstCol: Int, lastCol: Int, firstRow: Int, lastRow: Int) {
         with (graphicsContext2D) {
-            clearRect(0.0, 0.0, width, height)
-            save()
-            beginPath()
-            rect(x, y, w, h)
-            clip()
             var xPos = MAP_BORDER
-            for (col in floor(colFor(xPos)).toInt().coerceAtLeast(0)..
-                    ceil(colFor(xPos + w)).toInt().coerceAtMost(board.width)) {
+            for (col in firstCol..lastCol) {
                 var yPos = MAP_BORDER + if ((col % 2 == 1) == board.oddOffset) 0.0 else HEX_HEIGHT * 0.5
-                for (row in floor(rowFor(yPos) - 1.0).toInt().coerceAtLeast(0)..
-                        ceil(rowFor(yPos + h) + 1.0).toInt().coerceAtMost(board.height)) {
+                for (row in firstRow..lastRow) {
                     val terrain = board.getHex(col, row).terrain
                     ImageCache.get(terrain)?.let {
                         drawImage(it, xPos, yPos)

@@ -28,6 +28,8 @@ import board.Board
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
 import tornadofx.getValue
+import kotlin.math.ceil
+import kotlin.math.floor
 
 abstract internal class BoardViewLayer(board: Board) : Canvas() {
     protected val boardProperty = SimpleObjectProperty(board)
@@ -37,7 +39,24 @@ abstract internal class BoardViewLayer(board: Board) : Canvas() {
         HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)
     protected val borderY = listOf(0.0, 0.0, HEX_HEIGHT * 0.5, HEX_HEIGHT, HEX_HEIGHT, HEX_HEIGHT * 0.5)
 
-    abstract fun redraw(x: Double, y: Double, w: Double, h: Double)
+    fun redraw(x: Double, y: Double, w: Double, h: Double) {
+        with(graphicsContext2D) {
+            clearRect(0.0, 0.0, width, height)
+            save()
+            beginPath()
+            rect(x, y, w, h)
+            clip()
+            drawHexes(
+                floor(colFor(x)).toInt().coerceAtLeast(0),
+                ceil(colFor(x + w)).toInt().coerceAtMost(board.width),
+                floor(rowFor(y) - 1.0).toInt().coerceAtLeast(0),
+                ceil(rowFor(y + h) + 1.0).toInt().coerceAtMost(board.height)
+            )
+            restore()
+        }
+    }
+
+    abstract protected fun drawHexes(firstCol: Int, lastCol: Int, firstRow: Int, lastRow: Int)
 
     fun colFor(x: Double) = (x - MAP_BORDER) / HEX_WIDTH
     fun rowFor(y: Double) = (y - MAP_BORDER) / HEX_HEIGHT
