@@ -25,8 +25,10 @@
 package ui.board
 
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.scene.transform.Affine
 import tornadofx.Fragment
+import tornadofx.doubleBinding
 import tornadofx.pane
 import ui.model.GameModel
 import kotlin.math.min
@@ -41,23 +43,30 @@ class BoardView : Fragment() {
     internal val viewportWidth: Double by param()
     internal val viewportHeight: Double by param()
 
+    private val boardWidthProperty = SimpleIntegerProperty(gameModel.gameProperty.value.board.width)
+    private val boardHeightProperty = SimpleIntegerProperty(gameModel.gameProperty.value.board.height)
     private var scale = 1.0
     private var translateX = 0.0
     private var translateY = 0.0
     private var mouseX = 0.0
     private var mouseY = 0.0
 
-
     private val layers = ArrayList<BoardViewLayer>()
+    val layerWidth = boardWidthProperty.multiply(HEX_WIDTH).add(MAP_BORDER * 2)
+    val layerHeight = boardWidthProperty.add(0.5).multiply(HEX_HEIGHT).add(MAP_BORDER * 2)
+    val minScale = doubleBinding(layerWidth, layerHeight) {
+        min(
+            viewportWidth / layerWidth.value,
+            viewportHeight / layerHeight.value
+        )
+    }
 
     override val root = pane {
-        val w = gameModel.gameProperty.value.board.width * HEX_WIDTH + MAP_BORDER * 2
-        val h = (gameModel.gameProperty.value.board.height + 0.5) * HEX_HEIGHT + MAP_BORDER * 2
-        scale = min(viewportWidth / w, viewportHeight / h).coerceAtMost(1.0)
+        scale = minScale.value.coerceAtMost(1.0)
         layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
         layers.forEach {
-            it.width = w
-            it.height = h
+            it.widthProperty().bind(layerWidth)
+            it.heightProperty().bind(layerHeight)
             it.graphicsContext2D.scale(scale, scale)
             it.redraw()
         }
@@ -68,11 +77,13 @@ class BoardView : Fragment() {
     private fun addListeners(layer: BoardViewLayer) {
         with (layer) {
             setOnScroll {
-                if (it.deltaY < 0.0) {
-                    scale *= 0.95
+                val factor = if (it.deltaY < 0.0) {
+                    0.95
                 } else {
-                    scale *= 1.05
+                    1.05
                 }
+                scale = (scale * factor).coerceAtLeast(minScale.value)
+                    .coerceAtMost(1.0)
                 redrawLayers()
             }
             setOnMousePressed {
