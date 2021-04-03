@@ -101,31 +101,38 @@ class BoardView : Fragment() {
         (value - layerHeight.value * scale)
     }
 
+    private fun Double.boundsCheck(limit: Double) =
+        coerceAtLeast(limit.coerceAtMost(0.0))
+            .coerceAtMost(limit.coerceAtLeast(0.0))
+
     private fun addListeners(layer: BoardViewLayer) {
-        with (layer) {
-            setOnScroll {
-                val factor = if (it.deltaY < 0.0) {
-                    0.95
-                } else {
-                    1.05
-                }
-                scale = (scale * factor).coerceAtLeast(minScale.value)
-                    .coerceAtMost(1.0)
-                redrawLayers()
+        layer.setOnScroll {
+            val factor = if (it.deltaY < 0.0) {
+                0.95
+            } else {
+                1.05
             }
-            setOnMousePressed {
-                mouseX = it.sceneX
-                mouseY = it.sceneY
+            (scale * factor).takeIf {
+                it <= 1.0 && it >= minScale.value
+            }?.let { newScale ->
+                translateX = (translateX - (it.x - translateX) * (newScale - scale) / scale)
+                    .boundsCheck(limitX.value)
+                translateY = (translateY - (it.y - translateY) * (newScale - scale) / scale)
+                    .boundsCheck(limitY.value)
+                scale = newScale
             }
-            setOnMouseDragged {
-                this@BoardView.translateX = (this@BoardView.translateX + (it.sceneX - mouseX) * scale)
-                    .coerceAtLeast(limitX.value.coerceAtMost(0.0))
-                    .coerceAtMost(limitX.value.coerceAtLeast(0.0))
-                this@BoardView.translateY = (this@BoardView.translateY + (it.sceneY - mouseY) * scale)
-                    .coerceAtLeast(limitY.value.coerceAtMost(0.0))
-                    .coerceAtMost(limitY.value.coerceAtLeast(0.0))
-                redrawLayers()
-            }
+            redrawLayers()
+        }
+        layer.setOnMousePressed {
+            mouseX = it.sceneX
+            mouseY = it.sceneY
+        }
+        layer.setOnMouseDragged {
+            translateX = (translateX + (it.sceneX - mouseX) * scale)
+                .boundsCheck(limitX.value)
+            translateY = (translateY + (it.sceneY - mouseY) * scale)
+                .boundsCheck(limitY.value)
+            redrawLayers()
         }
     }
 
