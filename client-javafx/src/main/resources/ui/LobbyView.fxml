@@ -40,7 +40,7 @@
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="SOMETIMES">
          <children>
-            <Pane fx:id="panMapView" prefHeight="200.0" prefWidth="200.0" />
+            <Pane fx:id="panMapView" />
          </children>
       </VBox>
    </HBox>

@@ -42,10 +42,7 @@ internal class LobbyView : View() {
 
     init {
         panForces.children.setAll(tblForces.root)
-        panMapView.children.setAll(find<BoardView>(mapOf(
-            "width" to panMapView.prefWidth,
-            "height" to panMapView.prefHeight
-        )).root)
+        panMapView.children.setAll(find<BoardView>().root)
     }
 
     @FXML

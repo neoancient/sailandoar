@@ -40,8 +40,8 @@ const val MAP_BORDER = HEX_WIDTH * 2
 class BoardView : Fragment() {
     internal val gameModel: GameModel by inject()
 
-    private val viewportWidthProperty = SimpleDoubleProperty(params["width"] as Double)
-    private val viewportHeightProperty = SimpleDoubleProperty(params["height"] as Double)
+    private val viewportWidthProperty = SimpleDoubleProperty()
+    private val viewportHeightProperty = SimpleDoubleProperty()
     private val viewportWidth by viewportWidthProperty
     internal val viewportHeight by viewportHeightProperty
 
@@ -57,14 +57,18 @@ class BoardView : Fragment() {
     private val layers = ArrayList<BoardViewLayer>()
     val layerWidth = boardWidthProperty.multiply(HEX_WIDTH).add(MAP_BORDER * 2)
     val layerHeight = boardHeightProperty.add(0.5).multiply(HEX_HEIGHT).add(MAP_BORDER * 2)
-    val minScale = doubleBinding(layerWidth, layerHeight) {
+    val minScale = doubleBinding(
+        viewportWidthProperty,
+        viewportHeightProperty,
+        layerWidth,
+        layerHeight
+    ) {
         min(
             viewportWidth / layerWidth.value,
             viewportHeight / layerHeight.value
         )
     }
     override val root = pane {
-        scale = minScale.value.coerceAtMost(1.0)
         layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
         layers.add(BoardViewGridLayer(gameModel.gameProperty.value.board))
         layers.forEach {
@@ -74,12 +78,20 @@ class BoardView : Fragment() {
         redrawLayers()
         addListeners(layers.last())
         children.setAll(layers)
-        parentProperty().onChange { p ->
+        parentProperty().onChangeOnce { p ->
             (p as? Pane)?.let {
                 viewportWidthProperty.unbind()
                 viewportHeightProperty.unbind()
                 viewportWidthProperty.bind(it.widthProperty())
                 viewportHeightProperty.bind(it.heightProperty())
+                viewportWidthProperty.onChangeOnce {
+                    scale = minScale.value.coerceAtMost(1.0)
+                    redrawLayers()
+                }
+                viewportHeightProperty.onChangeOnce {
+                    scale = minScale.value.coerceAtMost(1.0)
+                    redrawLayers()
+                }
             }
         }
     }
