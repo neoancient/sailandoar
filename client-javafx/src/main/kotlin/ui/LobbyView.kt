@@ -43,10 +43,10 @@ internal class LobbyView : View() {
     internal val panMapView: Pane by fxid()
     internal val spnMapWidth: Spinner<Int> by fxid()
     internal val spnMapHeight: Spinner<Int> by fxid()
+    private val boardView = find<BoardView>()
 
     init {
         panForces.children.setAll(tblForces.root)
-        val boardView = find<BoardView>()
         panMapView.children.setAll(boardView.root)
         spnMapWidth.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
             1, Integer.MAX_VALUE, boardView.board.width, 1
@@ -54,8 +54,16 @@ internal class LobbyView : View() {
         spnMapHeight.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
             1, Integer.MAX_VALUE, boardView.board.height, 1
         )
-        spnMapWidth.bind(boardView.board.widthProperty.asObject())
-        spnMapHeight.bind(boardView.board.heightProperty.asObject())
+    }
+
+    override fun onDock() {
+        boardView.board.widthProperty.bind(spnMapWidth.valueFactory.valueProperty())
+        boardView.board.heightProperty.bind(spnMapHeight.valueFactory.valueProperty())
+    }
+
+    override fun onUndock() {
+        boardView.board.widthProperty.unbind()
+        boardView.board.heightProperty.unbind()
     }
 
     @FXML
