@@ -27,10 +27,11 @@ package ui.board
 import board.Board
 import javafx.scene.paint.Color
 import ui.ImageCache
+import ui.model.BoardModel
 import kotlin.math.ceil
 import kotlin.math.floor
 
-internal class BoardViewGridLayer(board: Board) : BoardViewLayer(board) {
+internal class BoardViewGridLayer(board: BoardModel) : BoardViewLayer(board) {
 
     override fun drawHexes(firstCol: Int, lastCol: Int, firstRow: Int, lastRow: Int) {
         with (graphicsContext2D) {

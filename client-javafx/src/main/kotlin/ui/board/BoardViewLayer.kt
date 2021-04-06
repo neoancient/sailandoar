@@ -24,16 +24,12 @@
 
 package ui.board
 
-import board.Board
-import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.canvas.Canvas
-import tornadofx.getValue
+import ui.model.BoardModel
 import kotlin.math.ceil
 import kotlin.math.floor
 
-abstract internal class BoardViewLayer(board: Board) : Canvas() {
-    protected val boardProperty = SimpleObjectProperty(board)
-    protected val board by boardProperty
+abstract internal class BoardViewLayer(protected val board: BoardModel) : Canvas() {
 
     protected val borderX = listOf(HEX_WIDTH * 0.25, HEX_WIDTH * 0.75, HEX_WIDTH,
         HEX_WIDTH * 0.75, HEX_WIDTH * 0.25, 0.0)

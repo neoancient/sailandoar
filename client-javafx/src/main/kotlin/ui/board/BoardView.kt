@@ -24,11 +24,12 @@
 
 package ui.board
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Affine
 import tornadofx.*
+import ui.model.BoardModel
 import ui.model.GameModel
 import kotlin.math.min
 
@@ -45,8 +46,7 @@ class BoardView : Fragment() {
     private val viewportWidth by viewportWidthProperty
     internal val viewportHeight by viewportHeightProperty
 
-    private val boardWidthProperty = SimpleIntegerProperty(gameModel.gameProperty.value.board.width)
-    private val boardHeightProperty = SimpleIntegerProperty(gameModel.gameProperty.value.board.height)
+    internal val board = BoardModel(gameModel.gameProperty.value.board)
     private val scaleProperty = SimpleDoubleProperty(1.0)
     private var scale by scaleProperty
     private var translateX = 0.0
@@ -55,8 +55,8 @@ class BoardView : Fragment() {
     private var mouseY = 0.0
 
     private val layers = ArrayList<BoardViewLayer>()
-    val layerWidth = boardWidthProperty.multiply(HEX_WIDTH).add(MAP_BORDER * 2)
-    val layerHeight = boardHeightProperty.add(0.5).multiply(HEX_HEIGHT).add(MAP_BORDER * 2)
+    val layerWidth = board.widthProperty.multiply(HEX_WIDTH).add(MAP_BORDER * 2)
+    val layerHeight = board.heightProperty.add(0.5).multiply(HEX_HEIGHT).add(MAP_BORDER * 2)
     val minScale = doubleBinding(
         viewportWidthProperty,
         viewportHeightProperty,
@@ -69,8 +69,8 @@ class BoardView : Fragment() {
         )
     }
     override val root = pane {
-        layers.add(BoardViewMapLayer(gameModel.gameProperty.value.board))
-        layers.add(BoardViewGridLayer(gameModel.gameProperty.value.board))
+        layers.add(BoardViewMapLayer(board))
+        layers.add(BoardViewGridLayer(board))
         layers.forEach {
             it.widthProperty().bind(layerWidth)
             it.heightProperty().bind(layerHeight)
@@ -93,6 +93,15 @@ class BoardView : Fragment() {
                     redrawLayers()
                 }
             }
+        }
+    }
+
+    init {
+        board.widthProperty.onChange {
+            redrawLayers()
+        }
+        board.heightProperty.onChange {
+            redrawLayers()
         }
     }
 
@@ -153,8 +162,10 @@ class BoardView : Fragment() {
             0.0, scale, translateY)
         layers.forEach {
             it.graphicsContext2D.transform = transform
-            it.redraw(-translateX / scale, -translateY / scale,
-                viewportWidth / scale, viewportHeight / scale)
+            it.redraw(
+                -translateX / scale, -translateY / scale,
+                viewportWidth / scale, viewportHeight / scale
+            )
         }
     }
 }

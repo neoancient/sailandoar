@@ -32,4 +32,5 @@ interface GameListener {
     fun unitAdded(unitId: Int)
     fun unitRemoved(unitId: Int)
     fun appendChat(text: String)
+    fun boardChanged()
 }

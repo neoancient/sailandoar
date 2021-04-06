@@ -30,6 +30,7 @@ import unit.BaseUnit
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.properties.Delegates.observable
 
 /**
  * Manages all aspects of the game including unit state, board, and weather conditions.
@@ -37,7 +38,12 @@ import java.util.concurrent.atomic.AtomicInteger
 @Serializable
 class Game {
 
-    var board = Board(32, 16)
+    var board by observable(Board(32, 16)) { _, _, _ ->
+        listeners.forEach {
+            it.boardChanged()
+        }
+    }
+
     val weather = Weather()
     @Serializable(with = AtomicIntegerAsIntSerializer::class)
     private val nextUnitId = AtomicInteger(1)
@@ -92,9 +98,10 @@ class Game {
      * a unit with this id, it is replaced.
      */
     fun replaceUnit(unitId: Int, unit: BaseUnit): Int {
-        units[unit.unitId] = unit
-        listeners.forEach { it.unitAdded(unit.unitId) }
-        return unit.unitId
+        unit.unitId = unitId
+        units[unitId] = unit
+        listeners.forEach { it.unitAdded(unitId) }
+        return unitId
     }
 
     fun removeUnit(unitId: Int): BaseUnit? {

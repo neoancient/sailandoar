@@ -25,6 +25,8 @@
 package ui
 
 import javafx.fxml.FXML
+import javafx.scene.control.Spinner
+import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import tornadofx.*
@@ -39,10 +41,21 @@ internal class LobbyView : View() {
 
     internal val panForces: Pane by fxid()
     internal val panMapView: Pane by fxid()
+    internal val spnMapWidth: Spinner<Int> by fxid()
+    internal val spnMapHeight: Spinner<Int> by fxid()
 
     init {
         panForces.children.setAll(tblForces.root)
-        panMapView.children.setAll(find<BoardView>().root)
+        val boardView = find<BoardView>()
+        panMapView.children.setAll(boardView.root)
+        spnMapWidth.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
+            1, Integer.MAX_VALUE, boardView.board.width, 1
+        )
+        spnMapHeight.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
+            1, Integer.MAX_VALUE, boardView.board.height, 1
+        )
+        spnMapWidth.bind(boardView.board.widthProperty.asObject())
+        spnMapHeight.bind(boardView.board.heightProperty.asObject())
     }
 
     @FXML

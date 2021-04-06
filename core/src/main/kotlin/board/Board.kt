@@ -33,7 +33,7 @@ class Board(val width: Int, val height: Int,
             val oddOffset: Boolean = true,
             val defaultHex: HexData = HexData(TerrainType.SEA, DEPTH_DEEP_SEA, 0)) {
 
-    private val hexes: MutableMap<in HexCoords, HexData> = HashMap()
+    private val hexes: MutableMap<HexCoords, HexData> = HashMap()
 
     constructor(width: Int, height: Int, verticalGrid: Boolean = true, oddOffset: Boolean = true,
                 defaultHex: HexData = HexData(TerrainType.SEA, DEPTH_DEEP_SEA, 0),
@@ -43,13 +43,22 @@ class Board(val width: Int, val height: Int,
     }
 
     /**
-     * Factory method to create a set of coordinates for this board
+     * Factory method to create a set of axial coordinates for this board
      * @param col The hex column
      * @param row The hex row
      * @return    The coordinates for the hex
      */
     fun createCoords(col: Int, row: Int): HexCoords =
             HexCoords(col, row, verticalGrid)
+
+    /**
+     * Factory method to create a set of axial coordinates for this board
+     * @param col The hex column
+     * @param row The hex row
+     * @return    The coordinates for the hex
+     */
+    fun createOffsetCoords(col: Int, row: Int): HexCoords =
+        HexCoords.createFromOffset(col, row, verticalGrid, oddOffset)
 
     /**
      * Lookup for the features of the hex at the given coordinates
@@ -73,9 +82,23 @@ class Board(val width: Int, val height: Int,
      */
     fun getOffsetCoordX(coords: HexCoords) = coords.offsetX(oddOffset)
 
+    /**
+     * Find the Y coordinate of the hex using offset coordinates
+     */
     fun getOffsetCoordY(coords: HexCoords) = coords.offsetY(oddOffset)
 
+    /**
+     * Find the X coordinate of the hex using Cartesian coordinates
+     */
     fun getCartesianX(coords: HexCoords) = coords.cartesianX()
 
+    /**
+     * Find the Y coordinate of the hex using Cartesian coordinates
+     */
     fun getCartesianY(coords: HexCoords) = coords.cartesianY()
+
+    /**
+     * Returns a copy of the hex data
+     */
+    fun exportHexes(): MutableMap<HexCoords, HexData> = HashMap(hexes)
 }

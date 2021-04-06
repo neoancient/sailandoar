@@ -24,9 +24,11 @@
 
 package ui.model
 
+import board.Board
 import game.Game
 import game.GameListener
 import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -41,6 +43,9 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     val client by clientProperty
     val gameProperty: ObjectProperty<Game> = SimpleObjectProperty(client?.game ?: Game())
     private var game by gameProperty
+
+    val boardWidthProperty = SimpleIntegerProperty(game.board.width)
+    val boardHeightProperty = SimpleIntegerProperty(game.board.height)
 
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty)
@@ -105,4 +110,6 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     override fun receiveAvailableShips() {
         availableShips.setAll(client.getAvailableShips().sortedBy { it.name })
     }
+
+    override fun boardChanged() {}
 }
