@@ -29,6 +29,7 @@ import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
+import javafx.util.StringConverter
 import tornadofx.*
 import ui.board.BoardView
 import ui.dialog.AddUnitsDialog
@@ -50,10 +51,20 @@ internal class LobbyView : View() {
         panMapView.children.setAll(boardView.root)
         spnMapWidth.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
             1, Integer.MAX_VALUE, boardView.board.width, 1
-        )
+        ).apply {
+            converter = IntegerStringConverter {
+                spnMapWidth.editor.text = boardView.board.width.toString()
+                boardView.board.width
+            }
+        }
         spnMapHeight.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(
             1, Integer.MAX_VALUE, boardView.board.height, 1
-        )
+        ).apply {
+            converter = IntegerStringConverter {
+                spnMapHeight.editor.text = boardView.board.height.toString()
+                boardView.board.height
+            }
+        }
     }
 
     override fun onDock() {
@@ -70,5 +81,18 @@ internal class LobbyView : View() {
     fun addUnits() {
         val view = find<AddUnitsDialog>(AddUnitsDialog::playerId to model.client.id)
         view.openModal()
+    }
+}
+
+private class IntegerStringConverter(private val reset: () -> Int) : StringConverter<Int>() {
+
+    override fun toString(int: Int): String = int.toString()
+
+    override fun fromString(string: String): Int {
+        try {
+            return string.toInt()
+        } catch (ex: NumberFormatException) {
+            return reset.invoke()
+        }
     }
 }
