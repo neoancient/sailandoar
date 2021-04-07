@@ -25,6 +25,7 @@
 package ui
 
 import javafx.fxml.FXML
+import javafx.scene.control.Button
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.layout.AnchorPane
@@ -44,6 +45,8 @@ internal class LobbyView : View() {
     internal val panMapView: Pane by fxid()
     internal val spnMapWidth: Spinner<Int> by fxid()
     internal val spnMapHeight: Spinner<Int> by fxid()
+    internal val btnResetMap: Button by fxid()
+    internal val btnAcceptMap: Button by fxid()
     private val boardView = find<BoardView>()
 
     init {
@@ -65,6 +68,14 @@ internal class LobbyView : View() {
                 boardView.board.height
             }
         }
+        model.boardProperty.onChange {
+            it?.let {
+                boardView.board.gameBoard = it
+                resetMap()
+            }
+        }
+        btnResetMap.enableWhen(boardView.board.dirty)
+        btnAcceptMap.enableWhen(boardView.board.dirty)
     }
 
     override fun onDock() {
@@ -81,6 +92,17 @@ internal class LobbyView : View() {
     fun addUnits() {
         val view = find<AddUnitsDialog>(AddUnitsDialog::playerId to model.client.id)
         view.openModal()
+    }
+
+    @FXML
+    fun resetMap() {
+        spnMapWidth.valueFactory.value = boardView.board.gameBoard.width
+        spnMapHeight.valueFactory.value = boardView.board.gameBoard.height
+    }
+
+    @FXML
+    fun acceptMap() {
+        model.client.sendBoard(boardView.board.createBoard())
     }
 }
 

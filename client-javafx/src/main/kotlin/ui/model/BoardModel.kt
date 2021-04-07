@@ -30,7 +30,17 @@ import board.HexData
 import javafx.beans.property.*
 import tornadofx.*
 
+/**
+ * Used for local editing of the game board. The current board is held by
+ * [gameBoardProperty] and used to determine whether any changes have been
+ * made. A new [Board] can be created from the changes using [createBoard].
+ */
 class BoardModel(board: Board) {
+    /**
+     * The reference [Board] instance. This is the one currently in use.
+     */
+    val gameBoardProperty: ObjectProperty<Board> = SimpleObjectProperty(board)
+    var gameBoard by gameBoardProperty
     val widthProperty: IntegerProperty = SimpleIntegerProperty(board.width)
     var width by widthProperty
     val heightProperty: IntegerProperty = SimpleIntegerProperty(board.height)
@@ -42,6 +52,12 @@ class BoardModel(board: Board) {
     val defaultHexProperty: ObjectProperty<HexData> = SimpleObjectProperty(board.defaultHex)
     var defaultHex: HexData by defaultHexProperty
     val hexes = board.exportHexes().toObservable()
+
+    val dirty = widthProperty.isNotEqualTo(gameBoard.width)
+        .or(heightProperty.isNotEqualTo(gameBoard.height))
+        .or(verticalGridProperty.eq(gameBoard.verticalGrid).not())
+        .or(oddOffsetProperty.eq(gameBoard.oddOffset).not())
+        .or(!hexes.equals(gameBoard.exportHexes()))
 
     /**
      * Retrieves the hex data for the hex at the given [col] and [row]

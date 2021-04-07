@@ -103,5 +103,7 @@ class ChatWindow : GameListener, View() {
     override fun unitRemoved(unitId: Int) {
     }
 
-    override fun boardChanged() {}
+    override fun boardChanged() {
+        appendChat(messages["message.boardChanged"])
+    }
 }

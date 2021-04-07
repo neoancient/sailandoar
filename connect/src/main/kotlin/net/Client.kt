@@ -26,6 +26,7 @@ package net
 
 import ClientConnector
 import NetworkClient
+import board.Board
 import game.Game
 import game.Player
 import game.PlayerColor
@@ -118,6 +119,7 @@ class Client(name: String) {
             }
             is AddUnitPacket -> game?.replaceUnit(packet.unit.unitId, packet.unit)
             is RemoveUnitPacket -> game?.removeUnit(packet.unitId)
+            is SetBoardPacket -> game?.board = packet.board
             else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
@@ -130,6 +132,10 @@ class Client(name: String) {
 
     fun removeUnit(unitId: Int) {
         send(RemoveUnitPacket(id, unitId))
+    }
+
+    fun sendBoard(board: Board) {
+        send(SetBoardPacket(id, board))
     }
 
     fun addClientListener(l: ClientListener) {

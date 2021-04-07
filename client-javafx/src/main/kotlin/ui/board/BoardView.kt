@@ -24,7 +24,6 @@
 
 package ui.board
 
-import javafx.application.Platform
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Affine
@@ -46,7 +45,7 @@ class BoardView : Fragment() {
     private val viewportWidth by viewportWidthProperty
     internal val viewportHeight by viewportHeightProperty
 
-    internal val board = BoardModel(gameModel.gameProperty.value.board)
+    internal val board = BoardModel(gameModel.board)
     private val scaleProperty = SimpleDoubleProperty(1.0)
     private var scale by scaleProperty
     private var translateX = 0.0

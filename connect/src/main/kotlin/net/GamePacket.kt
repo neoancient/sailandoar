@@ -23,6 +23,7 @@
 
 package net
 
+import board.Board
 import game.Game
 import game.Player
 import kotlinx.serialization.Serializable
@@ -68,6 +69,9 @@ class AddUnitPacket(override val clientId: Int, val unit: BaseUnit): GamePacket(
 
 @Serializable
 class RemoveUnitPacket(override val clientId: Int, val unitId: Int): GamePacket()
+
+@Serializable
+class SetBoardPacket(override val clientId: Int, val board: Board): GamePacket()
 
 @Serializable
 class BroadcastChatMessagePacket(override val clientId: Int, val text: String): GamePacket()

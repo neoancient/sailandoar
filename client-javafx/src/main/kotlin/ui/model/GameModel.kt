@@ -43,9 +43,8 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     val client by clientProperty
     val gameProperty: ObjectProperty<Game> = SimpleObjectProperty(client?.game ?: Game())
     private var game by gameProperty
-
-    val boardWidthProperty = SimpleIntegerProperty(game.board.width)
-    val boardHeightProperty = SimpleIntegerProperty(game.board.height)
+    val boardProperty: ObjectProperty<Board> = SimpleObjectProperty(game.board)
+    var board by boardProperty
 
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty)
@@ -111,5 +110,7 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
         availableShips.setAll(client.getAvailableShips().sortedBy { it.name })
     }
 
-    override fun boardChanged() {}
+    override fun boardChanged() {
+        boardProperty.value = game.board
+    }
 }
