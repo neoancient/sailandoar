@@ -26,11 +26,13 @@ package game
 /**
  * Wind strength categories for weather
  */
-enum class WindStrength {
-    BECALMED,
-    LIGHT_WIND,
-    MODERATE_WIND,
-    STRONG_WIND,
-    GALE,
-    HURRICANE
+enum class WindStrength(val lowestSpeed: Int, val icon: String) {
+    BECALMED(0, ""),
+    GENTLE_BREEZE(2, "wind_gentle.png"),
+    LIGHT_WIND(10, "wind_light.png"),
+    MODERATE_WIND(20, "wind_moderate.png"),
+    STRONG_WIND(30, "wind_strong.png"),
+    GALE(40, "wind_gale.png"),
+    STORM(55, "wind_storm.png"),
+    HURRICANE(70, "wind_hurricane.png")
 }

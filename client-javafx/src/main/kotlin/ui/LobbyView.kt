@@ -24,10 +24,13 @@
 
 package ui
 
+import game.WindStrength
 import javafx.fxml.FXML
 import javafx.scene.control.Button
+import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
+import javafx.scene.image.ImageView
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.util.StringConverter
@@ -47,6 +50,10 @@ internal class LobbyView : View() {
     internal val spnMapHeight: Spinner<Int> by fxid()
     internal val btnResetMap: Button by fxid()
     internal val btnAcceptMap: Button by fxid()
+    private val chWindDirection: ChoiceBox<Int> by fxid()
+    private val chWindStrength: ChoiceBox<WindStrength> by fxid()
+    private val imgWindDirection: ImageView by fxid()
+    private val imgWindStrength: ImageView by fxid()
     private val boardView = find<BoardView>()
 
     init {
@@ -76,6 +83,20 @@ internal class LobbyView : View() {
         }
         btnResetMap.enableWhen(boardView.board.dirty)
         btnAcceptMap.enableWhen(boardView.board.dirty)
+        chWindDirection.items = (0..5).toList().toObservable()
+        chWindStrength.items = WindStrength.values().toList().toObservable()
+        chWindDirection.bind(model.windDirectionProperty.asObject())
+        chWindStrength.bind(model.windStrengthProperty)
+        imgWindDirection.image = ImageCache.getCompass(model.windDirection)
+        imgWindStrength.image = ImageCache.getWindStrength(model.windStrength)
+        model.windDirectionProperty.onChange {
+            imgWindDirection.image = ImageCache.getCompass(it)
+        }
+        model.windStrengthProperty.onChange {
+            it?.let {
+                imgWindStrength.image = ImageCache.getWindStrength(it)
+            }
+        }
     }
 
     override fun onDock() {

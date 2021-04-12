@@ -27,6 +27,8 @@ package ui.model
 import board.Board
 import game.Game
 import game.GameListener
+import game.WindStrength
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -45,6 +47,10 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     private var game by gameProperty
     val boardProperty: ObjectProperty<Board> = SimpleObjectProperty(game.board)
     var board by boardProperty
+    val windDirectionProperty: IntegerProperty = SimpleIntegerProperty(game.weather.windDirection)
+    var windDirection by windDirectionProperty
+    val windStrengthProperty: ObjectProperty<WindStrength> = SimpleObjectProperty(game.weather.windStrength)
+    var windStrength by windStrengthProperty
 
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty)
@@ -111,6 +117,11 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     }
 
     override fun boardChanged() {
-        boardProperty.value = game.board
+        board = game.board
+    }
+
+    override fun weatherChanged() {
+        windDirection = game.weather.windDirection
+        windStrength = game.weather.windStrength
     }
 }

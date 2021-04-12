@@ -25,10 +25,11 @@
 package ui
 
 import board.TerrainType
+import game.Weather
+import game.WindStrength
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import unit.ShipStats
-import java.io.InputStream
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -40,6 +41,8 @@ class ImageCache {
         private val imageMap = HashMap<UUID, Image>()
         private val spriteMap = HashMap<SpriteKey, Image>()
         private val terrainMap = HashMap<TerrainType, Image>()
+        private val windCompassMap = HashMap<Int, Image>()
+        private val windStrengthMap = HashMap<WindStrength, Image>()
 
         operator fun get(ship: ShipStats): Image? =
             imageMap[ship.id] ?:
@@ -78,6 +81,22 @@ class ImageCache {
             TerrainType::class.java.getResourceAsStream(terrain.name.toLowerCase() + ".png")?.let {
                 Image(it).apply {
                     terrainMap[terrain] = this
+                }
+            }
+
+        fun getCompass(direction: Int): Image? =
+            windCompassMap[direction] ?:
+            Weather::class.java.getResourceAsStream(Weather.directionIcons[direction])?.let {
+                Image(it).apply {
+                    windCompassMap[direction] = this
+                }
+            }
+
+        fun getWindStrength(strength: WindStrength): Image? =
+            windStrengthMap[strength] ?:
+            WindStrength::class.java.getResourceAsStream(strength.icon)?.let {
+                Image(it).apply {
+                    windStrengthMap[strength] = this
                 }
             }
     }

@@ -106,4 +106,8 @@ class ChatWindow : GameListener, View() {
     override fun boardChanged() {
         appendChat(messages["message.boardChanged"])
     }
+
+    override fun weatherChanged() {
+        appendChat(messages["message.weatherChanged"])
+    }
 }

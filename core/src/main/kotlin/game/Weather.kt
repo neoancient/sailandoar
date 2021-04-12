@@ -33,4 +33,15 @@ import kotlinx.serialization.Serializable
 class Weather {
     var windDirection: Int = 0
     var windStrength: WindStrength = WindStrength.MODERATE_WIND
+
+    companion object {
+        val directionIcons = arrayOf(
+            "wind_s.png",
+            "wind_sw.png",
+            "wind_nw.png",
+            "wind_n.png",
+            "wind_ne.png",
+            "wind_se.png"
+        )
+    }
 }

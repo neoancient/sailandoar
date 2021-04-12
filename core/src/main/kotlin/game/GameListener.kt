@@ -24,7 +24,7 @@
 package game
 
 /**
- *
+ * Implemented by classes that need to be notified of game events
  */
 interface GameListener {
     fun playerAdded(playerId: Int)
@@ -32,5 +32,6 @@ interface GameListener {
     fun unitAdded(unitId: Int)
     fun unitRemoved(unitId: Int)
     fun appendChat(text: String)
-    fun boardChanged()
+    fun boardChanged() {}
+    fun weatherChanged() {}
 }
