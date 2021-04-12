@@ -24,6 +24,7 @@
 
 package ui
 
+import game.Weather
 import game.WindStrength
 import javafx.fxml.FXML
 import javafx.scene.control.Button
@@ -84,7 +85,9 @@ internal class LobbyView : View() {
         btnResetMap.enableWhen(boardView.board.dirty)
         btnAcceptMap.enableWhen(boardView.board.dirty)
         chWindDirection.items = (0..5).toList().toObservable()
+        chWindDirection.converter = WindDirectionConverter()
         chWindStrength.items = WindStrength.values().toList().toObservable()
+        chWindStrength.converter = WindStrengthConverter()
         chWindDirection.bind(model.windDirectionProperty.asObject())
         chWindStrength.bind(model.windStrengthProperty)
         imgWindDirection.image = ImageCache.getCompass(model.windDirection)
@@ -138,4 +141,16 @@ private class IntegerStringConverter(private val reset: () -> Int) : StringConve
             return reset.invoke()
         }
     }
+}
+
+private class WindDirectionConverter : StringConverter<Int>() {
+    override fun toString(facing: Int): String = Weather.getWindDirectionDisplay(facing)
+
+    override fun fromString(string: String): Int = 0
+}
+
+private class WindStrengthConverter : StringConverter<WindStrength>() {
+    override fun toString(strength: WindStrength): String = strength.displayName()
+
+    override fun fromString(string: String): WindStrength = WindStrength.valueOf(string)
 }

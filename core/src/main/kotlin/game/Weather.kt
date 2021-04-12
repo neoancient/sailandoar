@@ -24,6 +24,7 @@
 package game
 
 import kotlinx.serialization.Serializable
+import java.util.*
 
 /**
  * Aspects of weather conditions; primarily wind strength and direction. Advanced options may include
@@ -35,13 +36,21 @@ class Weather {
     var windStrength: WindStrength = WindStrength.MODERATE_WIND
 
     companion object {
+        val bundle = ResourceBundle.getBundle(Weather::class.java.name)
+        fun getWindDirectionDisplay(facing: Int): String =
+            try {
+                bundle.getString("facing${facing % 6}")
+            } catch (e: MissingResourceException) {
+                "[facing $facing]"
+            }
+
         val directionIcons = arrayOf(
+            "wind_n.png",
+            "wind_ne.png",
+            "wind_se.png",
             "wind_s.png",
             "wind_sw.png",
             "wind_nw.png",
-            "wind_n.png",
-            "wind_ne.png",
-            "wind_se.png"
         )
     }
 }

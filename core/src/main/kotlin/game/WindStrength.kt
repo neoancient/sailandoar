@@ -23,6 +23,8 @@
 
 package game
 
+import java.util.*
+
 /**
  * Wind strength categories for weather
  */
@@ -34,5 +36,13 @@ enum class WindStrength(val lowestSpeed: Int, val icon: String) {
     STRONG_WIND(30, "wind_strong.png"),
     GALE(40, "wind_gale.png"),
     STORM(55, "wind_storm.png"),
-    HURRICANE(70, "wind_hurricane.png")
+    HURRICANE(70, "wind_hurricane.png");
+
+    val bundle: ResourceBundle = ResourceBundle.getBundle(Weather::class.java.name)
+
+    fun displayName() = try {
+            bundle.getString(name)
+        } catch (e: MissingResourceException) {
+            "[$name]"
+        }
 }
