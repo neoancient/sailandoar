@@ -28,10 +28,9 @@ import NetworkServer
 import ServerConnector
 import game.Game
 import kotlinx.serialization.json.Json
+import net.handler.*
 import net.handler.AddShipHandler
 import net.handler.RemoveUnitHandler
-import net.handler.RequestAvailableShipsHandler
-import net.handler.SetBoardHandler
 import org.slf4j.LoggerFactory
 import serialization.polymorphismModule
 
@@ -75,6 +74,7 @@ class Server(address: String, serverPort: Int) {
             is AddShipToForcePacket -> AddShipHandler(packet)
             is RemoveUnitPacket -> RemoveUnitHandler(packet)
             is SetBoardPacket -> SetBoardHandler(packet)
+            is SetWeatherPacket -> SetWeatherHandler(packet)
             else -> {
                 LoggerFactory.getLogger("server").debug(""""Could not find correct handler for ${packet.debugString()} from player
                     ${game.getPlayer(packet.clientId)}""".trimMargin())

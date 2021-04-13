@@ -28,6 +28,7 @@ import board.Board
 import game.Game
 import game.GameListener
 import game.WindStrength
+import javafx.application.Platform
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleIntegerProperty
@@ -121,7 +122,9 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     }
 
     override fun weatherChanged() {
-        windDirection = game.weather.windDirection
-        windStrength = game.weather.windStrength
+        Platform.runLater {
+            windDirection = game.weather.windDirection
+            windStrength = game.weather.windStrength
+        }
     }
 }

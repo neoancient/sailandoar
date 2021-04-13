@@ -26,6 +26,7 @@ package net
 import board.Board
 import game.Game
 import game.Player
+import game.Weather
 import kotlinx.serialization.Serializable
 import serialization.UUIDAsStringSerializer
 import unit.BaseUnit
@@ -72,6 +73,9 @@ class RemoveUnitPacket(override val clientId: Int, val unitId: Int): GamePacket(
 
 @Serializable
 class SetBoardPacket(override val clientId: Int, val board: Board): GamePacket()
+
+@Serializable
+class SetWeatherPacket(override val clientId: Int, val weather: Weather): GamePacket()
 
 @Serializable
 class BroadcastChatMessagePacket(override val clientId: Int, val text: String): GamePacket()

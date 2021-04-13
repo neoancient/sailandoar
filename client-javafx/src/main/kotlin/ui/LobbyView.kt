@@ -51,10 +51,12 @@ internal class LobbyView : View() {
     internal val spnMapHeight: Spinner<Int> by fxid()
     internal val btnResetMap: Button by fxid()
     internal val btnAcceptMap: Button by fxid()
-    private val chWindDirection: ChoiceBox<Int> by fxid()
+    private val chWindDirection: ChoiceBox<String> by fxid()
     private val chWindStrength: ChoiceBox<WindStrength> by fxid()
     private val imgWindDirection: ImageView by fxid()
     private val imgWindStrength: ImageView by fxid()
+    private val btnResetWeather: Button by fxid()
+    private val btnAcceptWeather: Button by fxid()
     private val boardView = find<BoardView>()
 
     init {
@@ -84,21 +86,41 @@ internal class LobbyView : View() {
         }
         btnResetMap.enableWhen(boardView.board.dirty)
         btnAcceptMap.enableWhen(boardView.board.dirty)
-        chWindDirection.items = (0..5).toList().toObservable()
-        chWindDirection.converter = WindDirectionConverter()
+        chWindDirection.items = (0..5).map {
+            Weather.getWindDirectionDisplay(it)
+        }.toList().toObservable()
+        with (chWindDirection.selectionModel) {
+            select(model.windDirection)
+            selectedIndexProperty().onChange {
+                model.windDirection = it
+            }
+        }
         chWindStrength.items = WindStrength.values().toList().toObservable()
         chWindStrength.converter = WindStrengthConverter()
-        chWindDirection.bind(model.windDirectionProperty.asObject())
-        chWindStrength.bind(model.windStrengthProperty)
+        with (chWindStrength.selectionModel) {
+            select(model.windStrength)
+            selectedItemProperty().onChange {
+                it?.let {
+                    model.windStrength = it
+                }
+            }
+        }
         imgWindDirection.image = ImageCache.getCompass(model.windDirection)
         imgWindStrength.image = ImageCache.getWindStrength(model.windStrength)
         model.windDirectionProperty.onChange {
+            chWindDirection.selectionModel.select(it)
             imgWindDirection.image = ImageCache.getCompass(it)
         }
         model.windStrengthProperty.onChange {
             it?.let {
+                chWindStrength.selectionModel.select(it)
                 imgWindStrength.image = ImageCache.getWindStrength(it)
             }
+        }
+        (model.windDirectionProperty.isNotEqualTo(model.gameProperty.value.weather.windDirection)
+                .or(model.windStrengthProperty.isNotEqualTo(model.gameProperty.value.weather.windStrength))).let {
+            btnResetWeather.enableWhen(it)
+            btnAcceptWeather.enableWhen(it)
         }
     }
 
@@ -128,6 +150,20 @@ internal class LobbyView : View() {
     fun acceptMap() {
         model.client.sendBoard(boardView.board.createBoard())
     }
+
+    @FXML
+    fun resetWeather() {
+        chWindDirection.selectionModel.select(model.gameProperty.value.weather.windDirection)
+        chWindStrength.selectionModel.select(model.gameProperty.value.weather.windStrength)
+    }
+
+    @FXML
+    fun acceptWeather() {
+        model.client.sendWeather(Weather(
+            chWindDirection.selectionModel.selectedIndex,
+            chWindStrength.selectionModel.selectedItem
+        ))
+    }
 }
 
 private class IntegerStringConverter(private val reset: () -> Int) : StringConverter<Int>() {
@@ -141,12 +177,6 @@ private class IntegerStringConverter(private val reset: () -> Int) : StringConve
             return reset.invoke()
         }
     }
-}
-
-private class WindDirectionConverter : StringConverter<Int>() {
-    override fun toString(facing: Int): String = Weather.getWindDirectionDisplay(facing)
-
-    override fun fromString(string: String): Int = 0
 }
 
 private class WindStrengthConverter : StringConverter<WindStrength>() {

@@ -26,7 +26,9 @@ package net.handler
 
 import game.Game
 import net.ALL_CLIENTS
+import net.GamePacket
 import net.SetBoardPacket
+import net.SetWeatherPacket
 
 class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler {
     override fun process(game: Game) {
@@ -34,4 +36,12 @@ class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler {
     }
 
     override fun packetsToSend() = listOf(SetBoardPacket(ALL_CLIENTS, packet.board))
+}
+
+class SetWeatherHandler(val packet: SetWeatherPacket) : ServerPacketHandler {
+    override fun process(game: Game) {
+        game.setWeather(packet.weather)
+    }
+
+    override fun packetsToSend() = listOf(SetWeatherPacket(ALL_CLIENTS, packet.weather))
 }

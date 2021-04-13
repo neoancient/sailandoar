@@ -30,6 +30,7 @@ import board.Board
 import game.Game
 import game.Player
 import game.PlayerColor
+import game.Weather
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import serialization.polymorphismModule
@@ -120,6 +121,7 @@ class Client(name: String) {
             is AddUnitPacket -> game?.replaceUnit(packet.unit.unitId, packet.unit)
             is RemoveUnitPacket -> game?.removeUnit(packet.unitId)
             is SetBoardPacket -> game?.board = packet.board
+            is SetWeatherPacket -> game?.setWeather(packet.weather)
             else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
@@ -136,6 +138,10 @@ class Client(name: String) {
 
     fun sendBoard(board: Board) {
         send(SetBoardPacket(id, board))
+    }
+
+    fun sendWeather(weather: Weather) {
+        send(SetWeatherPacket(id, weather))
     }
 
     fun addClientListener(l: ClientListener) {

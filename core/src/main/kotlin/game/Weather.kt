@@ -31,9 +31,10 @@ import java.util.*
  * effects of precipitation and temperature.
  */
 @Serializable
-class Weather {
-    var windDirection: Int = 0
+class Weather(
+    var windDirection: Int = 0,
     var windStrength: WindStrength = WindStrength.MODERATE_WIND
+) {
 
     companion object {
         val bundle = ResourceBundle.getBundle(Weather::class.java.name)

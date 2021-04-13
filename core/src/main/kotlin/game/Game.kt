@@ -51,6 +51,16 @@ class Game {
     private val units: MutableMap<Int, BaseUnit> = ConcurrentHashMap()
     private val listeners: MutableList<GameListener> = CopyOnWriteArrayList()
 
+    fun setWeather(weather: Weather) {
+        with (this.weather) {
+            windDirection = weather.windDirection
+            windStrength = weather.windStrength
+        }
+        listeners.forEach {
+            it.weatherChanged()
+        }
+    }
+
     fun allPlayers(): Collection<Player> = players.values
 
     fun addPlayer(player: Player) {
