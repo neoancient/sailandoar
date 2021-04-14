@@ -108,10 +108,10 @@ sealed class MapRegion {
         override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean {
             val x = coords.offsetX(board.oddOffset)
             val y = coords.offsetY(board.oddOffset)
-            return x <= board.width / 2
-                    && y <= board.width / 2
-                    && NORTH.hexInRegion(coords, board, depth)
-                    && WEST.hexInRegion(coords, board, depth)
+            return x < (board.width + 1) / 2
+                    && y < (board.height + 1) / 2
+                    && (NORTH.hexInRegion(coords, board, depth)
+                        || WEST.hexInRegion(coords, board, depth))
         }
     }
 
@@ -124,9 +124,10 @@ sealed class MapRegion {
         override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean {
             val x = coords.offsetX(board.oddOffset)
             val y = coords.offsetY(board.oddOffset)
-            return board.width / 2 in y..x
-                    && NORTH.hexInRegion(coords, board, depth)
-                    && EAST.hexInRegion(coords, board, depth)
+            return x >= (board.width + 1) / 2
+                    && y < (board.height + 1) / 2
+                    && (NORTH.hexInRegion(coords, board, depth)
+                        || EAST.hexInRegion(coords, board, depth))
         }
     }
 
@@ -139,9 +140,10 @@ sealed class MapRegion {
         override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean {
             val x = coords.offsetX(board.oddOffset)
             val y = coords.offsetY(board.oddOffset)
-            return board.width / 2 in x..y
-                    && SOUTH.hexInRegion(coords, board, depth)
-                    && WEST.hexInRegion(coords, board, depth)
+            return x < (board.width + 1) / 2
+                    && y >= (board.height + 1) / 2
+                    && (SOUTH.hexInRegion(coords, board, depth)
+                        || WEST.hexInRegion(coords, board, depth))
         }
     }
 
@@ -154,10 +156,10 @@ sealed class MapRegion {
         override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean {
             val x = coords.offsetX(board.oddOffset)
             val y = coords.offsetY(board.oddOffset)
-            return x >= board.width / 2
-                    && y >= board.width / 2
-                    && SOUTH.hexInRegion(coords, board, depth)
-                    && EAST.hexInRegion(coords, board, depth)
+            return x >= (board.width + 1) / 2
+                    && y >= (board.height + 1) / 2
+                    && (SOUTH.hexInRegion(coords, board, depth)
+                        || EAST.hexInRegion(coords, board, depth))
         }
     }
 
@@ -182,19 +184,26 @@ sealed class MapRegion {
     }
 
     /**
-     * A square in the center of the map that is depth x 2 on each side
+     * Any hex that is on the edge of the map
+     */
+    object ANY_EDGE : MapRegion() {
+        override fun displayNameKey(): String = "ANY_EDGE.displayName"
+
+        override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean =
+            NORTH.hexInRegion(coords, board, depth)
+                    || SOUTH.hexInRegion(coords, board, depth)
+                    || WEST.hexInRegion(coords, board, depth)
+                    || EAST.hexInRegion(coords, board, depth)
+    }
+
+    /**
+     * Any hex that is not in one of the edge zones
      */
     object CENTER : MapRegion() {
         override fun displayNameKey(): String = "CENTER.displayName"
 
-        override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean {
-            val x = coords.offsetX(board.oddOffset)
-            val y = coords.offsetY(board.oddOffset)
-            return x > board.width / 2 - depth
-                    && x <= board.width / 2 + depth
-                    && y > board.height / 2 - depth
-                    && y <= board.height / 2 + depth
-        }
+        override fun hexInRegion(coords: HexCoords, board: Board, depth: Int): Boolean =
+            !ANY_EDGE.hexInRegion(coords, board, depth)
     }
 
     /**

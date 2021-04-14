@@ -57,7 +57,7 @@ class Board(val width: Int, val height: Int,
      * @param row The hex row
      * @return    The coordinates for the hex
      */
-    fun createOffsetCoords(col: Int, row: Int): HexCoords =
+    fun createCoordsFromOffset(col: Int, row: Int): HexCoords =
         HexCoords.createFromOffset(col, row, verticalGrid, oddOffset)
 
     /**
