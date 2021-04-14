@@ -71,7 +71,7 @@ class Game {
     }
 
     fun newPlayer(id: Int, name: String): Player {
-        val player = Player(id, name, NO_TEAM, selectColor())
+        val player = Player(id, name, color = selectColor())
         addPlayer(player)
         return player
     }

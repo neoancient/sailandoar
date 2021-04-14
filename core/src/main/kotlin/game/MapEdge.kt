@@ -1,6 +1,6 @@
-/**
+/*
  * Sail and Oar
- * Copyright (c) 2020 Carl W Spain
+ * Copyright (c) 2021 Carl W Spain
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,23 +19,33 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package game
 
-import kotlinx.serialization.Serializable
+import java.util.*
 
-const val NO_TEAM = -1
+enum class MapEdge {
+    NORTH,
+    SOUTH,
+    WEST,
+    EAST,
+    NONE;
 
-/**
- * A participant in the game. Each player should have an id that is assigned by the {@link Game}
- * to ensure that it is unique.
- */
-@Serializable
-data class Player(
-    val id: Int,
-    val name: String,
-    var team: Int = NO_TEAM,
-    var color: PlayerColor = PlayerColor.BLUE,
-    var homeEdge: MapEdge = MapEdge.NONE
-)
+    companion object {
+        private val bundle = ResourceBundle.getBundle(MapEdge::class.java.name)
+    }
+
+    fun displayName() = try {
+        bundle.getString("$name.displayName")
+    } catch (e: MissingResourceException) {
+        "[$name]"
+    }
+
+    fun deploymentName() = try {
+        bundle.getString("$name.deploymentName")
+    } catch (e: MissingResourceException) {
+        "[$name]"
+    }
+}

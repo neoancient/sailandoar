@@ -24,8 +24,13 @@
 
 package ui
 
+import game.MapEdge
 import javafx.beans.binding.Bindings
+import javafx.scene.control.ChoiceBox
+import javafx.scene.control.TableCell
 import javafx.scene.input.KeyCode
+import javafx.util.Callback
+import javafx.util.StringConverter
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
@@ -34,6 +39,7 @@ import ui.model.UnitModel
 class PlayerForcesTable : View() {
     private val model: GameModel by inject()
     override val root = tableview(model.players) {
+        isEditable = true
         readonlyColumn(messages["name"], PlayerModel::name).remainingWidth()
         column(messages["team"], PlayerModel::team).cellFormat {
             text = if (it < 0) messages["noTeam"] else it.toString()
@@ -41,6 +47,11 @@ class PlayerForcesTable : View() {
         }
         column(messages["color"], PlayerModel::color).cellFormat {
             style = "-fx-background-color:#${item.rgb.toString(16)}"
+        }
+        column(messages["deployment"], PlayerModel::homeEdge) {
+            cellFactory = Callback {
+                DeploymentTableCell()
+            }
         }
         rowExpander { player ->
             paddingLeft = expanderColumn.width
@@ -60,7 +71,52 @@ class PlayerForcesTable : View() {
                     }
                 }
             }
+            smartResize()
         }
-        smartResize()
+    }
+}
+
+private class DeploymentTableCell : TableCell<PlayerModel, MapEdge>() {
+    val choice = ChoiceBox<MapEdge>()
+
+    init {
+        choice.items = MapEdge.values().toList().toObservable()
+        choice.selectionModel.selectedItemProperty().onChange {
+            commitEdit(it)
+        }
+        choice.selectionModel.select(item)
+        choice.converter = object : StringConverter<MapEdge>() {
+            override fun toString(edge: MapEdge?): String = edge?.deploymentName() ?: ""
+
+            override fun fromString(string: String?) = MapEdge.NONE
+        }
+    }
+
+    override fun cancelEdit() {
+        super.cancelEdit()
+        text = item.deploymentName()
+        graphic = null
+    }
+
+    override fun commitEdit(newValue: MapEdge?) {
+        super.commitEdit(newValue)
+        graphic = null
+    }
+
+    override fun startEdit() {
+        super.startEdit()
+        item?.run {
+            graphic = choice
+            text = null
+        }
+    }
+
+    override fun updateItem(item: MapEdge?, empty: Boolean) {
+        super.updateItem(item, empty)
+        if (item == null || empty) {
+            text = null
+        } else {
+            text = item.deploymentName()
+        }
     }
 }
