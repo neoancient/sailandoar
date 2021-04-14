@@ -37,5 +37,5 @@ data class Player(
     val name: String,
     var team: Int = NO_TEAM,
     var color: PlayerColor = PlayerColor.BLUE,
-    var homeEdge: MapEdge = MapEdge.NONE
+    var homeEdge: MapRegion = MapRegion.ANY
 )

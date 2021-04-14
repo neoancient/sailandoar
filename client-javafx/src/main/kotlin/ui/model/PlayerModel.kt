@@ -24,7 +24,7 @@
 
 package ui.model
 
-import game.MapEdge
+import game.MapRegion
 import game.PlayerColor
 import game.Player
 import javafx.beans.property.Property
@@ -40,6 +40,6 @@ class PlayerModel(player: Player) {
     var team: Int by teamProperty
     val colorProperty: Property<PlayerColor> = player.observable(Player::color)
     var color: PlayerColor by colorProperty
-    val homeEdgeProperty: Property<MapEdge> = player.observable(Player::homeEdge)
+    val homeEdgeProperty: Property<MapRegion> = player.observable(Player::homeEdge)
     var homeEdge by homeEdgeProperty
 }

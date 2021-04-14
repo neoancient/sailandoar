@@ -24,13 +24,12 @@
 
 package ui
 
-import game.MapEdge
+import game.MapRegion
 import javafx.beans.binding.Bindings
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.TableCell
 import javafx.scene.input.KeyCode
 import javafx.util.Callback
-import javafx.util.StringConverter
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
@@ -76,29 +75,37 @@ class PlayerForcesTable : View() {
     }
 }
 
-private class DeploymentTableCell : TableCell<PlayerModel, MapEdge>() {
-    val choice = ChoiceBox<MapEdge>()
+val deploymentEdgeValues = mutableListOf(
+    MapRegion.ANY,
+    MapRegion.NORTH,
+    MapRegion.EAST,
+    MapRegion.SOUTH,
+    MapRegion.WEST,
+    MapRegion.NORTHWEST,
+    MapRegion.NORTHEAST,
+    MapRegion.SOUTHWEST,
+    MapRegion.SOUTHEAST,
+    MapRegion.CENTER,
+).toObservable()
+
+private class DeploymentTableCell : TableCell<PlayerModel, MapRegion>() {
+    val choice = ChoiceBox<MapRegion>()
 
     init {
-        choice.items = MapEdge.values().toList().toObservable()
+        choice.items = deploymentEdgeValues
         choice.selectionModel.selectedItemProperty().onChange {
             commitEdit(it)
         }
         choice.selectionModel.select(item)
-        choice.converter = object : StringConverter<MapEdge>() {
-            override fun toString(edge: MapEdge?): String = edge?.deploymentName() ?: ""
-
-            override fun fromString(string: String?) = MapEdge.NONE
-        }
     }
 
     override fun cancelEdit() {
         super.cancelEdit()
-        text = item.deploymentName()
+        text = item.toString()
         graphic = null
     }
 
-    override fun commitEdit(newValue: MapEdge?) {
+    override fun commitEdit(newValue: MapRegion?) {
         super.commitEdit(newValue)
         graphic = null
     }
@@ -111,12 +118,12 @@ private class DeploymentTableCell : TableCell<PlayerModel, MapEdge>() {
         }
     }
 
-    override fun updateItem(item: MapEdge?, empty: Boolean) {
+    override fun updateItem(item: MapRegion?, empty: Boolean) {
         super.updateItem(item, empty)
         if (item == null || empty) {
             text = null
         } else {
-            text = item.deploymentName()
+            text = item.toString()
         }
     }
 }
