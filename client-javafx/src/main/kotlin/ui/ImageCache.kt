@@ -29,6 +29,7 @@ import game.Weather
 import game.WindStrength
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
+import unit.ShipLibrary
 import unit.ShipStats
 import java.util.*
 import kotlin.collections.HashMap
@@ -50,6 +51,11 @@ class ImageCache {
                 Image(it).apply {
                     imageMap[ship.id] = this
                 }
+            }
+
+        operator fun get(id: UUID): Image? =
+            imageMap[id] ?: ShipLibrary.getShip(id)?.let {
+                get(id)
             }
 
         fun get(ship: ShipStats, windDirection: Int,

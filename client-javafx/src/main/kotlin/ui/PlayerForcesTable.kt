@@ -28,12 +28,14 @@ import game.MapRegion
 import javafx.beans.binding.Bindings
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.TableCell
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.util.Callback
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
 import ui.model.UnitModel
+import unit.Ship
 
 class PlayerForcesTable : View() {
     private val model: GameModel by inject()
@@ -56,9 +58,21 @@ class PlayerForcesTable : View() {
             paddingLeft = expanderColumn.width
             val unitList = model.units.filtered { it.playerId == player.id }
             tableview(unitList) {
-                readonlyColumn(messages["unit"], UnitModel::name)
+                val cellHeight = 50.0
+                readonlyColumn(messages["unit"], UnitModel::unit).cellFormat {
+                    graphic = cache {
+                        ImageView((it as? Ship)?.let { ship ->
+                            ImageCache[ship.shipStatId]
+                        }).apply {
+                            fitHeight = cellHeight
+                            fitWidth = cellHeight
+                            isPreserveRatio = true
+                        }
+                    }
+                    text = it.name
+                }
                 smartResize()
-                fixedCellSize = 30.0
+                fixedCellSize = cellHeight
                 prefHeightProperty().bind(Bindings.size(items).multiply(fixedCellSizeProperty()).add(30.0))
                 setOnKeyPressed { event ->
                     if (event.code == KeyCode.DELETE) {
