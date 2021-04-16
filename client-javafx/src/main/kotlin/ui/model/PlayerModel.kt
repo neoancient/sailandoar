@@ -42,4 +42,6 @@ class PlayerModel(player: Player) {
     var color: PlayerColor by colorProperty
     val homeEdgeProperty: Property<MapRegion> = player.observable(Player::homeEdge)
     var homeEdge by homeEdgeProperty
+
+    fun export() = Player(id, name, team, color, homeEdge)
 }

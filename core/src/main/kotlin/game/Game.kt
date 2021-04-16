@@ -78,7 +78,7 @@ class Game {
 
     fun selectColor(): PlayerColor {
         val used = players.values.map { it.color }.toSet()
-        return PlayerColor.values().firstOrNull {
+        return PlayerColor.values().find {
             it !in used
         } ?: PlayerColor.values()[0]
     }
@@ -86,9 +86,16 @@ class Game {
     fun removePlayer(playerId: Int): Player? {
         val p = players.remove(playerId)
         if (null != p) {
-            listeners.forEach{ l: GameListener -> l.playerRemoved(p.id) }
+            listeners.forEach { it.playerRemoved(p.id) }
         }
         return p
+    }
+
+    fun updatePlayer(playerId: Int, newValues: Player) {
+        getPlayer(playerId)?.let {
+            it.set(newValues)
+            listeners.forEach { it.playerChanged(playerId) }
+        }
     }
 
     fun getPlayer(playerId: Int): Player? = players[playerId]

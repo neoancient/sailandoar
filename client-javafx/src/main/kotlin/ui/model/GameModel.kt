@@ -54,7 +54,7 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     var windStrength by windStrengthProperty
 
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
-        arrayOf (it.teamProperty, it.colorProperty)
+        arrayOf (it.teamProperty, it.colorProperty, it.homeEdgeProperty)
     }
     val units: ObservableList<UnitModel> = FXCollections.observableArrayList()
 
@@ -91,6 +91,18 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     override fun playerRemoved(playerId: Int) {
         players.removeIf {
             it.id == playerId
+        }
+    }
+
+    override fun playerChanged(playerId: Int) {
+        game.getPlayer(playerId)?.let { player ->
+            players.find {
+                it.id == playerId
+            }?.let {
+                it.team = player.team
+                it.color = player.color
+                it.homeEdge = player.homeEdge
+            }
         }
     }
 

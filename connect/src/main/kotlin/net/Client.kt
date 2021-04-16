@@ -114,6 +114,7 @@ class Client(name: String) {
             }
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
+            is UpdatePlayerPacket -> game?.updatePlayer(packet.player.id, packet.player)
             is SendAvailableShipsPacket -> {
                 availableShips.clear()
                 availableShips.addAll(packet.ships)
@@ -127,6 +128,10 @@ class Client(name: String) {
     }
 
     fun getAvailableShips(): List<ShipStats> = availableShips
+
+    fun sendUpdatePlayer(player: Player) {
+        send(UpdatePlayerPacket(id, player))
+    }
 
     fun addUnit(shipId: UUID) {
         send(AddShipToForcePacket(id, shipId))

@@ -38,4 +38,13 @@ data class Player(
     var team: Int = NO_TEAM,
     var color: PlayerColor = PlayerColor.BLUE,
     var homeEdge: MapRegion = MapRegion.ANY
-)
+) {
+    /**
+     * Copies variable properties from another [Player] instance
+     */
+    fun set(other: Player) {
+        team = other.team
+        color = other.color
+        homeEdge = other.homeEdge
+    }
+}

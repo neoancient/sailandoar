@@ -29,6 +29,7 @@ package game
 interface GameListener {
     fun playerAdded(playerId: Int)
     fun playerRemoved(playerId: Int)
+    fun playerChanged(playerId: Int)
     fun unitAdded(unitId: Int)
     fun unitRemoved(unitId: Int)
     fun appendChat(text: String)

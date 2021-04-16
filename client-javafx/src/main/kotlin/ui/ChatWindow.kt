@@ -37,8 +37,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import tornadofx.*
+import ui.model.GameModel
 
 class ChatWindow : GameListener, View() {
+    private val gameModel: GameModel by inject()
     override val root: VBox by fxml()
 
     private val txtChatWindow: WebView by fxid()
@@ -95,6 +97,11 @@ class ChatWindow : GameListener, View() {
     }
 
     override fun playerRemoved(playerId: Int) {
+    }
+
+    override fun playerChanged(playerId: Int) {
+        appendChat(String.format(messages["message.playerChanged"],
+            gameModel.gameProperty.value.getPlayer(playerId)?.name))
     }
 
     override fun unitAdded(unitId: Int) {

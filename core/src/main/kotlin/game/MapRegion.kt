@@ -56,6 +56,7 @@ sealed class MapRegion {
     /**
      * One or more rows of hexes at the top of the map
      */
+    @Serializable
     object NORTH : MapRegion() {
         override fun displayNameKey(): String = "NORTH.displayName"
 
@@ -66,6 +67,7 @@ sealed class MapRegion {
     /**
      * One or more rows of hexes at the bottom of the map
      */
+    @Serializable
     object SOUTH : MapRegion() {
         override fun displayNameKey(): String = "SOUTH.displayName"
 
@@ -82,6 +84,7 @@ sealed class MapRegion {
     /**
      * One or more columns of hexes at the left of the map
      */
+    @Serializable
     object WEST : MapRegion() {
         override fun displayNameKey(): String = "WEST.displayName"
 
@@ -92,6 +95,7 @@ sealed class MapRegion {
     /**
      * One or more columns of hexes at the right of the map
      */
+    @Serializable
     object EAST : MapRegion() {
         override fun displayNameKey(): String = "EAST.displayName"
 
@@ -102,6 +106,7 @@ sealed class MapRegion {
     /**
      * The left half of [NORTH] and the top half of [WEST]
      */
+    @Serializable
     object NORTHWEST : MapRegion() {
         override fun displayNameKey(): String = "NORTHWEST.displayName"
 
@@ -118,6 +123,7 @@ sealed class MapRegion {
     /**
      * The right half of [NORTH] and the top half of [WEST]
      */
+    @Serializable
     object NORTHEAST : MapRegion() {
         override fun displayNameKey(): String = "NORTHEAST.displayName"
 
@@ -134,6 +140,7 @@ sealed class MapRegion {
     /**
      * The left half of [SOUTH] and the bottom half of [WEST]
      */
+    @Serializable
     object SOUTHWEST : MapRegion() {
         override fun displayNameKey(): String = "SOUTHWEST.displayName"
 
@@ -150,6 +157,7 @@ sealed class MapRegion {
     /**
      * The right half of [SOUTH] and the bottom half of [EAST]
      */
+    @Serializable
     object SOUTHEAST : MapRegion() {
         override fun displayNameKey(): String = "SOUTHEAST.displayName"
 
@@ -166,6 +174,7 @@ sealed class MapRegion {
     /**
      * The entire map
      */
+    @Serializable
     object ANY : MapRegion() {
         override fun displayNameKey(): String = "ANY.displayName"
 
@@ -176,6 +185,7 @@ sealed class MapRegion {
     /**
      * None of the map
      */
+    @Serializable
     object NONE : MapRegion() {
         override fun displayNameKey(): String = "NONE.displayName"
 
@@ -186,6 +196,7 @@ sealed class MapRegion {
     /**
      * Any hex that is on the edge of the map
      */
+    @Serializable
     object ANY_EDGE : MapRegion() {
         override fun displayNameKey(): String = "ANY_EDGE.displayName"
 
@@ -199,6 +210,7 @@ sealed class MapRegion {
     /**
      * Any hex that is not in one of the edge zones
      */
+    @Serializable
     object CENTER : MapRegion() {
         override fun displayNameKey(): String = "CENTER.displayName"
 
@@ -209,6 +221,7 @@ sealed class MapRegion {
     /**
      * A custom region that consists of every hex within a certain radius of [hex]
      */
+    @Serializable
     class RangeOf(private val hex: HexCoords) : MapRegion() {
         override fun displayNameKey(): String = "RANGE.displayName"
 
@@ -219,6 +232,7 @@ sealed class MapRegion {
     /**
      * A custom region defined by the [predicate]
      */
+    @Serializable
     class Custom(private val predicate: (HexCoords, Board, Int) -> Boolean) : MapRegion() {
         override fun displayNameKey(): String = "CUSTOM.displayName"
 

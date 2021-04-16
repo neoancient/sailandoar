@@ -25,6 +25,7 @@
 package ui
 
 import game.MapRegion
+import javafx.beans.InvalidationListener
 import javafx.beans.binding.Bindings
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.TableCell
@@ -41,6 +42,9 @@ class PlayerForcesTable : View() {
     private val model: GameModel by inject()
     override val root = tableview(model.players) {
         isEditable = true
+        items.addListener(InvalidationListener {
+            refresh()
+        })
         readonlyColumn(messages["name"], PlayerModel::name).remainingWidth()
         column(messages["team"], PlayerModel::team).cellFormat {
             text = if (it < 0) messages["noTeam"] else it.toString()
@@ -49,9 +53,12 @@ class PlayerForcesTable : View() {
         column(messages["color"], PlayerModel::color).cellFormat {
             style = "-fx-background-color:#${item.rgb.toString(16)}"
         }
-        column(messages["deployment"], PlayerModel::homeEdge) {
+        column(messages["deployment"], PlayerModel::homeEdgeProperty) {
             cellFactory = Callback {
                 DeploymentTableCell()
+            }
+            onEditCommit {
+                model.client.sendUpdatePlayer(rowValue.export())
             }
         }
         rowExpander { player ->

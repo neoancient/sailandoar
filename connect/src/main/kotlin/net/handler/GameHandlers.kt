@@ -25,10 +25,15 @@
 package net.handler
 
 import game.Game
-import net.ALL_CLIENTS
-import net.GamePacket
-import net.SetBoardPacket
-import net.SetWeatherPacket
+import net.*
+
+class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacketHandler {
+    override fun process(game: Game) {
+        game.getPlayer(packet.player.id)?.set(packet.player)
+    }
+
+    override fun packetsToSend() = listOf(UpdatePlayerPacket(ALL_CLIENTS, packet.player))
+}
 
 class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler {
     override fun process(game: Game) {
