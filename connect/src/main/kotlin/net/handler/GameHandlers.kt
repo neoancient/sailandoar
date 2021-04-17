@@ -60,7 +60,7 @@ internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacke
  * Adds a ship to the game
  */
 internal class AddShipHandler(val packet: AddShipToForcePacket) : ServerPacketHandler {
-    val toSend = ArrayList<GamePacket>()
+    private val toSend = ArrayList<GamePacket>()
 
     override fun process(game: Game) {
         val ship = Ship(packet.id)
@@ -75,7 +75,7 @@ internal class AddShipHandler(val packet: AddShipToForcePacket) : ServerPacketHa
  * Removes a ship from the game
  */
 internal class RemoveUnitHandler(private val packet: RemoveUnitPacket) : ServerPacketHandler {
-    val toSend = ArrayList<GamePacket>()
+    private val toSend = ArrayList<GamePacket>()
 
     override fun process(game: Game) {
         game.removeUnit(packet.unitId)
