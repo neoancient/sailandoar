@@ -26,8 +26,29 @@ package net.handler
 
 import game.Game
 import net.*
+import unit.Ship
+import unit.ShipLibrary
+import unit.ShipStats
 
-class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacketHandler {
+/**
+ * Handles request for available units. Returns all units available in the ship library.
+ */
+class RequestAvailableShipsHandler(val packet: RequestAvailableShipsPacket): ServerPacketHandler {
+    private val ships = ArrayList<ShipStats>()
+
+    override fun process(game: Game) {
+        ships.addAll(ShipLibrary.allShips())
+    }
+
+    override fun packetsToSend(): List<GamePacket> {
+        return listOf(SendAvailableShipsPacket(packet.clientId, ships))
+    }
+}
+
+/**
+ * Handles changes in player settings
+ */
+internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacketHandler {
     override fun process(game: Game) {
         game.getPlayer(packet.player.id)?.set(packet.player)
     }
@@ -35,7 +56,39 @@ class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacketHandler 
     override fun packetsToSend() = listOf(UpdatePlayerPacket(ALL_CLIENTS, packet.player))
 }
 
-class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler {
+/**
+ * Adds a ship to the game
+ */
+internal class AddShipHandler(val packet: AddShipToForcePacket) : ServerPacketHandler {
+    val toSend = ArrayList<GamePacket>()
+
+    override fun process(game: Game) {
+        val ship = Ship(packet.id)
+        game.addUnit(ship, packet.clientId)
+        toSend += AddUnitPacket(ALL_CLIENTS, ship)
+    }
+
+    override fun packetsToSend() = toSend
+}
+
+/**
+ * Removes a ship from the game
+ */
+internal class RemoveUnitHandler(private val packet: RemoveUnitPacket) : ServerPacketHandler {
+    val toSend = ArrayList<GamePacket>()
+
+    override fun process(game: Game) {
+        game.removeUnit(packet.unitId)
+        toSend += RemoveUnitPacket(ALL_CLIENTS, packet.unitId)
+    }
+
+    override fun packetsToSend() = toSend
+}
+
+/**
+ * Changes the game board
+ */
+internal class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler {
     override fun process(game: Game) {
         game.board = packet.board
     }
@@ -43,7 +96,10 @@ class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler {
     override fun packetsToSend() = listOf(SetBoardPacket(ALL_CLIENTS, packet.board))
 }
 
-class SetWeatherHandler(val packet: SetWeatherPacket) : ServerPacketHandler {
+/**
+ * Sets the weather conditions
+ */
+internal class SetWeatherHandler(val packet: SetWeatherPacket) : ServerPacketHandler {
     override fun process(game: Game) {
         game.setWeather(packet.weather)
     }
