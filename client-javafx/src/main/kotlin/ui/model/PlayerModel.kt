@@ -27,20 +27,18 @@ package ui.model
 import game.MapRegion
 import game.PlayerColor
 import game.Player
-import javafx.beans.property.Property
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
+import javafx.beans.property.*
 import tornadofx.*
 
 class PlayerModel(player: Player) {
     val id = player.id
     val nameProperty: StringProperty = SimpleStringProperty(player.name)
     val name: String by nameProperty
-    val teamProperty: Property<Int> =  player.observable(Player::team)
+    val teamProperty: IntegerProperty =  SimpleIntegerProperty(player.team)
     var team: Int by teamProperty
-    val colorProperty: Property<PlayerColor> = player.observable(Player::color)
+    val colorProperty: ObjectProperty<PlayerColor> = SimpleObjectProperty(player.color)
     var color: PlayerColor by colorProperty
-    val homeEdgeProperty: Property<MapRegion> = player.observable(Player::homeEdge)
+    val homeEdgeProperty: ObjectProperty<MapRegion> = SimpleObjectProperty(player.homeEdge)
     var homeEdge by homeEdgeProperty
 
     fun export() = Player(id, name, team, color, homeEdge)
