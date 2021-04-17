@@ -25,8 +25,13 @@
 package ui
 
 import game.MapRegion
+import game.PlayerColor
 import javafx.beans.binding.Bindings
+import javafx.collections.ObservableList
+import javafx.collections.transformation.FilteredList
 import javafx.scene.control.ChoiceBox
+import javafx.scene.control.ComboBox
+import javafx.scene.control.ListCell
 import javafx.scene.control.TableCell
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
@@ -39,6 +44,7 @@ import unit.Ship
 
 class PlayerForcesTable : View() {
     private val model: GameModel by inject()
+
     override val root = tableview(model.players) {
         isEditable = true
         readonlyColumn(messages["name"], PlayerModel::name).remainingWidth()
@@ -46,8 +52,10 @@ class PlayerForcesTable : View() {
             text = if (it < 0) messages["noTeam"] else it.toString()
             style = "-fx-alignment:center"
         }
-        column(messages["color"], PlayerModel::color).cellFormat {
-            style = "-fx-background-color:#${item.rgb.toString(16)}"
+        column(messages["color"], PlayerModel::colorProperty) {
+            cellFactory = Callback {
+                PlayerColorCell()
+            }
         }
         column(messages["deployment"], PlayerModel::homeEdgeProperty) {
             cellFactory = Callback {
@@ -92,20 +100,78 @@ class PlayerForcesTable : View() {
     }
 }
 
-val deploymentEdgeValues = mutableListOf(
-    MapRegion.ANY,
-    MapRegion.NORTH,
-    MapRegion.EAST,
-    MapRegion.SOUTH,
-    MapRegion.WEST,
-    MapRegion.NORTHWEST,
-    MapRegion.NORTHEAST,
-    MapRegion.SOUTHWEST,
-    MapRegion.SOUTHEAST,
-    MapRegion.CENTER,
-).toObservable()
+
+private class PlayerColorCell : TableCell<PlayerModel, PlayerColor>() {
+    companion object {
+        val colorList = PlayerColor.values().toList().asObservable()
+    }
+    val choice = ComboBox<PlayerColor>()
+
+    init {
+        choice.items = colorList
+        choice.selectionModel.selectedItemProperty().onChange {
+            commitEdit(it)
+        }
+        choice.selectionModel.select(item)
+        choice.cellFactory = Callback {
+            object : ListCell<PlayerColor>() {
+                override fun updateItem(item: PlayerColor?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    if (item == null || empty) {
+                        style = ""
+                    } else {
+                        style = "-fx-background-color:#${item.rgb.toString(16)}"
+                    }
+                }
+            }
+        }
+    }
+
+    override fun cancelEdit() {
+        super.cancelEdit()
+        style = "-fx-background-color:#${item.rgb.toString(16)}"
+        graphic = null
+    }
+
+    override fun commitEdit(newValue: PlayerColor?) {
+        super.commitEdit(newValue)
+        graphic = null
+    }
+
+    override fun startEdit() {
+        super.startEdit()
+        item?.run {
+            graphic = choice
+            style = ""
+        }
+    }
+
+    override fun updateItem(item: PlayerColor?, empty: Boolean) {
+        super.updateItem(item, empty)
+        if (item == null || empty) {
+            style = ""
+        } else {
+            style = "-fx-background-color:#${item.rgb.toString(16)}"
+        }
+    }
+}
 
 private class DeploymentTableCell : TableCell<PlayerModel, MapRegion>() {
+    companion object {
+        val deploymentEdgeValues = mutableListOf(
+            MapRegion.ANY,
+            MapRegion.NORTH,
+            MapRegion.EAST,
+            MapRegion.SOUTH,
+            MapRegion.WEST,
+            MapRegion.NORTHWEST,
+            MapRegion.NORTHEAST,
+            MapRegion.SOUTHWEST,
+            MapRegion.SOUTHEAST,
+            MapRegion.CENTER,
+        ).toObservable()
+    }
+
     val choice = ChoiceBox<MapRegion>()
 
     init {

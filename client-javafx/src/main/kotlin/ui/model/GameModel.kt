@@ -83,38 +83,48 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     }
 
     override fun playerAdded(playerId: Int) {
-        game.getPlayer(playerId)?.let {
-            players.add(PlayerModel(it))
+        Platform.runLater {
+            game.getPlayer(playerId)?.let {
+                players.add(PlayerModel(it))
+            }
         }
     }
 
     override fun playerRemoved(playerId: Int) {
-        players.removeIf {
-            it.id == playerId
+        Platform.runLater {
+            players.removeIf {
+                it.id == playerId
+            }
         }
     }
 
     override fun playerChanged(playerId: Int) {
-        game.getPlayer(playerId)?.let { player ->
-            players.find {
-                it.id == playerId
-            }?.let {
-                it.team = player.team
-                it.color = player.color
-                it.homeEdge = player.homeEdge
+        Platform.runLater {
+            game.getPlayer(playerId)?.let { player ->
+                players.find {
+                    it.id == playerId
+                }?.let {
+                    it.team = player.team
+                    it.color = player.color
+                    it.homeEdge = player.homeEdge
+                }
             }
         }
     }
 
     override fun unitAdded(unitId: Int) {
-        game.getUnit(unitId)?.let {
-            units.add(UnitModel.createModel(it))
+        Platform.runLater {
+            game.getUnit(unitId)?.let {
+                units.add(UnitModel.createModel(it))
+            }
         }
     }
 
     override fun unitRemoved(unitId: Int) {
-        units.removeIf {
-            it.unitId == unitId
+        Platform.runLater {
+            units.removeIf {
+                it.unitId == unitId
+            }
         }
     }
 
@@ -126,11 +136,15 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     }
 
     override fun receiveAvailableShips() {
-        availableShips.setAll(client.getAvailableShips().sortedBy { it.name })
+        Platform.runLater {
+            availableShips.setAll(client.getAvailableShips().sortedBy { it.name })
+        }
     }
 
     override fun boardChanged() {
-        board = game.board
+        Platform.runLater {
+            board = game.board
+        }
     }
 
     override fun weatherChanged() {
