@@ -62,6 +62,23 @@ internal class GameHandlersTest {
     }
 
     @Test
+    fun disallowUpdateFromAnotherPlayer() {
+        val player = Player(1, "Test Player", 5, PlayerColor.RED, MapRegion.NORTH)
+        val game = Game()
+        game.addPlayer(player)
+        val newPlayer = Player(1, "Test Player", 50, PlayerColor.GREEN, MapRegion.SOUTH)
+        val packet = UpdatePlayerPacket(player.id + 1, newPlayer)
+        val handler = UpdatePlayerHandler(packet)
+
+        handler.process(game)
+
+        assertAll(
+            { assertNotEquals(newPlayer, player) },
+            { assertTrue(handler.packetsToSend().isEmpty()) }
+        )
+    }
+
+    @Test
     fun testAddShip() {
         val ship = ShipLibrary.allShips().first()
         val game = Game()
@@ -91,6 +108,24 @@ internal class GameHandlersTest {
         assertAll(
             { assertTrue(game.allUnits().isEmpty()) },
             { assertEquals(ship.unitId, (handler.packetsToSend().first() as RemoveUnitPacket).unitId) }
+        )
+    }
+
+    @Test
+    fun disallowRemovingAnotherPlayersUnit() {
+        val ship = Ship(ShipLibrary.allShips().first().id)
+        val player = Player(1, "Test")
+        val game = Game()
+        game.addPlayer(player)
+        game.addUnit(ship, player.id)
+        val packet = RemoveUnitPacket(player.id + 1, ship.unitId)
+        val handler = RemoveUnitHandler(packet)
+
+        handler.process(game)
+
+        assertAll(
+            { assertFalse(game.allUnits().isEmpty()) },
+            { assertTrue(handler.packetsToSend().isEmpty()) }
         )
     }
 

@@ -26,6 +26,7 @@ package net.handler
 
 import game.Game
 import net.*
+import org.slf4j.LoggerFactory
 import unit.Ship
 import unit.ShipLibrary
 import unit.ShipStats
@@ -49,11 +50,23 @@ class RequestAvailableShipsHandler(val packet: RequestAvailableShipsPacket): Ser
  * Handles changes in player settings
  */
 internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacketHandler {
+    private var updated = false
+
     override fun process(game: Game) {
-        game.getPlayer(packet.player.id)?.set(packet.player)
+        if (packet.clientId == packet.player.id) {
+            game.getPlayer(packet.player.id)?.set(packet.player)
+            updated = true
+        } else {
+            LoggerFactory.getLogger(javaClass)
+                .warn("Client ${packet.clientId} attempted to update player ${packet.player.id}")
+        }
     }
 
-    override fun packetsToSend() = listOf(UpdatePlayerPacket(ALL_CLIENTS, packet.player))
+    override fun packetsToSend() = if (updated) {
+            listOf(UpdatePlayerPacket(ALL_CLIENTS, packet.player))
+        } else {
+            emptyList()
+        }
 }
 
 /**
@@ -78,8 +91,13 @@ internal class RemoveUnitHandler(private val packet: RemoveUnitPacket) : ServerP
     private val toSend = ArrayList<GamePacket>()
 
     override fun process(game: Game) {
-        game.removeUnit(packet.unitId)
-        toSend += RemoveUnitPacket(ALL_CLIENTS, packet.unitId)
+        if (game.getUnit(packet.unitId)?.playerId == packet.clientId) {
+            game.removeUnit(packet.unitId)
+            toSend += RemoveUnitPacket(ALL_CLIENTS, packet.unitId)
+        } else if (game.getUnit(packet.unitId) != null) {
+            LoggerFactory.getLogger(javaClass)
+                .warn("Client ${packet.clientId} attempted to remove unit belonging to player ${game.getUnit(packet.unitId)?.playerId}")
+        }
     }
 
     override fun packetsToSend() = toSend
