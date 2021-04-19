@@ -40,6 +40,12 @@ data class Player(
     var homeEdge: MapRegion = MapRegion.ANY
 ) {
     /**
+     * Determines whether this player is allowed to make changes to another player's configuration.
+     * This can be used for things like GM mode or team leaders
+     */
+    fun canEdit(otherPlayerId: Int) = id == otherPlayerId
+
+    /**
      * Copies variable properties from another [Player] instance
      */
     fun set(other: Player) {

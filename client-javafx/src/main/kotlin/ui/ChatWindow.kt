@@ -101,7 +101,7 @@ class ChatWindow : GameListener, View() {
 
     override fun playerChanged(playerId: Int) {
         appendChat(String.format(messages["message.playerChanged"],
-            gameModel.gameProperty.value.getPlayer(playerId)?.name))
+            gameModel.game.getPlayer(playerId)?.name))
     }
 
     override fun unitAdded(unitId: Int) {

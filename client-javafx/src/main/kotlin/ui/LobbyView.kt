@@ -117,8 +117,8 @@ internal class LobbyView : View() {
                 imgWindStrength.image = ImageCache.getWindStrength(it)
             }
         }
-        (model.windDirectionProperty.isNotEqualTo(model.gameProperty.value.weather.windDirection)
-                .or(model.windStrengthProperty.isNotEqualTo(model.gameProperty.value.weather.windStrength))).let {
+        (model.windDirectionProperty.isNotEqualTo(model.game.weather.windDirection)
+                .or(model.windStrengthProperty.isNotEqualTo(model.game.weather.windStrength))).let {
             btnResetWeather.enableWhen(it)
             btnAcceptWeather.enableWhen(it)
         }

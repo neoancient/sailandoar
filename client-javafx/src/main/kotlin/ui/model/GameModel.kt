@@ -43,15 +43,15 @@ import unit.ShipStats
 
 internal class GameModel : GameListener, ClientListener, ViewModel() {
     val clientProperty: ObjectProperty<Client> = bind { (app as SailAndOarApp).clientProperty }
-    val client by clientProperty
-    val gameProperty: ObjectProperty<Game> = SimpleObjectProperty(client?.game ?: Game())
-    private var game by gameProperty
+    val client: Client by clientProperty
+    val gameProperty: ObjectProperty<Game> = SimpleObjectProperty(client.game)
+    val game: Game by gameProperty
     val boardProperty: ObjectProperty<Board> = SimpleObjectProperty(game.board)
-    var board by boardProperty
+    var board: Board by boardProperty
     val windDirectionProperty: IntegerProperty = SimpleIntegerProperty(game.weather.windDirection)
     var windDirection by windDirectionProperty
     val windStrengthProperty: ObjectProperty<WindStrength> = SimpleObjectProperty(game.weather.windStrength)
-    var windStrength by windStrengthProperty
+    var windStrength: WindStrength by windStrengthProperty
 
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty, it.homeEdgeProperty)
@@ -61,12 +61,12 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     val availableShips: ObservableList<ShipStats> = FXCollections.observableArrayList()
 
     init {
-        client?.addClientListener(this)
+        client.addClientListener(this)
         game.addListener(this)
         clientProperty.addListener {_, old, new ->
             old?.removeClientListener(this)
             new.addClientListener(this)
-            game = new.game
+            gameProperty.value = new.game
         }
         gameProperty.addListener { _, old, new ->
             old.removeListener(this)
@@ -132,7 +132,7 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     }
 
     override fun receiveGame() {
-        game = client.game
+        gameProperty.value = client.game
     }
 
     override fun receiveAvailableShips() {

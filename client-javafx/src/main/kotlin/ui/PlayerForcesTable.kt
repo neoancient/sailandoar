@@ -25,10 +25,9 @@
 package ui
 
 import game.MapRegion
+import game.Player
 import game.PlayerColor
 import javafx.beans.binding.Bindings
-import javafx.collections.ObservableList
-import javafx.collections.transformation.FilteredList
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
@@ -54,12 +53,12 @@ class PlayerForcesTable : View() {
         }
         column(messages["color"], PlayerModel::colorProperty) {
             cellFactory = Callback {
-                PlayerColorCell()
+                PlayerColorCell(model.game.getPlayer(model.client.id))
             }
         }
         column(messages["deployment"], PlayerModel::homeEdgeProperty) {
             cellFactory = Callback {
-                DeploymentTableCell()
+                DeploymentTableCell(model.game.getPlayer(model.client.id))
             }
             onEditCommit {
                 model.client.sendUpdatePlayer(rowValue.export())
@@ -101,7 +100,7 @@ class PlayerForcesTable : View() {
 }
 
 
-private class PlayerColorCell : TableCell<PlayerModel, PlayerColor>() {
+private class PlayerColorCell(private val player: Player?) : TableCell<PlayerModel, PlayerColor>() {
     companion object {
         val colorList = PlayerColor.values().toList().asObservable()
     }
@@ -117,10 +116,10 @@ private class PlayerColorCell : TableCell<PlayerModel, PlayerColor>() {
             object : ListCell<PlayerColor>() {
                 override fun updateItem(item: PlayerColor?, empty: Boolean) {
                     super.updateItem(item, empty)
-                    if (item == null || empty) {
-                        style = ""
+                    style = if (item == null || empty) {
+                        ""
                     } else {
-                        style = "-fx-background-color:#${item.rgb.toString(16)}"
+                        "-fx-background-color:#${item.rgb.toString(16)}"
                     }
                 }
             }
@@ -139,24 +138,26 @@ private class PlayerColorCell : TableCell<PlayerModel, PlayerColor>() {
     }
 
     override fun startEdit() {
-        super.startEdit()
-        item?.run {
-            graphic = choice
-            style = ""
+        if (player?.canEdit(rowItem.id) == true) {
+            super.startEdit()
+            item?.run {
+                graphic = choice
+                style = ""
+            }
         }
     }
 
     override fun updateItem(item: PlayerColor?, empty: Boolean) {
         super.updateItem(item, empty)
-        if (item == null || empty) {
-            style = ""
+        style = if (item == null || empty) {
+            ""
         } else {
-            style = "-fx-background-color:#${item.rgb.toString(16)}"
+            "-fx-background-color:#${item.rgb.toString(16)}"
         }
     }
 }
 
-private class DeploymentTableCell : TableCell<PlayerModel, MapRegion>() {
+private class DeploymentTableCell(private val player: Player?) : TableCell<PlayerModel, MapRegion>() {
     companion object {
         val deploymentEdgeValues = mutableListOf(
             MapRegion.ANY,
@@ -194,19 +195,21 @@ private class DeploymentTableCell : TableCell<PlayerModel, MapRegion>() {
     }
 
     override fun startEdit() {
-        super.startEdit()
-        item?.run {
-            graphic = choice
-            text = null
+        if (player?.canEdit(rowItem.id) == true) {
+            super.startEdit()
+            item?.run {
+                graphic = choice
+                text = null
+            }
         }
     }
 
     override fun updateItem(item: MapRegion?, empty: Boolean) {
         super.updateItem(item, empty)
-        if (item == null || empty) {
-            text = null
+        text = if (item == null || empty) {
+            null
         } else {
-            text = item.toString()
+            item.toString()
         }
     }
 }

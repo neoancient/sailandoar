@@ -53,7 +53,7 @@ internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacke
     private var updated = false
 
     override fun process(game: Game) {
-        if (packet.clientId == packet.player.id) {
+        if (game.getPlayer(packet.clientId)?.canEdit(packet.player.id) == true) {
             game.getPlayer(packet.player.id)?.set(packet.player)
             updated = true
         } else {
