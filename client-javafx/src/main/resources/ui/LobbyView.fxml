@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -48,6 +49,11 @@
             <tooltip>
                <Tooltip text="%btnAddUnits.tooltip" />
             </tooltip></Button>
+         <ToggleButton fx:id="btnReady" mnemonicParsing="false" onAction="#ready" text="%btnReady.text">
+            <tooltip>
+               <Tooltip text="%btnReady.tooltip" />
+            </tooltip>
+         </ToggleButton>
        </VBox>
        <TabPane prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="SOMETIMES">
            <Tab text="%tabMap.title">

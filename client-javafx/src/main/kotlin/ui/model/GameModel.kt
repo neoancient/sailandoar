@@ -29,10 +29,7 @@ import game.Game
 import game.GameListener
 import game.WindStrength
 import javafx.application.Platform
-import javafx.beans.property.IntegerProperty
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.*
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import net.Client
@@ -56,6 +53,8 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
         arrayOf (it.teamProperty, it.colorProperty, it.homeEdgeProperty)
     }
+    val playerReadyProperty: BooleanProperty = SimpleBooleanProperty(false)
+    var playerReady by playerReadyProperty
     val units: ObservableList<UnitModel> = FXCollections.observableArrayList()
 
     val availableShips: ObservableList<ShipStats> = FXCollections.observableArrayList()
@@ -138,6 +137,12 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     override fun receiveAvailableShips() {
         Platform.runLater {
             availableShips.setAll(client.getAvailableShips().sortedBy { it.name })
+        }
+    }
+
+    override fun playerReady(ready: Boolean) {
+        Platform.runLater {
+            playerReady = ready
         }
     }
 

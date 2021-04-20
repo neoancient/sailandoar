@@ -70,6 +70,7 @@ class Server(address: String, serverPort: Int) {
     private suspend fun handlePacket(packet: GamePacket) {
         val handler = when (packet) {
             is UpdatePlayerPacket -> UpdatePlayerHandler(packet)
+            is PlayerReadyPacket -> PlayerReadyHandler(packet)
             is RequestAvailableShipsPacket -> RequestAvailableShipsHandler(packet)
             is AddShipToForcePacket -> AddShipHandler(packet)
             is RemoveUnitPacket -> RemoveUnitHandler(packet)

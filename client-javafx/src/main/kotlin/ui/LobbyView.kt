@@ -27,10 +27,7 @@ package ui
 import game.Weather
 import game.WindStrength
 import javafx.fxml.FXML
-import javafx.scene.control.Button
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.Spinner
-import javafx.scene.control.SpinnerValueFactory
+import javafx.scene.control.*
 import javafx.scene.image.ImageView
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
@@ -58,6 +55,7 @@ internal class LobbyView : View() {
     private val btnResetWeather: Button by fxid()
     private val btnAcceptWeather: Button by fxid()
     private val boardView = find<BoardView>()
+    private val btnReady: ToggleButton by fxid()
 
     init {
         panForces.children.setAll(tblForces.root)
@@ -122,6 +120,9 @@ internal class LobbyView : View() {
             btnResetWeather.enableWhen(it)
             btnAcceptWeather.enableWhen(it)
         }
+        model.playerReadyProperty.onChange {
+            btnReady.isSelected = it
+        }
     }
 
     override fun onDock() {
@@ -163,6 +164,11 @@ internal class LobbyView : View() {
             chWindDirection.selectionModel.selectedIndex,
             chWindStrength.selectionModel.selectedItem
         ))
+    }
+
+    @FXML
+    fun ready() {
+        model.client.sendReady(btnReady.isSelected)
     }
 }
 

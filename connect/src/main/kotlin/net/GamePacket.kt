@@ -59,6 +59,9 @@ class RemovePlayerPacket(override val clientId: Int, val player: Player): GamePa
 class UpdatePlayerPacket(override val clientId: Int, val player: Player): GamePacket()
 
 @Serializable
+class PlayerReadyPacket(override val clientId: Int, val ready: Boolean): GamePacket()
+
+@Serializable
 class RequestAvailableShipsPacket(override val clientId: Int): GamePacket()
 
 @Serializable

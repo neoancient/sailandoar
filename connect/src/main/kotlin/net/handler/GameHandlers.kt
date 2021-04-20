@@ -69,6 +69,14 @@ internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacke
         }
 }
 
+internal class PlayerReadyHandler(val packet: PlayerReadyPacket) : ServerPacketHandler {
+    override fun process(game: Game) {
+        game.getPlayer(packet.clientId)?.ready = packet.ready
+    }
+
+    override fun packetsToSend() = listOf(packet)
+}
+
 /**
  * Adds a ship to the game
  */

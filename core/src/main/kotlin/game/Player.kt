@@ -32,12 +32,13 @@ const val NO_TEAM = -1
  * to ensure that it is unique.
  */
 @Serializable
-data class Player(
+class Player(
     val id: Int,
     val name: String,
     var team: Int = NO_TEAM,
     var color: PlayerColor = PlayerColor.BLUE,
-    var homeEdge: MapRegion = MapRegion.ANY
+    var homeEdge: MapRegion = MapRegion.ANY,
+    var ready: Boolean = false
 ) {
     /**
      * Determines whether this player is allowed to make changes to another player's configuration.
