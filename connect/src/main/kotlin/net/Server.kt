@@ -48,6 +48,10 @@ class Server(address: String, serverPort: Int) {
             send(SendGamePacket(id, game))
             send(AddPlayerPacket(ALL_CLIENTS, player))
         }
+
+        override suspend fun playerDisconnected(id: Int) {
+            send(PlayerDisconnectionPacket(ALL_CLIENTS, id, true))
+        }
     }
 
     private val server = NetworkServer(address, serverPort, connector)

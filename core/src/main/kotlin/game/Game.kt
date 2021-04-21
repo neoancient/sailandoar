@@ -109,6 +109,13 @@ class Game {
         }
     }
 
+    fun playerDisconnected(playerId: Int, disconnected: Boolean) {
+        getPlayer(playerId)?.let {
+            it.disconnected = disconnected
+            listeners.forEach { l -> l.playerDisconnected(playerId, disconnected) }
+        }
+    }
+
     fun getPlayer(playerId: Int): Player? = players[playerId]
 
     /**

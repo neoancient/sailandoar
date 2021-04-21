@@ -30,6 +30,10 @@ import game.Player
 import javafx.beans.property.*
 import tornadofx.*
 
+enum class PlayerStatus {
+    READY, NOT_READY, DISCONNECTED
+}
+
 class PlayerModel(player: Player) {
     val id = player.id
     val nameProperty: StringProperty = SimpleStringProperty(player.name)
@@ -42,6 +46,13 @@ class PlayerModel(player: Player) {
     var homeEdge by homeEdgeProperty
     val readyProperty: BooleanProperty = SimpleBooleanProperty(player.ready)
     var ready by readyProperty
+    val disconnectedProperty: BooleanProperty = SimpleBooleanProperty(player.disconnected)
+    var disconnected by disconnectedProperty
+    val status = objectBinding(readyProperty, disconnectedProperty) {
+        if (disconnectedProperty.value) PlayerStatus.DISCONNECTED
+        else if (readyProperty.value) PlayerStatus.READY
+        else PlayerStatus.NOT_READY
+    }
 
     fun export() = Player(id, name, team, color, homeEdge)
 }

@@ -38,6 +38,7 @@ import javafx.util.Callback
 import tornadofx.*
 import ui.model.GameModel
 import ui.model.PlayerModel
+import ui.model.PlayerStatus
 import ui.model.UnitModel
 import unit.Ship
 
@@ -64,11 +65,13 @@ class PlayerForcesTable : View() {
                 model.client.sendUpdatePlayer(rowValue.export())
             }
         }
-        column(messages["status"], PlayerModel::readyProperty).cellFormat {
-            text = if (item) {
-                messages["ready"]
-            } else {
-                messages["notReady"]
+        column(messages["status"], PlayerModel::status).cellFormat {
+            item?.let {
+                text = when (it) {
+                    PlayerStatus.DISCONNECTED -> messages["disconnected"]
+                    PlayerStatus.READY -> messages["ready"]
+                    PlayerStatus.NOT_READY -> messages["notReady"]
+                }
             }
         }
         rowExpander { player ->

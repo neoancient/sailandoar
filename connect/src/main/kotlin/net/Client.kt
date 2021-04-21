@@ -116,6 +116,7 @@ class Client(name: String) {
             is RemovePlayerPacket -> game.removePlayer(packet.player.id)
             is UpdatePlayerPacket -> game.updatePlayer(packet.player.id, packet.player)
             is PlayerReadyPacket -> game.playerReady(packet.playerId, packet.ready)
+            is PlayerDisconnectionPacket -> game.playerDisconnected(packet.playerId, packet.disconnected)
             is SendAvailableShipsPacket -> {
                 availableShips.clear()
                 availableShips.addAll(packet.ships)

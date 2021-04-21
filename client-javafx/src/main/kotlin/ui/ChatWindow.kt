@@ -104,6 +104,12 @@ class ChatWindow : GameListener, View() {
             gameModel.game.getPlayer(playerId)?.name))
     }
 
+    override fun playerDisconnected(playerId: Int, disconnected: Boolean) {
+        appendChat(String.format(messages[
+                if (disconnected) "message.disconnected" else "message.reconnected"
+        ], gameModel.game.getPlayer(playerId)?.name))
+    }
+
     override fun unitAdded(unitId: Int) {
     }
 

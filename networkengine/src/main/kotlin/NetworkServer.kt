@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger
 public interface ServerConnector {
     public suspend fun handle(json: String)
     public suspend fun playerConnected(id: Int, name: String)
+    public suspend fun playerDisconnected(id: Int)
 }
 
 public class NetworkServer(
@@ -85,6 +86,7 @@ public class NetworkServer(
                 } finally {
                     println("Removing $thisConnection")
                     connections.remove(thisConnection.id)
+                    connector.playerDisconnected(thisConnection.id)
                 }
             }
         }

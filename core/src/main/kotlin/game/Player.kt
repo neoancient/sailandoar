@@ -38,7 +38,8 @@ class Player(
     var team: Int = NO_TEAM,
     var color: PlayerColor = PlayerColor.BLUE,
     var homeEdge: MapRegion = MapRegion.ANY,
-    var ready: Boolean = false
+    var ready: Boolean = false,
+    var disconnected: Boolean = false
 ) {
     /**
      * Determines whether this player is allowed to make changes to another player's configuration.
