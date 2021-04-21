@@ -49,7 +49,7 @@ class Client(name: String) {
     private val logger = LoggerFactory.getLogger(javaClass)
     var id = -1
     var player = Player(id, name, id, PlayerColor.BLUE)
-    var game: Game? = null
+    var game: Game = Game()
     private val availableShips = ArrayList<ShipStats>()
     private val clientListeners: MutableList<ClientListener> = CopyOnWriteArrayList()
     private val connectionListeners: MutableList<ConnectionListener> = CopyOnWriteArrayList()
@@ -76,7 +76,7 @@ class Client(name: String) {
         }
 
         override suspend fun receiveChatMessage(html: String) {
-            game?.appendChat(html)
+            game.appendChat(html)
         }
     }
 
@@ -110,20 +110,20 @@ class Client(name: String) {
             is SendGamePacket -> {
                 id = packet.clientId
                 game = requireNotNull(packet.game)
-                player = requireNotNull(game?.getPlayer(id))
+                player = requireNotNull(game.getPlayer(id))
             }
-            is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
-            is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
-            is UpdatePlayerPacket -> game?.updatePlayer(packet.player.id, packet.player)
-            is PlayerReadyPacket -> game?.playerReady(packet.playerId, packet.ready)
+            is AddPlayerPacket -> if (packet.player.id != id) game.addPlayer(packet.player)
+            is RemovePlayerPacket -> game.removePlayer(packet.player.id)
+            is UpdatePlayerPacket -> game.updatePlayer(packet.player.id, packet.player)
+            is PlayerReadyPacket -> game.playerReady(packet.playerId, packet.ready)
             is SendAvailableShipsPacket -> {
                 availableShips.clear()
                 availableShips.addAll(packet.ships)
             }
-            is AddUnitPacket -> game?.replaceUnit(packet.unit.unitId, packet.unit)
-            is RemoveUnitPacket -> game?.removeUnit(packet.unitId)
-            is SetBoardPacket -> game?.board = packet.board
-            is SetWeatherPacket -> game?.setWeather(packet.weather)
+            is AddUnitPacket -> game.replaceUnit(packet.unit.unitId, packet.unit)
+            is RemoveUnitPacket -> game.removeUnit(packet.unitId)
+            is SetBoardPacket -> game.board = packet.board
+            is SetWeatherPacket -> game.setWeather(packet.weather)
             else -> logger.error("Handler not found for packet ${packet.debugString()}")
         }
     }
