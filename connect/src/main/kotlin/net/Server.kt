@@ -85,6 +85,14 @@ class Server(address: String, serverPort: Int) {
         if (handler != null) {
             handler.process(game)
             handler.packetsToSend().forEach { p -> send(p) }
+            if (handler.resetReady()) {
+                game.allPlayers().forEach {
+                    if (it.ready) {
+                        it.ready = false
+                        send(PlayerReadyPacket(ALL_CLIENTS, it.id, false))
+                    }
+                }
+            }
         }
     }
 }

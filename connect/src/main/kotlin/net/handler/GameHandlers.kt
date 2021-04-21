@@ -67,6 +67,8 @@ internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacke
         } else {
             emptyList()
         }
+
+    override fun resetReady() = true
 }
 
 internal class PlayerReadyHandler(val packet: PlayerReadyPacket) : ServerPacketHandler {
@@ -90,6 +92,8 @@ internal class AddShipHandler(val packet: AddShipToForcePacket) : ServerPacketHa
     }
 
     override fun packetsToSend() = toSend
+
+    override fun resetReady() = true
 }
 
 /**
@@ -109,6 +113,8 @@ internal class RemoveUnitHandler(private val packet: RemoveUnitPacket) : ServerP
     }
 
     override fun packetsToSend() = toSend
+
+    override fun resetReady() = true
 }
 
 /**
@@ -120,6 +126,8 @@ internal class SetBoardHandler(val packet: SetBoardPacket) : ServerPacketHandler
     }
 
     override fun packetsToSend() = listOf(SetBoardPacket(ALL_CLIENTS, packet.board))
+
+    override fun resetReady() = true
 }
 
 /**
@@ -131,4 +139,6 @@ internal class SetWeatherHandler(val packet: SetWeatherPacket) : ServerPacketHan
     }
 
     override fun packetsToSend() = listOf(SetWeatherPacket(ALL_CLIENTS, packet.weather))
+
+    override fun resetReady() = true
 }

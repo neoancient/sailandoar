@@ -62,4 +62,9 @@ interface ServerPacketHandler {
      * Any client updates that need to be sent
      */
     fun packetsToSend(): List<GamePacket> = emptyList()
+
+    /**
+     * If true, all clients are set to not ready after this is processed
+     */
+    fun resetReady(): Boolean = false
 }
