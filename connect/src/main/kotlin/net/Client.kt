@@ -42,7 +42,6 @@ import kotlin.collections.ArrayList
 interface ClientListener {
     fun receiveGame()
     fun receiveAvailableShips()
-    fun playerReady(ready: Boolean)
 }
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -116,7 +115,7 @@ class Client(name: String) {
             is AddPlayerPacket -> if (packet.player.id != id) game?.addPlayer(packet.player)
             is RemovePlayerPacket -> game?.removePlayer(packet.player.id)
             is UpdatePlayerPacket -> game?.updatePlayer(packet.player.id, packet.player)
-            is PlayerReadyPacket -> player.ready = packet.ready
+            is PlayerReadyPacket -> game?.playerReady(packet.playerId, packet.ready)
             is SendAvailableShipsPacket -> {
                 availableShips.clear()
                 availableShips.addAll(packet.ships)
@@ -136,7 +135,7 @@ class Client(name: String) {
     }
 
     fun sendReady(ready: Boolean) {
-        send(PlayerReadyPacket(id, ready))
+        send(PlayerReadyPacket(id, id, ready))
     }
 
     fun addUnit(shipId: UUID) {

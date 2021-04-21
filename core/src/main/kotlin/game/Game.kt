@@ -94,7 +94,14 @@ class Game {
     fun updatePlayer(playerId: Int, newValues: Player) {
         getPlayer(playerId)?.let {
             it.set(newValues)
-            listeners.forEach { it.playerChanged(playerId) }
+            listeners.forEach { l -> l.playerChanged(playerId) }
+        }
+    }
+
+    fun playerReady(playerId: Int, ready: Boolean) {
+        getPlayer(playerId)?.let {
+            it.ready = ready
+            listeners.forEach { l -> l.playerReady(playerId, ready) }
         }
     }
 
@@ -111,7 +118,7 @@ class Game {
     }
 
     /**
-     * Add an initailized [unit] to the game with [unitId]. If there is alreayd
+     * Add an initialized [unit] to the game with [unitId]. If there is already
      * a unit with this id, it is replaced.
      */
     fun replaceUnit(unitId: Int, unit: BaseUnit): Int {

@@ -30,6 +30,7 @@ interface GameListener {
     fun playerAdded(playerId: Int)
     fun playerRemoved(playerId: Int)
     fun playerChanged(playerId: Int)
+    fun playerReady(playerId: Int, ready: Boolean) {}
     fun unitAdded(unitId: Int)
     fun unitRemoved(unitId: Int)
     fun appendChat(text: String)

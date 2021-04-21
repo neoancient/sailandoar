@@ -51,7 +51,7 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
     var windStrength: WindStrength by windStrengthProperty
 
     val players: ObservableList<PlayerModel> = FXCollections.observableArrayList {
-        arrayOf (it.teamProperty, it.colorProperty, it.homeEdgeProperty)
+        arrayOf (it.teamProperty, it.colorProperty, it.homeEdgeProperty, it.readyProperty)
     }
     val playerReadyProperty: BooleanProperty = SimpleBooleanProperty(false)
     var playerReady by playerReadyProperty
@@ -140,9 +140,16 @@ internal class GameModel : GameListener, ClientListener, ViewModel() {
         }
     }
 
-    override fun playerReady(ready: Boolean) {
+    override fun playerReady(playerId: Int, ready: Boolean) {
         Platform.runLater {
-            playerReady = ready
+            players.find {
+                it.id == playerId
+            }?.let {
+                it.ready = ready
+                if (client.id == playerId) {
+                    playerReady = ready
+                }
+            }
         }
     }
 

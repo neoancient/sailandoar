@@ -22,26 +22,18 @@
  *
  */
 
-package ui.model
+package ui
 
-import game.MapRegion
-import game.PlayerColor
-import game.Player
-import javafx.beans.property.*
-import tornadofx.*
+import tornadofx.View
+import tornadofx.splitpane
+import ui.board.BoardView
 
-class PlayerModel(player: Player) {
-    val id = player.id
-    val nameProperty: StringProperty = SimpleStringProperty(player.name)
-    val name: String by nameProperty
-    val teamProperty: IntegerProperty =  SimpleIntegerProperty(player.team)
-    var team: Int by teamProperty
-    val colorProperty: ObjectProperty<PlayerColor> = SimpleObjectProperty(player.color)
-    var color: PlayerColor by colorProperty
-    val homeEdgeProperty: ObjectProperty<MapRegion> = SimpleObjectProperty(player.homeEdge)
-    var homeEdge by homeEdgeProperty
-    val readyProperty: BooleanProperty = SimpleBooleanProperty(player.ready)
-    var ready by readyProperty
-
-    fun export() = Player(id, name, team, color, homeEdge)
+/**
+ * The primary view of the game. It is a three-part split pane with controls on the left, report
+ * on the right, and the board in the middle.
+ */
+class GameView : View() {
+    override val root = splitpane {
+        find<BoardView>()
+    }
 }

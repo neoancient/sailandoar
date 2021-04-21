@@ -71,10 +71,10 @@ internal class UpdatePlayerHandler(val packet: UpdatePlayerPacket) : ServerPacke
 
 internal class PlayerReadyHandler(val packet: PlayerReadyPacket) : ServerPacketHandler {
     override fun process(game: Game) {
-        game.getPlayer(packet.clientId)?.ready = packet.ready
+        game.getPlayer(packet.playerId)?.ready = packet.ready
     }
 
-    override fun packetsToSend() = listOf(packet)
+    override fun packetsToSend() = listOf(PlayerReadyPacket(ALL_CLIENTS, packet.playerId, packet.ready))
 }
 
 /**

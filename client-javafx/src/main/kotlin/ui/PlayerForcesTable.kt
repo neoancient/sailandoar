@@ -64,6 +64,13 @@ class PlayerForcesTable : View() {
                 model.client.sendUpdatePlayer(rowValue.export())
             }
         }
+        column(messages["status"], PlayerModel::readyProperty).cellFormat {
+            text = if (item) {
+                messages["ready"]
+            } else {
+                messages["notReady"]
+            }
+        }
         rowExpander { player ->
             paddingLeft = expanderColumn.width
             val unitList = model.units.filtered { it.playerId == player.id }
