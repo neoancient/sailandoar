@@ -30,7 +30,6 @@ import unit.BaseUnit
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.properties.Delegates.observable
 
 /**
  * Manages all aspects of the game including unit state, board, and weather conditions.
@@ -38,11 +37,16 @@ import kotlin.properties.Delegates.observable
 @Serializable
 class Game {
 
-    var board by observable(Board(32, 16)) { _, _, _ ->
-        listeners.forEach {
-            it.boardChanged()
+    var board: Board = Board(32, 16)
+        set(value) {
+            val changed = field != value
+            field = value
+            if (changed) {
+                listeners.forEach {
+                    it.boardChanged()
+                }
+            }
         }
-    }
 
     val weather = Weather()
     @Serializable(with = AtomicIntegerAsIntSerializer::class)
