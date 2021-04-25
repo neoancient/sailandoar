@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory
 
 public interface ClientConnector {
     public suspend fun handle(data: String)
-    public suspend fun nameConflict(suggestion: String, taken: Set<String>)
+    public suspend fun nameConflict(suggestion: String, taken: Set<String>, disconnected: Boolean)
     public suspend fun connectionEstablished(clientId: Int)
     public suspend fun receiveChatMessage(html: String)
 }
@@ -93,7 +93,7 @@ public class NetworkClient(private var name: String, private val handler: Client
     private suspend fun handlePacket(packet: Packet) {
         when (packet) {
             is RequestNamePacket -> queue.send(SendNamePacket(name))
-            is SuggestNamePacket -> handler.nameConflict(packet.name, packet.taken)
+            is SuggestNamePacket -> handler.nameConflict(packet.name, packet.taken, packet.disconnected)
             is InitClientPacket -> handler.connectionEstablished(packet.clientId)
             is TextPacket -> handler.handle(packet.text)
             is ChatMessagePacket -> handler.receiveChatMessage(packet.message.toHtml())
@@ -109,6 +109,10 @@ public class NetworkClient(private var name: String, private val handler: Client
     public suspend fun changeName(name: String) {
         this.name = name
         queue.send(SendNamePacket(name))
+    }
+
+    public suspend fun reconnect() {
+        queue.send(SendNamePacket(name, true))
     }
 
     public suspend fun sendChatMessage(clientId: Int, text: String) {

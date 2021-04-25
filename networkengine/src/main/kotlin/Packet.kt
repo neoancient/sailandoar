@@ -39,13 +39,25 @@ internal class RequestNamePacket : Packet()
  * Sent by the client to request a user name
  */
 @Serializable
-internal class SendNamePacket(val name: String) : Packet()
+internal class SendNamePacket(
+    /** The requested name */
+    val name: String,
+    /** Whether this is an attempt to reconnect using an existing name */
+    val reconnect: Boolean = false
+) : Packet()
 
 /**
  * Sent by the server when the requested name is already taken
  */
 @Serializable
-internal class SuggestNamePacket(val name: String, val taken: Set<String>) : Packet()
+internal class SuggestNamePacket(
+    /** The suggested replacement name */
+    val name: String,
+    /** The names that are currently taken */
+    val taken: Set<String>,
+    /** Whether the requested name belongs to a disconnected user */
+    val disconnected: Boolean
+) : Packet()
 
 @Serializable
 internal class InitClientPacket(val clientId: Int) : Packet()

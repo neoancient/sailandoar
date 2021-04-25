@@ -24,6 +24,7 @@
 
 package ui.dialog
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.scene.layout.BorderPane
@@ -32,14 +33,23 @@ import tornadofx.*
 class SelectNameDialog : Fragment() {
     val suggested: String by param()
     val taken: Set<String> by param()
+    val disconnected: Boolean by param()
     private val nameProperty = SimpleStringProperty(suggested)
     val name by nameProperty
-    private val nameValid = booleanBinding(nameProperty) {
-        value.isNotEmpty() && value !in taken
+    private val reconnectProperty = SimpleBooleanProperty(disconnected)
+    val reconnect by reconnectProperty
+    private val nameValid = booleanBinding(nameProperty, reconnectProperty, nameProperty) {
+        (value.isNotEmpty() && value !in taken) ||
+                (reconnectProperty.value && nameProperty.value == suggested)
     }
 
     init {
         title = messages["title"]
+        nameProperty.onChange {
+            if (it != suggested) {
+                reconnectProperty.value = false
+            }
+        }
     }
 
     override val root = borderpane {
@@ -48,6 +58,9 @@ class SelectNameDialog : Fragment() {
                 field(messages["playerName"]) {
                     textfield(nameProperty)
                 }
+            }
+            if (disconnected) {
+                checkbox(messages["reconnect"], reconnectProperty)
             }
             label {
                 text = messages["invalidMessage"]

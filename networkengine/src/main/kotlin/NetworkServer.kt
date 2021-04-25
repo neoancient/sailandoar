@@ -40,6 +40,7 @@ public interface ServerConnector {
     public suspend fun handle(json: String)
     public suspend fun playerConnected(id: Int, name: String)
     public suspend fun playerDisconnected(id: Int)
+    public suspend fun playerReconnected(id: Int)
 }
 
 public class NetworkServer(
@@ -95,9 +96,23 @@ public class NetworkServer(
     private suspend fun handlePacket(packet: Packet, connection: ClientConnection) {
         when (packet) {
             is SendNamePacket ->
-                if (packet.name in users) {
+                if (packet.reconnect &&
+                        users[packet.name]?.takeUnless {
+                            connections.containsKey(it.connectionId)
+                        } != null) {
+                    connection.id = users[packet.name]!!.connectionId
+                    connection.name = packet.name
+                    connection.pending = false
+                    connections[connection.id] = connection
+                    connector.playerReconnected(connection.id)
+                    connection.send(InitClientPacket(connection.id))
+                    send(packet = ChatMessagePacket(SystemMessage("${packet.name} reconnected")))
+                } else if (packet.name in users) {
                     users.suggestAlternateName(packet.name).let {
-                        connection.send(SuggestNamePacket(it.first, it.second))
+                        connection.send(SuggestNamePacket(it.first, it.second,
+                            connections.values.none {
+                                it.name == packet.name
+                            }))
                     }
                 } else {
                     users += User(packet.name, connection.id)
@@ -177,7 +192,8 @@ private class ClientConnection(val session: DefaultWebSocketSession) {
     companion object {
         val lastId = AtomicInteger(0)
     }
-    val id = lastId.getAndIncrement()
+    var id = lastId.getAndIncrement()
+    var userId = id
     var name: String = "New Player"
     var pending: Boolean = true
 

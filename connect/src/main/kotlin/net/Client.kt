@@ -61,9 +61,9 @@ class Client(name: String) {
             }.decodeFromString(GamePacket.serializer(), data))
         }
 
-        override suspend fun nameConflict(suggestion: String, taken: Set<String>) {
+        override suspend fun nameConflict(suggestion: String, taken: Set<String>, disconnected: Boolean) {
             connectionListeners.forEach {
-                it.nameTaken(this@Client, suggestion, taken)
+                it.nameTaken(this@Client, suggestion, taken, disconnected)
             }
         }
 
@@ -99,6 +99,10 @@ class Client(name: String) {
 
     suspend fun sendName(name: String) {
         client.changeName(name)
+    }
+
+    suspend fun reconnect() {
+        client.reconnect()
     }
 
     suspend fun sendChatMessage(text: String) {

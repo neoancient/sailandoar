@@ -49,7 +49,13 @@ class Server(address: String, serverPort: Int) {
             send(AddPlayerPacket(ALL_CLIENTS, player))
         }
 
+        override suspend fun playerReconnected(id: Int) {
+            send(SendGamePacket(id, game))
+            send(PlayerDisconnectionPacket(ALL_CLIENTS, id, false))
+        }
+
         override suspend fun playerDisconnected(id: Int) {
+            game.getPlayer(id)?.disconnected = true
             send(PlayerDisconnectionPacket(ALL_CLIENTS, id, true))
         }
     }

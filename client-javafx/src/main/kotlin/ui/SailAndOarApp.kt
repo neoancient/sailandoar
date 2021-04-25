@@ -149,18 +149,26 @@ class SplashView: View(), ConnectionListener {
         // Do nothing
     }
 
-    override fun nameTaken(client: Client, suggestion: String, taken: Set<String>) {
+    override fun nameTaken(client: Client, suggestion: String, taken: Set<String>, disconnected: Boolean) {
         Platform.runLater {
             val dialog = find<SelectNameDialog>(
                 params = mapOf(
-                    SelectNameDialog::suggested to suggestion,
-                    SelectNameDialog::taken to taken
+
+                    SelectNameDialog::suggested to
+                            if (disconnected) client.player.name
+                            else suggestion,
+                    SelectNameDialog::taken to taken,
+                    SelectNameDialog::disconnected to disconnected
                 )
             )
             dialog.title = messages["nameTaken"]
             dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
             GlobalScope.launch(Dispatchers.IO) {
-                client.sendName(dialog.name)
+                if (dialog.reconnect) {
+                    client.reconnect()
+                } else {
+                    client.sendName(dialog.name)
+                }
             }
         }
     }
