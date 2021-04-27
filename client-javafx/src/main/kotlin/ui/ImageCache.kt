@@ -55,7 +55,7 @@ class ImageCache {
 
         operator fun get(id: UUID): Image? =
             imageMap[id] ?: ShipLibrary.getShip(id)?.let {
-                get(id)
+                get(it)
             }
 
         fun get(ship: ShipStats, windDirection: Int,
