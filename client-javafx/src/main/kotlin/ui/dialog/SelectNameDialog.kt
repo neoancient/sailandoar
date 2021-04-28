@@ -38,6 +38,8 @@ class SelectNameDialog : Fragment() {
     val name by nameProperty
     private val reconnectProperty = SimpleBooleanProperty(disconnected)
     val reconnect by reconnectProperty
+    private val canceledProperty = SimpleBooleanProperty(true)
+    val canceled by canceledProperty
     private val nameValid = booleanBinding(nameProperty, reconnectProperty, nameProperty) {
         (value.isNotEmpty() && value !in taken) ||
                 (reconnectProperty.value && nameProperty.value == suggested)
@@ -72,6 +74,7 @@ class SelectNameDialog : Fragment() {
             button(messages["ok"]) {
                 isDefaultButton = true
                 action {
+                    canceledProperty.value = false
                     close()
                 }
                 enableWhen(nameValid)

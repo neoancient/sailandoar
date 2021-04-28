@@ -163,11 +163,13 @@ class SplashView: View(), ConnectionListener {
             )
             dialog.title = messages["nameTaken"]
             dialog.openModal(stageStyle = StageStyle.UTILITY, block = true)
-            GlobalScope.launch(Dispatchers.IO) {
-                if (dialog.reconnect) {
-                    client.reconnect()
-                } else {
-                    client.sendName(dialog.name)
+            if (!dialog.canceled) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    if (dialog.reconnect) {
+                        client.reconnect()
+                    } else {
+                        client.sendName(dialog.name)
+                    }
                 }
             }
         }

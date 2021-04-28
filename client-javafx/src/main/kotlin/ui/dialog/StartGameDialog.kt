@@ -17,8 +17,8 @@ class StartGameDialog : Fragment() {
     val host: String by hostProperty
     private val portProperty = SimpleIntegerProperty(DEFAULT_PORT)
     var port by portProperty
-    private val canceledProperty = SimpleBooleanProperty(false)
-    var canceled by canceledProperty
+    private val canceledProperty = SimpleBooleanProperty(true)
+    val canceled by canceledProperty
 
     init {
         title = messages["title"]
@@ -58,7 +58,6 @@ class StartGameDialog : Fragment() {
             button(messages["cancel"]) {
                 isCancelButton = true
                 action {
-                    canceled = true
                     close()
                 }
             }
@@ -66,6 +65,7 @@ class StartGameDialog : Fragment() {
                 isDefaultButton = true
                 enableWhen(portProperty.greaterThan(0))
                 action {
+                    canceledProperty.value = false
                     close()
                 }
             }
